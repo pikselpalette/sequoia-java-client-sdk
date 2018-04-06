@@ -1,0 +1,9 @@
+{
+  "meta": {
+    "page": 2,
+    "perPage": 1,
+    "first": "/data/jobs?perPage=1&sort=-updatedAt&page=1"
+  },
+  "someResources": [
+  ]
+}

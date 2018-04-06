@@ -1,0 +1,17 @@
+{
+  "ref": "test:56b9bb7d8e4aa6e54b874844",
+  "owner": "test",
+  "metadata": {
+    "fields": {
+      "locks": {
+        "path.to.field.a": "LOCKED",
+        "path.to.field.b": "LOCKED"
+      },
+      "locking": {
+        "path.to.field.a": "LOCK",
+        "path.to.field.b": "UNLOCK",
+        "path.to.field.c": "OVERRIDE"
+      }
+    }
+  }
+}

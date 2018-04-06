@@ -1,0 +1,11 @@
+{
+  "someResources": [],
+  "meta": {
+    "totalCount": 3143,
+    "page": 1,
+    "perPage": 10,
+    "first": "/data/events?count=true&owner=test&perPage=10&resources=true&sort=-createdAt&page=1",
+    "last": "/data/events?count=true&owner=test&perPage=10&resources=true&sort=-createdAt&page=315",
+    "next": "/data/events?count=true&owner=test&perPage=10&resources=true&sort=-createdAt&page=2"
+  }
+}

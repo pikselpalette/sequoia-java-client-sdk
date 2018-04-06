@@ -1,0 +1,28 @@
+{
+   "meta": {},
+   "services":[
+      {
+         "owner":"test",
+         "name":"registry",
+         "ref":"test:registry",
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"test:test-admin",
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"test:test-admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "title":"registry",
+         "location":"http://127.0.0.1:8118"
+      }
+   ],
+   "linked": {
+   	 "jobs": [{
+   		"ref": "test:registry-job"
+   	 }], 
+   	 "tasks": [{
+   		"ref": "test:registry-job"
+   	 }],
+   	 "events": [{
+   		"ref": "test:registry-job"
+   	 }]
+   }
+}

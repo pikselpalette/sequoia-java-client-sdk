@@ -1,0 +1,43 @@
+{
+  "ref": "test:56b9bb7d8e4aa6e54b874844",
+  "owner": "test",
+  "name": "56b9bb7d8e4aa6e54b874844",
+  "title": "resource-title",
+  "createdAt": "2016-04-29T14:12:34.734Z",
+  "createdBy": "root:sysadmin",
+  "updatedAt": "2016-05-23T15:27:16.665Z",
+  "updatedBy": "root:system-piksel-task-management",
+  "deletedAt": "2016-05-24T15:27:16.665Z",
+  "deletedBy": "root:system-piksel-task-management",
+  "reapAt": "2016-05-24T10:27:16.665Z",
+  "version": "fa9a2db0f5f1dcb8cf0a6166ef2a3a2c4e9fb254",
+  "tags": ["my tag", "tag2", "the 3er tag"],
+  "alternativeIdentifiers": {
+    "tel": "0800100100",
+    "said": "something"
+  },
+  "custom": {
+    "stringValue": "0800100100",
+    "numberValue": 34,
+    "boolValue": true
+  },
+  "scores": {
+    "imdb.a3431": 0.9,
+    "fuse": 2
+  },
+  "metadata": {
+    "fields": {
+      "locks": {
+        "custom.numberValue": "LOCKED",
+        "custom.boolValue": "STATUS-NOT-SUPPORTED"
+      },
+      "locking": {
+        "title": "LOCK",
+        "custom.stringValue": "LOCK",
+        "custom.boolValue": "ACTION-NOT-SUPPORTED"
+      }
+    }
+  },
+  "myField": "theValue",
+  "non-parseable-field": "this field does not exist in the Java model"
+}

@@ -1,0 +1,20 @@
+{
+    "meta": {
+        "totalCount": 101,
+        "page": 2,
+        "perPage": 100,
+        "first": "/data/offers?count=true&fields=ref%2Cname%2Ctitle%2CcontentRefs&page=1&perPage=100&withContentRefs=test%3AcontentsToChecktesting1",
+        "prev": "/data/offers?count=true&fields=ref%2Cname%2Ctitle%2CcontentRefs&page=1&perPage=100&withContentRefs=test%3AcontentsToChecktesting1",
+        "last": "/data/offers?count=true&fields=ref%2Cname%2Ctitle%2CcontentRefs&page=2&perPage=100&withContentRefs=test%3AcontentsToChecktesting1"
+    },
+    "offers": [
+        {
+            "ref": "test:offersToTest1testing99",
+            "name": "offersToTest1testing99",
+            "title": "offersToTest1testing99",
+            "contentRefs": [
+                "test:contentsToChecktesting1"
+            ]
+        }
+    ]
+}

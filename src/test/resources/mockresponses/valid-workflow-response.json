@@ -1,0 +1,24 @@
+{
+   "workflows":[
+      {
+         "owner":"test",
+         "name":"test-flow",
+         "inputs":[
+            {
+               "url":"s3://path/to/video.mp4",
+               "label":"video"
+            },
+            {
+               "url":"s3://path/to/imageportrait.png",
+               "label":"portrait"
+            }
+         ],
+         "flow": [
+         	{
+         	   "inputLabels": ["video"]
+         	   
+         	}
+         ]
+      }
+   ]
+}

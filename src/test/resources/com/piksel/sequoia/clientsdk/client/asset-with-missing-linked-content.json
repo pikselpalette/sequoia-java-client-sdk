@@ -1,0 +1,21 @@
+{
+   "meta": {},
+   "assets":[
+      {
+         "owner":"owner",
+         "name":"asset1",
+         "ref":"owner:asset1",
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"owner:test-admin",
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"owner:test-admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "contentRef": "owner:content1",
+         "url": "url1",
+         "mediaType": "video"
+      }      
+   ],
+   "linked": {
+   	 "content": []
+   }
+}

@@ -1,0 +1,9 @@
+{
+  "services": 
+    [{
+      "owner": "piksel",
+      "name": "identity",
+      "location": "https://identity-reference.sequoia.piksel.com",
+      "title": "Identity Service"
+    }]
+}

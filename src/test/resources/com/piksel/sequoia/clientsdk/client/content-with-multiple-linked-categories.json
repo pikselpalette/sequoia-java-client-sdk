@@ -1,0 +1,91 @@
+{
+   "meta": {},
+   "contents":[
+      {
+         "owner":"owner",
+         "name":"content1",
+         "ref":"owner:content1",
+          "custom": {        "valence": [
+          0.3430962319300368,
+          0.34223761496414834,
+          0.3438500562055176,
+          0.33726191002419786,
+          0.3286411683600426,
+          0.3385137933063524
+        ]},
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"owner:test:admin",
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"owner:test:admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "title":"content 1",
+         "type":"movie",
+         "categoryRefs": ["owner:category1", "owner:category2"]
+      },
+      {
+         "owner":"owner",
+         "name":"content2",
+         "ref":"owner:content2",
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"owner:test:admin",
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"owner:test:admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "title":"content 2",
+         "type":"movie",
+         "categoryRefs": ["owner:category5", "owner:category1"]
+      },
+      {
+         "owner":"owner",
+         "name":"content3",
+         "ref":"owner:content3",
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"owner:test:admin",
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"owner:test:admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "title":"content 3",
+         "type":"movie",
+         "categoryRefs": []
+      },
+      {
+         "owner":"owner",
+         "name":"content4",
+         "ref":"owner:content4",
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"owner:test:admin",
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"owner:test:admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "title":"content 4",
+         "type":"movie",
+         "categoryRefs": ["owner:category5"]
+      }
+   ],
+   "linked": {
+   	 "categories": [{
+   		"ref": "owner:category1",
+   		"title": "Category 1",
+   		"value": "Category 1",
+   		"scheme": "genre"
+   	 },
+   	 {
+   		"ref": "owner:category2",
+   		"title": "Category 2",
+   		"value": "Category 2",
+   		"scheme": "genre"
+   	 },
+   	 {
+   		"ref": "owner:category3",
+   		"title": "Category 3",
+   		"value": "Category 3",
+   		"scheme": "genre"
+   	 },
+   	 {
+   		"ref": "owner:category4",
+   		"title": "Category 4",
+   		"value": "Category 4",
+   		"scheme": "genre"
+   	 }]
+   }
+}

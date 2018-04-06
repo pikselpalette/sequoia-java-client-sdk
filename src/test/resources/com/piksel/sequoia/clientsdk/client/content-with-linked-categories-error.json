@@ -1,0 +1,78 @@
+{
+   "meta": {
+
+     "page": 1,
+     "perPage": 100,
+     "first": "/data/contents?fields.scopeOffers=type%2Ctitle%2ClocalisedTitle%2CavailabilityStartAt%2CavailabilityEndAt%2Cprice%2Clive%2Crepeat%2Cpremiere%2Cactive%2CsubscriptionCodes%2Crights%2CcontentRefs%2CtermsRef%2CofferTemplateRef%2CchannelRef%2ClocationRefs%2CdescriptiveContentRef%2CscopeContentRefs%2Cname%2Cowner%2Cref%2CcreatedAt%2CupdatedAt%2CupdatedBy%2Cversion%2Ctags%2CalternativeIdentifiers%2Ccustom&include=scopeOffers&owner=lgilabs-be-prod-master&withRef=lgilabs-be-prod-master%3AEpisode2&page=1&perPage=100",
+     "linked": {
+       "categories": [{
+         "statusCode": 400,
+         "error": "Bad Request",
+         "message": "fields is invalid - channelRef is not allowed",
+         "validation": {
+           "source": "query",
+           "keys": ["fields"]
+         },
+         "request": "/data/offers?fields=type%2Ctitle%2ClocalisedTitle%2CavailabilityStartAt%2CavailabilityEndAt%2Cprice%2Clive%2Crepeat%2Cpremiere%2Cactive%2CsubscriptionCodes%2Crights%2CcontentRefs%2CtermsRef%2CofferTemplateRef%2CchannelRef%2ClocationRefs%2CdescriptiveContentRef%2CscopeContentRefs%2Cname%2Cowner%2Cref%2CcreatedAt%2CupdatedAt%2CupdatedBy%2Cversion%2Ctags%2CalternativeIdentifiers%2Ccustom&count=true&withScopeContentRefs=lgilabs-be-prod-master%3AEpisode2"
+       }]
+ }
+   },
+   "contents":[
+      {
+         "owner":"owner",
+         "name":"content1",
+         "ref":"owner:content1",
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"owner:test:admin",
+         "custom": {"test" : [0.12]}, 
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"owner:test:admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "title":"content 1",
+         "type":"movie",
+         "categoryRefs": ["owner:category1", "owner:category2"]
+      },
+      {
+         "owner":"owner",
+         "name":"content2",
+         "ref":"owner:content2",
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"owner:test:admin",
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"owner:test:admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "title":"content 2",
+         "type":"movie",
+         "categoryRefs": ["owner:category5", "owner:category1"]
+      },
+      {
+         "owner":"owner",
+         "name":"content3",
+         "ref":"owner:content3",
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"owner:test:admin",
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"owner:test:admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "title":"content 3",
+         "type":"movie",
+         "categoryRefs": []
+      },
+      {
+         "owner":"owner",
+         "name":"content4",
+         "ref":"owner:content4",
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"owner:test:admin",
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"owner:test:admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "title":"content 4",
+         "type":"movie",
+         "categoryRefs": ["owner:category5"]
+      }
+   ],
+   "linked": {
+   	 "categories": []
+   }
+}

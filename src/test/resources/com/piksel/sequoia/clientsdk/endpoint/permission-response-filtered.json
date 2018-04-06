@@ -1,0 +1,15 @@
+{
+  "expiresAt": "3000-01-02T00:00:00.000Z",
+  "userType": "sysadmin",
+  "userRef": "test:test-admin",
+  "permissions": [{
+    "tenant": "root",
+    "actions": [
+      "identity:identities:read",
+      "identity:identities:write"
+    ]
+  }, {
+    "tenant": "test",
+    "actions": []
+  }]
+}

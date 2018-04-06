@@ -1,0 +1,20 @@
+{
+    "meta": {
+        "totalCount": 101,
+        "page": 2,
+        "perPage": 100,
+        "first": "/data/assets?count=true&fields=ref%2Cname%2CcontentRef%2Ctype%2CmediaType%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&page=1&perPage=100&withContentRef=test%3AcontentsToChecktesting1",
+        "prev": "/data/assets?count=true&fields=ref%2Cname%2CcontentRef%2Ctype%2CmediaType%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&page=1&perPage=100&withContentRef=test%3AcontentsToChecktesting1",
+        "last": "/data/assets?count=true&fields=ref%2Cname%2CcontentRef%2Ctype%2CmediaType%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&page=2&perPage=100&withContentRef=test%3AcontentsToChecktesting1"
+    },
+    "assets": [
+        {
+            "ref": "test:assetsToTest1testing99",
+            "name": "assetsToTest1testing99",
+            "title": "assetsToTest1testing99",
+            "type": "other",
+            "mediaType": "other",
+            "contentRef": "test:contentsToChecktesting1"
+        }
+    ]
+}

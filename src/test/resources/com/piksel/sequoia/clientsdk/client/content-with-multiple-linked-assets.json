@@ -1,0 +1,44 @@
+{
+   "meta": {},
+   "contents":[
+      {
+         "owner":"owner",
+         "name":"content1",
+         "ref":"owner:content1",
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"owner:test:admin",
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"owner:test:admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "categoryRefs": ["owner:category1", "owner:category2"],
+         "title":"content 1",
+         "type":"movie"
+      },
+      {
+         "owner":"owner",
+         "name":"content2",
+         "ref":"owner:content2",
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"owner:test:admin",
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"owner:test:admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "title":"content 2",
+         "type":"movie"
+      }
+   ],
+   "linked": {
+   	 "assets": [{
+   		"ref": "owner:asset1",
+   		"contentRef": "owner:content1",
+   		"url": "url1",
+   		"mediaType": "video"
+   	 },
+   	 {
+   		"ref": "owner:asset2",
+   		"contentRef": "owner:content1",
+   		"url": "url2",
+   		"mediaType": "image"   		
+   	 }]
+   }
+}

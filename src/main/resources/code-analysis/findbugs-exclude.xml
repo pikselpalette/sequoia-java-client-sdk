@@ -1,0 +1,6 @@
+<FindBugsFilter>
+    <Match>
+        <Class name="com.piksel.sequoia.clientsdk.registry.service.RegisteredServicesService" />
+        <Bug pattern="NP_NONNULL_PARAM_VIOLATION" />
+    </Match>
+</FindBugsFilter>

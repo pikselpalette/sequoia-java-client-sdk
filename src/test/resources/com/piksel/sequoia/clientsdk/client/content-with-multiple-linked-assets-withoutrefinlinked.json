@@ -1,0 +1,29 @@
+{
+   "meta": {},
+   "contents":[
+      {
+         "name":"content1",
+         "ref":"owner:content1",
+         "categoryRefs": ["owner:category1", "owner:category2"]
+      }
+   ],
+   "linked": {
+   	 "assets": [{
+   		"ref": "owner:asset1",
+   		"url": "url1",
+   		"mediaType": "video"
+   	 },
+   	 {
+   		"ref": "owner:asset2",
+   		"url": "url2",
+   		"mediaType": "image"
+   	 }],
+   	 "offers": [{
+   		"ref": "owner:asset1"
+   	 },
+   	 {
+   		"ref": "owner:asset2"
+
+   	 }]
+   }
+}

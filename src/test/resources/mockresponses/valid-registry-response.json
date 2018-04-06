@@ -1,0 +1,24 @@
+{
+   "services":[
+      {
+         "owner":"test",
+         "name":"service1",
+         "ref":"test:resource-name",
+         "alternativeIdentifiers":{
+            "tel":"0800100100",
+            "said":"something"
+         },
+         "tags":[
+            "todo",
+            "usage:boxart"
+         ],
+         "createdAt":"2014-12-25T12:00:00.000Z",
+         "createdBy":"test:test-admin",
+         "updatedAt":"2014-12-25T12:00:00.000Z",
+         "updatedBy":"test:test-admin",
+         "version":"356b54eb90cd04566159dfb9c95a0426998a2f7b",
+         "title":"Sample Service",
+         "location":"http://sample.example.com:8080"
+      }
+   ]
+}
