@@ -28,6 +28,45 @@
 		<url>https://github.com/pikselpalette/sequoia-java-client-sdk</url>
 	</scm>
 
+	<developers>
+		<developer>
+			<name>Juan Luis Hidalgo</name>
+			<email>juan.hidalgo@piksel.com</email>
+			<organization>Piksel</organization>
+			<organizationUrl>http://www.piksel.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Paul Wilson</name>
+			<email>paul.wilson@piksel.com</email>
+			<organization>Piksel</organization>
+			<organizationUrl>http://www.piksel.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Francisco Gonzalez</name>
+			<email>francisco.gonzalez@piksel.com</email>
+			<organization>Piksel</organization>
+			<organizationUrl>http://www.piksel.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Luca DiVincenzo</name>
+			<email>luca.divincenzo@piksel.com</email>
+			<organization>Piksel</organization>
+			<organizationUrl>http://www.piksel.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Jose Ortiz</name>
+			<email>jose.ortiz@piksel.com</email>
+			<organization>Piksel</organization>
+			<organizationUrl>http://www.piksel.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>David Gonzalez</name>
+			<email>david.gonzalez@piksel.com</email>
+			<organization>Piksel</organization>
+			<organizationUrl>http://www.piksel.com</organizationUrl>
+		</developer>
+	</developers>
+
 	<distributionManagement>
 		<repository>
 			<id>ossrh</id>
