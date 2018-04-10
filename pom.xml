@@ -28,6 +28,13 @@
 		<url>https://github.com/pikselpalette/sequoia-java-client-sdk</url>
 	</scm>
 
+	<organization>
+		<name>Piksel</name>
+		<url>http://piksel.com</url>
+	</organization>
+
+	<inceptionYear>2018</inceptionYear>
+
 	<developers>
 		<developer>
 			<name>Juan Luis Hidalgo</name>
@@ -473,6 +480,130 @@
 					<serverId>ossrh</serverId>
 					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>1.16</version>
+				<configuration>
+					<verbose>false</verbose>
+					<includes>
+						<includes>**/*.java</includes>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generate-license-headers</id>
+						<goals>
+							<goal>update-file-header</goal>
+						</goals>
+						<phase>process-sources</phase>
+						<configuration>
+							<licenseName>apache_v2</licenseName>
+							<roots>
+								<root>src/main/java</root>
+								<root>src/test/java</root>
+							</roots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.rat</groupId>
+				<artifactId>apache-rat-plugin</artifactId>
+				<version>0.12</version><!--$NO-MVN-MAN-VER$-->
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<excludeSubProjects>false</excludeSubProjects>
+					<numUnapprovedLicenses>0</numUnapprovedLicenses>
+					<licenses>
+						<!-- Enforce this license:
+							Licensed to the Apache Software Foundation (ASF) under one
+							or more contributor license agreements.  See the NOTICE file
+							distributed with this work for additional information
+							regarding copyright ownership.  The ASF licenses this file
+							to you under the Apache License, Version 2.0 (the
+							"License"); you may not use this file except in compliance
+							with the License.  You may obtain a copy of the License at
+							  http://www.apache.org/licenses/LICENSE-2.0
+							Unless required by applicable law or agreed to in writing,
+							software distributed under the License is distributed on an
+							"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+							KIND, either express or implied.  See the License for the
+							specific language governing permissions and limitations
+							under the License.
+						-->
+						<license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
+							<licenseFamilyCategory>AL2 </licenseFamilyCategory>
+							<licenseFamilyName>Apache License 2.0</licenseFamilyName>
+							<notes />
+							<patterns>
+								<pattern>Licensed to the Apache Software Foundation (ASF) under one</pattern>
+							</patterns>
+						</license>
+					</licenses>
+					<licenseFamilies>
+						<licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
+							<familyName>Apache License 2.0</familyName>
+						</licenseFamily>
+					</licenseFamilies>
+					<excludes>
+						<!-- Additional files like .gitignore etc.-->
+						<exclude>**/.*/**</exclude>
+						<exclude>**/*.prefs</exclude>
+						<exclude>**/*.log</exclude>
+						<exclude>**/*.asc</exclude>
+						<!-- External web libraries. -->
+						<exclude>docs/**/bootstrap*</exclude>
+						<exclude>docs/Gemfile.lock</exclude>
+						<exclude>docs/ruby2/Gemfile.lock</exclude>
+						<exclude>docs/img/*.svg</exclude>
+						<exclude>**/docs/page/font-awesome/**</exclude>
+						<exclude>**/resources/**/font-awesome/**</exclude>
+						<exclude>**/resources/**/jquery*</exclude>
+						<exclude>**/resources/**/bootstrap*</exclude>
+
+						<!-- Test resources -->
+						<exclude>**/resources/**/*.json</exclude>
+						<exclude>**/resources/log4j.properties</exclude>
+
+						<!-- the licenses that are re-bundled -->
+						<exclude>**/packaged_licenses/LICENSE.*.txt</exclude>
+
+						<!-- Administrative files in the main trunk. -->
+						<exclude>**/README.md</exclude>
+						<exclude>CHANGES.md</exclude>
+						<exclude>checkstyle.xml</exclude>
+						<exclude>**/resources/**/findbugs-exclude.xml</exclude>
+						<exclude>**/resources/**/pmd-rules.xml</exclude>
+						<exclude>**/resources/version.properties</exclude>
+						<exclude>.github/**</exclude>
+						<!-- Build files -->
+						<exclude>**/*.iml</exclude>
+						<!-- Generated content -->
+						<exclude>out/**</exclude>
+						<exclude>**/target/**</exclude>
+						<exclude>docs/content/**</exclude>
+						<exclude>**/scalastyle-output.xml</exclude>
+						<exclude>build-target/**</exclude>
+						<exclude>docs/_includes/generated/**</exclude>
+						<!-- Tools: watchdog -->
+						<exclude>tools/artifacts/**</exclude>
+						<exclude>tools/flink*/**</exclude>
+						<!-- manually installed version on travis -->
+						<exclude>apache-maven-3.2.5/**</exclude>
+						<!-- PyCharm -->
+						<exclude>**/.idea/**</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>
