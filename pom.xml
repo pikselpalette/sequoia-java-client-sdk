@@ -30,7 +30,7 @@
 
 	<organization>
 		<name>Piksel</name>
-		<url>http://piksel.com</url>
+		<url>https://piksel.com</url>
 	</organization>
 
 	<inceptionYear>2018</inceptionYear>
@@ -40,37 +40,37 @@
 			<name>Juan Luis Hidalgo</name>
 			<email>juan.hidalgo@piksel.com</email>
 			<organization>Piksel</organization>
-			<organizationUrl>http://www.piksel.com</organizationUrl>
+			<organizationUrl>https://piksel.com</organizationUrl>
 		</developer>
 		<developer>
 			<name>Paul Wilson</name>
 			<email>paul.wilson@piksel.com</email>
 			<organization>Piksel</organization>
-			<organizationUrl>http://www.piksel.com</organizationUrl>
+			<organizationUrl>https://piksel.com</organizationUrl>
 		</developer>
 		<developer>
 			<name>Francisco Gonzalez</name>
 			<email>francisco.gonzalez@piksel.com</email>
 			<organization>Piksel</organization>
-			<organizationUrl>http://www.piksel.com</organizationUrl>
+			<organizationUrl>https://piksel.com</organizationUrl>
 		</developer>
 		<developer>
 			<name>Luca DiVincenzo</name>
 			<email>luca.divincenzo@piksel.com</email>
 			<organization>Piksel</organization>
-			<organizationUrl>http://www.piksel.com</organizationUrl>
+			<organizationUrl>https://piksel.com</organizationUrl>
 		</developer>
 		<developer>
 			<name>Jose Ortiz</name>
 			<email>jose.ortiz@piksel.com</email>
 			<organization>Piksel</organization>
-			<organizationUrl>http://www.piksel.com</organizationUrl>
+			<organizationUrl>https://piksel.com</organizationUrl>
 		</developer>
 		<developer>
 			<name>David Gonzalez</name>
 			<email>david.gonzalez@piksel.com</email>
 			<organization>Piksel</organization>
-			<organizationUrl>http://www.piksel.com</organizationUrl>
+			<organizationUrl>https://piksel.com</organizationUrl>
 		</developer>
 	</developers>
 
@@ -84,7 +84,6 @@
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
-
 
 	<properties>
 		<jacoco.percentage.instruction>0.74</jacoco.percentage.instruction>
@@ -418,7 +417,6 @@
 				</executions>
 				<configuration>
 					<additionalparam>-Xdoclint:none</additionalparam>
-					<additionalOptions>-Xdoclint:none</additionalOptions>
 				</configuration>
 			</plugin>
 			<plugin>
