@@ -14,6 +14,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   
   will generate a URL kind of: `http://myHost:ports/myPath/myService?owner=myOwner`
 
+- RequestClient moved to interface, and added the capability to define at configuration which implementation to be used when creating the client. So this means that
+  the implementation of Http requests can be now delegated to the user. Regarding the old implementation it´s being hold in the distribution as the default RequestClient
+  implementation, using Google Http libraries.
+
 ## 1.9.2 - RELEASE - 21-MAR-2018
 
 - Add `@Key` annotation to `Resource#title` field 
