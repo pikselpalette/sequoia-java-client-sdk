@@ -49,7 +49,7 @@ import com.piksel.sequoia.clientsdk.RequestExecutionException;
 
 public class RequestClientTest {
     @Mock
-    RequestClient requestClient;
+    DefaultRequestClient requestClient;
 
     @Before
     public void initMocks() throws IOException {
