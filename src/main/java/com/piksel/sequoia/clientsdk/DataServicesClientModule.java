@@ -73,7 +73,9 @@ public class DataServicesClientModule extends AbstractModule {
         bind(DataServicesCredentialProvider.class)
                 .to(HttpClientAccessCredentialProvider.class)
                 .asEagerSingleton();
-        bind(RequestClient.class).asEagerSingleton();
+        bind(RequestClient.class)
+            .to(configuration.getRequestClientClass())
+            .asEagerSingleton();
     }
 
     private Class<? extends RegistryClient> providesRegistryClient() {

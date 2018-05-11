@@ -22,6 +22,8 @@ package com.piksel.sequoia.clientsdk.configuration;
 
 import com.piksel.sequoia.clientsdk.DefaultServiceFactoryProviderWithOwner;
 import com.piksel.sequoia.clientsdk.ServiceFactoryProviderWithOwner;
+import com.piksel.sequoia.clientsdk.request.DefaultRequestClient;
+import com.piksel.sequoia.clientsdk.request.RequestClient;
 import java.util.Collection;
 
 import com.google.api.client.http.HttpTransport;
@@ -36,6 +38,7 @@ import com.piksel.sequoia.clientsdk.SequoiaClient;
 import com.piksel.sequoia.clientsdk.ServiceFactoryProvider;
 import com.piksel.sequoia.clientsdk.recovery.RecoveryStrategy;
 
+import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -57,14 +60,17 @@ public class ClientConfiguration {
     @NonNull
     private final Class<? extends ServiceFactoryProviderWithOwner> serviceFactoryProviderWithOwnerClass;
 
+    @NotNull
+    private final Class<? extends RequestClient> requestClientClass;
+
     /**
-     * Specifies the host configuration for the identity service. 
+     * Specifies the host configuration for the identity service.
      */
     @NonNull
     private final HostConfiguration identityHostConfiguration;
 
     /**
-     * Specifies the component credentials used to access the identity 
+     * Specifies the component credentials used to access the identity
      * service and retrieve a token.
      */
     private final ComponentCredentials identityComponentCredentials;
@@ -89,29 +95,29 @@ public class ClientConfiguration {
     private String httpResponseInterceptorName;
 
     /**
-     * Provide the back off strategy to use when recovering from 
+     * Provide the back off strategy to use when recovering from
      * communication issues.
-     * 
+     *
      * @deprecated {@link #recoveryStrategy} will be used for this functionality.
      */
     @Deprecated
     private BackOff backOffStrategy;
-    
+
     /**
-     * Provide the {@link RecoveryStrategy} to use when recovering from 
+     * Provide the {@link RecoveryStrategy} to use when recovering from
      * communication issues.
-     * 
+     *
      */
     @NonNull
     private RecoveryStrategy recoveryStrategy;
-    
+
 
     /**
-     * The owner to use when using the registry service. 
+     * The owner to use when using the registry service.
      */
     @NonNull
     private String registryServiceOwner;
-    
+
     @NonNull
     private UserAgentConfigurer userAgentConfigurer;
 
@@ -132,21 +138,21 @@ public class ClientConfiguration {
     }
 
     /**
-     * Provides a builder with default values configured ready to be overridden
-     * if needed.
+     * Provides a builder with default values configured ready to be overridden if needed.
      */
     public static ClientConfigurationBuilder builder() {
         return new ClientConfigurationBuilder()
-                .recoveryStrategy(RecoveryStrategy.builder().backOff(BackOff.ZERO_BACKOFF)
-                        .numberOfRetries(10).build())
-                .gsonBuilder(DefaultClientConfiguration.getDefaultGsonBuilder())
-                .serviceRefreshIntervalSeconds(3600)
-                .userAgentConfigurer(noOperationConfigurer())
-                .typeAdapters(
-                        DefaultClientConfiguration.getDefaultTypeAdapters())
-                .serviceFactoryProviderClass(DefaultServiceFactoryProvider.class)
-                .serviceFactoryProviderWithOwnerClass(DefaultServiceFactoryProviderWithOwner.class)
-                .httpTransport(new NetHttpTransport());
+            .recoveryStrategy(RecoveryStrategy.builder().backOff(BackOff.ZERO_BACKOFF)
+                .numberOfRetries(10).build())
+            .gsonBuilder(DefaultClientConfiguration.getDefaultGsonBuilder())
+            .serviceRefreshIntervalSeconds(3600)
+            .userAgentConfigurer(noOperationConfigurer())
+            .typeAdapters(
+                DefaultClientConfiguration.getDefaultTypeAdapters())
+            .serviceFactoryProviderClass(DefaultServiceFactoryProvider.class)
+            .serviceFactoryProviderWithOwnerClass(DefaultServiceFactoryProviderWithOwner.class)
+            .requestClientClass(DefaultRequestClient.class)
+            .httpTransport(new NetHttpTransport());
     }
 
     private static UserAgentConfigurer noOperationConfigurer() {
