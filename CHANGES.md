@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.0.0 - RELEASE -
+## 2.0.0 - RELEASE - 23-MAY-2018
 
 - Add capability to call services for owners different from the owner which the client was first instantiated.
  
