@@ -9,9 +9,9 @@ package com.piksel.sequoia.clientsdk.resource;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,8 @@ package com.piksel.sequoia.clientsdk.resource;
 import static com.piksel.sequoia.clientsdk.resource.UrlQueryStringParser.urlParser;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -68,74 +70,112 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
 
     @Override
     public ResourceResponse<T> store(T resource) {
+        return store(resource, new HashMap<>());
+    }
+
+    @Override
+    public ResourceResponse<T> store(T resource, Map<? extends String, ?> headers) {
         validate(resource, 0);
-        return toResourceResponse(requestClient.executePostRequest(endpointUrl,
-                resourceKey, resource));
+        return toResourceResponse(requestClient.executePostRequest(endpointUrl, headers, resourceKey, resource));
     }
 
     @Override
     public ResourceResponse<T> store(Collection<T> resources) {
+        return store(resources, new HashMap<>());
+    }
+
+    @Override
+    public ResourceResponse<T> store(Collection<T> resources, Map<? extends String, ?> headers) {
         T[] resourcesArray = collectionToArray(resources);
         validate(resourcesArray);
-        return toResourceResponse(requestClient.executePostRequest(endpointUrl,
-                resourceKey, resourcesArray));
+        return toResourceResponse(requestClient.executePostRequest(endpointUrl, headers, resourceKey, resourcesArray));
     }
 
     @Override
     public ResourceResponse<T> delete(Reference reference) {
+        return delete(reference, new HashMap<>());
+    }
+
+    @Override
+    public ResourceResponse<T> delete(Reference reference, Map<? extends String, ?> headers) {
         validate(reference);
         GenericUrl urlToDelete = endpointUrl.clone();
         return toResourceResponse(
-                requestClient.executeDeleteRequest(urlToDelete, reference));
+                requestClient.executeDeleteRequest(urlToDelete, headers, reference));
     }
 
     @Override
     public ResourceResponse<T> delete(Collection<Reference> references) {
+        return delete(references, new HashMap<>());
+    }
+
+    @Override
+    public ResourceResponse<T> delete(Collection<Reference> references, Map<? extends String, ?> headers) {
         Reference[] referencesArray = references
                 .toArray((Reference[]) java.lang.reflect.Array
                         .newInstance(Reference.class, references.size()));
         validate(referencesArray);
         GenericUrl urlToDelete = endpointUrl.clone();
         return toResourceResponse(requestClient
-                .executeDeleteRequest(urlToDelete, referencesArray));
+                .executeDeleteRequest(urlToDelete, headers, referencesArray));
     }
 
     @Override
     public ResourceResponse<T> update(T resource, Reference reference) {
+        return update(resource, reference, new HashMap<>());
+    }
+
+    @Override
+    public ResourceResponse<T> update(T resource, Reference reference, Map<? extends String, ?> headers) {
         validate(reference);
         validate(resource, 0);
         validate(resource, PutValidation.class);
         validateReferenceToUpdateWithResourceReference(resource, reference);
         GenericUrl urlToUpdate = endpointUrl.clone();
-        return toResourceResponse(requestClient.executePutRequest(urlToUpdate,
-                resourceKey, resource, reference));
+        return toResourceResponse(requestClient.executePutRequest(urlToUpdate, headers, resourceKey, resource,
+                reference));
     }
 
     @Override
     public ResourceResponse<T> read(Reference reference) {
+        return read(reference, new HashMap<>());
+    }
+
+    @Override
+    public ResourceResponse<T> read(Reference reference, Map<? extends String, ?> headers) {
         validate(reference);
         GenericUrl urlToRead = endpointUrl.clone();
         return toResourceResponse(
-                requestClient.executeGetRequest(urlToRead, reference));
+                requestClient.executeGetRequest(urlToRead, headers, reference));
     }
 
     @Override
     public ResourceResponse<T> read(Collection<Reference> references) {
+        return read(references, new HashMap<>());
+    }
+
+    @Override
+    public ResourceResponse<T> read(Collection<Reference> references, Map<? extends String, ?> headers) {
         Reference[] referencesArray = references
                 .toArray((Reference[]) java.lang.reflect.Array
                         .newInstance(Reference.class, references.size()));
         validate(referencesArray);
         GenericUrl urlToRead = endpointUrl.clone();
         return toResourceResponse(
-                requestClient.executeGetRequest(urlToRead, referencesArray));
+                requestClient.executeGetRequest(urlToRead, headers, referencesArray));
     }
 
     @Override
     public ResourceResponse<T> browse(ResourceCriteria criteria) {
+        return browse(criteria, new HashMap<>());
+    }
+
+    @Override
+    public ResourceResponse<T> browse(ResourceCriteria criteria, Map<? extends String, ?> headers) {
         GenericUrl urlToApplyCriteria = endpointUrl.clone();
         return toResourceResponse(
                 requestClient.executeGetRequest(new CriteriaUrlApplier()
-                        .applyCriteria(urlToApplyCriteria, criteria)));
+                        .applyCriteria(urlToApplyCriteria, criteria), headers));
     }
 
     @Override
@@ -154,7 +194,7 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
         urlToCall.putAll(urlParser(url).queryString());
         return requestClient.executeGetRequest(urlToCall).getPayload();
     }
-    
+
     @Override
     public Optional<JsonElement> getPagedLinkedResource(String url) {
         GenericUrl urlToCall = endpointUrl.clone();
@@ -165,9 +205,11 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
     }
 
     @Override
-    public ResourceEndpointHandler<T> getLinkedPages(String resourceKey, String endpointLocation, Class<T> resourceClass) {
+    public ResourceEndpointHandler<T> getLinkedPages(String resourceKey, String endpointLocation,
+            Class<T> resourceClass) {
         GenericUrl urlToCall = endpointUrl.clone();
-        ResourceEndpointHandler<T> newRes = new ResourceEndpointHandler<>(requestClient, resourceKey, resourceClass, gson);
+        ResourceEndpointHandler<T> newRes = new ResourceEndpointHandler<>(requestClient, resourceKey, resourceClass,
+                gson);
         newRes.endpointUrl = new GenericUrl(urlParser(urlToCall.toString()).replaceFinalPath(resourceKey));
         return newRes;
     }
@@ -182,7 +224,8 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
         if (resource.getOwner() != null && resource.getName() != null) {
             Reference resourceReference = Reference.fromOwnerAndName(resource.getOwner(), resource.getName());
             if (!reference.equals(resourceReference)) {
-                throw ReferencesMismatchException.thrown(Objects.toString(reference), Objects.toString(resourceReference));
+                throw ReferencesMismatchException.thrown(Objects.toString(reference), Objects.toString(
+                        resourceReference));
             }
         }
 
@@ -217,11 +260,11 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
             throw ResourceValidationException.thrown(resource.isValid(), index);
         }
     }
-    
+
     private ResourceResponse<T> toResourceResponse(
             Response<JsonElement> jsonResponse) {
         DefaultResourceResponseBuilder<T> builder = DefaultResourceResponse
-                .<T>builder().statusCode(jsonResponse.getStatusCode())
+                .<T> builder().statusCode(jsonResponse.getStatusCode())
                 .successStatusCode(jsonResponse.isSuccessStatusCode());
         if (jsonResponse.getPayload().isPresent()
                 && !jsonResponse.getPayload().get().isJsonNull()) {
@@ -240,9 +283,9 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
                 .newInstance(payloadClass, resources.size()));
         return resourcesArray;
     }
-    
+
     private String applyCamelCaseConvention(String resourceKey) {
-        return CaseFormat.LOWER_HYPHEN.to(CaseFormat.LOWER_CAMEL,resourceKey);
+        return CaseFormat.LOWER_HYPHEN.to(CaseFormat.LOWER_CAMEL, resourceKey);
     }
 
 }
