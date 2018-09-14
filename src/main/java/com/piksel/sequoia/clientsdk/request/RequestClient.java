@@ -78,7 +78,10 @@ public interface RequestClient {
      * @param reference
      * @return
      */
-    Response<JsonElement> executeGetRequest(GenericUrl url, Map<? extends String, ?> headers, Reference reference);
+    default Response<JsonElement> executeGetRequest(GenericUrl url, Map<? extends String, ?> headers,
+            Reference reference) {
+        return executeGetRequest(url, reference);
+    }
 
     /**
      *
@@ -99,7 +102,10 @@ public interface RequestClient {
      * @param references
      * @return
      */
-    Response<JsonElement> executeGetRequest(GenericUrl url, Map<? extends String, ?> headers, Reference... references);
+    default Response<JsonElement> executeGetRequest(GenericUrl url, Map<? extends String, ?> headers,
+            Reference... references) {
+        return executeGetRequest(url, references);
+    }
 
     /**
      * Executes a POST request for the given url using a payload and returning a serialized object of type T
@@ -127,8 +133,10 @@ public interface RequestClient {
      * @param <K> the generic type for Payload
      * @return A response serialized to the T type object.
      */
-    <T, K> Response<JsonElement> executePostRequest(GenericUrl url, K payload,
-            Class<T> responseType, Map<? extends String, ?> headers);
+    default <T, K> Response<JsonElement> executePostRequest(GenericUrl url, K payload,
+            Class<T> responseType, Map<? extends String, ?> headers) {
+        return executePostRequest(url, payload, responseType);
+    }
 
     /**
      *
@@ -154,8 +162,11 @@ public interface RequestClient {
      * @param <T>
      * @return
      */
-    <T extends Resource> Response<JsonElement> executePostRequest(GenericUrl url, Map<? extends String, ?> headers,
-            String resourceKey, T... content);
+    default <T extends Resource> Response<JsonElement> executePostRequest(GenericUrl url,
+            Map<? extends String, ?> headers,
+            String resourceKey, T... content) {
+        return executePostRequest(url, resourceKey, content);
+    }
 
     /**
      *
@@ -183,8 +194,11 @@ public interface RequestClient {
      * @param <T>
      * @return
      */
-    <T extends Resource> Response<JsonElement> executePutRequest(GenericUrl url, Map<? extends String, ?> headers,
-            String resourceKey, T content, Reference reference);
+    default <T extends Resource> Response<JsonElement> executePutRequest(GenericUrl url,
+            Map<? extends String, ?> headers,
+            String resourceKey, T content, Reference reference) {
+        return executePutRequest(url, resourceKey, content, reference);
+    }
 
     /**
      *
@@ -205,7 +219,9 @@ public interface RequestClient {
      * @param references
      * @return
      */
-    Response<JsonElement> executeDeleteRequest(GenericUrl url, Map<? extends String, ?> headers,
-            Reference... references);
+    default Response<JsonElement> executeDeleteRequest(GenericUrl url, Map<? extends String, ?> headers,
+            Reference... references) {
+        return executeDeleteRequest(url, references);
+    }
 
 }

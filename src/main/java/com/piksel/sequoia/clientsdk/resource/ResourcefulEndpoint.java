@@ -47,7 +47,9 @@ public interface ResourcefulEndpoint<T extends Resource> {
      *
      * @throws RequestExecutionException if there is an error during the process
      */
-    ResourceResponse<T> read(Reference ref, Map<? extends String, ?> headers);
+    default ResourceResponse<T> read(Reference ref, Map<? extends String, ?> headers) {
+        return read(ref);
+    }
 
     /**
      * Retrieves a batch of resources given their references and returns the response {@link ResourceResponse}
@@ -63,7 +65,9 @@ public interface ResourcefulEndpoint<T extends Resource> {
      *
      * @throws RequestExecutionException if there is an error during the process
      */
-    ResourceResponse<T> read(Collection<Reference> ref, Map<? extends String, ?> headers);
+    default ResourceResponse<T> read(Collection<Reference> ref, Map<? extends String, ?> headers) {
+        return read(ref);
+    }
 
     /**
      * Retrieves the list of resources that matches with the criteria and returns the {@link ResourceResponse response}
@@ -79,7 +83,9 @@ public interface ResourcefulEndpoint<T extends Resource> {
      *
      * @throws RequestExecutionException if there is an error during the process
      */
-    ResourceResponse<T> browse(ResourceCriteria criteria, Map<? extends String, ?> headers);
+    default ResourceResponse<T> browse(ResourceCriteria criteria, Map<? extends String, ?> headers) {
+        return browse(criteria);
+    }
 
     /**
      * Creates one resource and returns the {@link ResourceResponse response} retrieved.
@@ -102,7 +108,9 @@ public interface ResourcefulEndpoint<T extends Resource> {
      *
      * @throws ResourceValidationException if the resource to be created is not valid.
      */
-    ResourceResponse<T> store(T resource, Map<? extends String, ?> headers);
+    default ResourceResponse<T> store(T resource, Map<? extends String, ?> headers) {
+        return store(resource);
+    }
 
     /**
      * Creates a batch of resources and returns the {@link ResourceResponse response} retrieved.
@@ -125,7 +133,9 @@ public interface ResourcefulEndpoint<T extends Resource> {
      *
      * @throws ResourceValidationException if the resource's batch to be created is not valid.
      */
-    ResourceResponse<T> store(Collection<T> resources, Map<? extends String, ?> headers);
+    default ResourceResponse<T> store(Collection<T> resources, Map<? extends String, ?> headers) {
+        return store(resources);
+    }
 
     /**
      * Updates one resource given its reference and returns the response {@link ResourceResponse} retrieved.
@@ -158,7 +168,9 @@ public interface ResourcefulEndpoint<T extends Resource> {
      * @throws ResourceValidationException if the resource to be updated is not valid.
      * @throws RequestExecutionException if the resource has a version that conflicts with the stored resource
      */
-    ResourceResponse<T> update(T resource, Reference reference, Map<? extends String, ?> headers);
+    default ResourceResponse<T> update(T resource, Reference reference, Map<? extends String, ?> headers) {
+        return update(resource, reference);
+    }
 
     /**
      * Deletes one resource given its references and returns the {@link ResourceResponse response} retrieved.
@@ -173,7 +185,9 @@ public interface ResourcefulEndpoint<T extends Resource> {
      *
      * @throws RequestExecutionException if there is an error during the process
      */
-    ResourceResponse<T> delete(Reference reference, Map<? extends String, ?> headers);
+    default ResourceResponse<T> delete(Reference reference, Map<? extends String, ?> headers) {
+        return delete(reference);
+    }
 
     /**
      * Deletes a batch of resources and returns the {@link ResourceResponse response} retrieved.
@@ -188,7 +202,9 @@ public interface ResourcefulEndpoint<T extends Resource> {
      *
      * @throws RequestExecutionException if there is an error during the process.
      */
-    ResourceResponse<T> delete(Collection<Reference> references, Map<? extends String, ?> headers);
+    default ResourceResponse<T> delete(Collection<Reference> references, Map<? extends String, ?> headers) {
+        return delete(references);
+    }
 
     /**
      * Provides the class type for the resource endpoint.
