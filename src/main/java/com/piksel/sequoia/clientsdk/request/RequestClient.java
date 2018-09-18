@@ -1,5 +1,7 @@
 package com.piksel.sequoia.clientsdk.request;
 
+import java.util.Map;
+
 /*-
  * #%L
  * Sequoia Java Client SDK
@@ -9,9 +11,9 @@ package com.piksel.sequoia.clientsdk.request;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +27,6 @@ import com.google.gson.JsonElement;
 import com.piksel.sequoia.clientsdk.Response;
 import com.piksel.sequoia.clientsdk.resource.Reference;
 import com.piksel.sequoia.clientsdk.resource.Resource;
-import java.util.Map;
 
 public interface RequestClient {
 
@@ -73,10 +74,38 @@ public interface RequestClient {
      * Executes a GET request
      *
      * @param url is the url to do the request
+     * @param headers are the headers needed to do the request
+     * @param reference
+     * @return
+     */
+    default Response<JsonElement> executeGetRequest(GenericUrl url, Map<? extends String, ?> headers,
+            Reference reference) {
+        return executeGetRequest(url, reference);
+    }
+
+    /**
+     *
+     * Executes a GET request
+     *
+     * @param url is the url to do the request
      * @param references
      * @return
      */
     Response<JsonElement> executeGetRequest(GenericUrl url, Reference... references);
+
+    /**
+     *
+     * Executes a GET request
+     *
+     * @param url is the url to do the request
+     * @param headers are the headers needed to do the request
+     * @param references
+     * @return
+     */
+    default Response<JsonElement> executeGetRequest(GenericUrl url, Map<? extends String, ?> headers,
+            Reference... references) {
+        return executeGetRequest(url, references);
+    }
 
     /**
      * Executes a POST request for the given url using a payload and returning a serialized object of type T
@@ -89,11 +118,12 @@ public interface RequestClient {
      * @return A response serialized to the T type object.
      */
     <T, K> Response<JsonElement> executePostRequest(GenericUrl url, K payload,
-        Class<T> responseType);
+            Class<T> responseType);
 
     /**
      *
-     * Executes a POST request for the given url, using a payload and adding the needed headers. It returns a serialized object of type T
+     * Executes a POST request for the given url, using a payload and adding the needed headers. It returns a serialized
+     * object of type T
      *
      * @param url is the url to do the request
      * @param payload the payload for the POST request
@@ -103,8 +133,10 @@ public interface RequestClient {
      * @param <K> the generic type for Payload
      * @return A response serialized to the T type object.
      */
-    <T, K> Response<JsonElement> executePostRequest(GenericUrl url, K payload,
-        Class<T> responseType, Map<? extends String, ?> headers);
+    default <T, K> Response<JsonElement> executePostRequest(GenericUrl url, K payload,
+            Class<T> responseType, Map<? extends String, ?> headers) {
+        return executePostRequest(url, payload, responseType);
+    }
 
     /**
      *
@@ -117,7 +149,24 @@ public interface RequestClient {
      * @return
      */
     <T extends Resource> Response<JsonElement> executePostRequest(GenericUrl url,
-        String resourceKey, T... content);
+            String resourceKey, T... content);
+
+    /**
+     *
+     * Executes a POST request
+     *
+     * @param url is the url to do the request
+     * @param headers are the params to add to do the request
+     * @param resourceKey
+     * @param content
+     * @param <T>
+     * @return
+     */
+    default <T extends Resource> Response<JsonElement> executePostRequest(GenericUrl url,
+            Map<? extends String, ?> headers,
+            String resourceKey, T... content) {
+        return executePostRequest(url, resourceKey, content);
+    }
 
     /**
      *
@@ -131,7 +180,25 @@ public interface RequestClient {
      * @return
      */
     <T extends Resource> Response<JsonElement> executePutRequest(GenericUrl url, String resourceKey,
-        T content, Reference reference);
+            T content, Reference reference);
+
+    /**
+     *
+     * Executes a PUT request
+     *
+     * @param url is the url to do the request
+     * @param headers are the params to add to do the request
+     * @param resourceKey
+     * @param content
+     * @param reference
+     * @param <T>
+     * @return
+     */
+    default <T extends Resource> Response<JsonElement> executePutRequest(GenericUrl url,
+            Map<? extends String, ?> headers,
+            String resourceKey, T content, Reference reference) {
+        return executePutRequest(url, resourceKey, content, reference);
+    }
 
     /**
      *
@@ -142,4 +209,19 @@ public interface RequestClient {
      * @return
      */
     Response<JsonElement> executeDeleteRequest(GenericUrl url, Reference... references);
+
+    /**
+     *
+     * Executesa DELETE reuqest
+     *
+     * @param url is the url to do the request
+     * @param headers are the params to add to do the request
+     * @param references
+     * @return
+     */
+    default Response<JsonElement> executeDeleteRequest(GenericUrl url, Map<? extends String, ?> headers,
+            Reference... references) {
+        return executeDeleteRequest(url, references);
+    }
+
 }
