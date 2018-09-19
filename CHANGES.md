@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.1.0 - RELEASE - xx-xx-xxxx
+## 2.1.0 - RELEASE - 19-SEP-2018
 
 - Added the option to pass headers parameter to the endpoint
 
