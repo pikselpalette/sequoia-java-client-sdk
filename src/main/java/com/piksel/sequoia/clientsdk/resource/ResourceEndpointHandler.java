@@ -76,7 +76,8 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
     @Override
     public ResourceResponse<T> store(T resource, Map<? extends String, ?> headers) {
         validate(resource, 0);
-        return toResourceResponse(requestClient.executePostRequest(endpointUrl, headers, resourceKey, resource));
+        return toResourceResponse(requestClient.executePostRequest(endpointUrl, headers, resourceKey, resource),
+                headers);
     }
 
     @Override
@@ -88,7 +89,8 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
     public ResourceResponse<T> store(Collection<T> resources, Map<? extends String, ?> headers) {
         T[] resourcesArray = collectionToArray(resources);
         validate(resourcesArray);
-        return toResourceResponse(requestClient.executePostRequest(endpointUrl, headers, resourceKey, resourcesArray));
+        return toResourceResponse(requestClient.executePostRequest(endpointUrl, headers, resourceKey, resourcesArray),
+                headers);
     }
 
     @Override
@@ -101,7 +103,7 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
         validate(reference);
         GenericUrl urlToDelete = endpointUrl.clone();
         return toResourceResponse(
-                requestClient.executeDeleteRequest(urlToDelete, headers, reference));
+                requestClient.executeDeleteRequest(urlToDelete, headers, reference), headers);
     }
 
     @Override
@@ -117,7 +119,7 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
         validate(referencesArray);
         GenericUrl urlToDelete = endpointUrl.clone();
         return toResourceResponse(requestClient
-                .executeDeleteRequest(urlToDelete, headers, referencesArray));
+                .executeDeleteRequest(urlToDelete, headers, referencesArray), headers);
     }
 
     @Override
@@ -133,7 +135,7 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
         validateReferenceToUpdateWithResourceReference(resource, reference);
         GenericUrl urlToUpdate = endpointUrl.clone();
         return toResourceResponse(requestClient.executePutRequest(urlToUpdate, headers, resourceKey, resource,
-                reference));
+                reference), headers);
     }
 
     @Override
@@ -146,7 +148,7 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
         validate(reference);
         GenericUrl urlToRead = endpointUrl.clone();
         return toResourceResponse(
-                requestClient.executeGetRequest(urlToRead, headers, reference));
+                requestClient.executeGetRequest(urlToRead, headers, reference), headers);
     }
 
     @Override
@@ -162,7 +164,7 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
         validate(referencesArray);
         GenericUrl urlToRead = endpointUrl.clone();
         return toResourceResponse(
-                requestClient.executeGetRequest(urlToRead, headers, referencesArray));
+                requestClient.executeGetRequest(urlToRead, headers, referencesArray), headers);
     }
 
     @Override
@@ -175,7 +177,7 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
         GenericUrl urlToApplyCriteria = endpointUrl.clone();
         return toResourceResponse(
                 requestClient.executeGetRequest(new CriteriaUrlApplier()
-                        .applyCriteria(urlToApplyCriteria, criteria), headers));
+                        .applyCriteria(urlToApplyCriteria, criteria), headers), headers);
     }
 
     @Override
@@ -190,18 +192,28 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
 
     @Override
     public Optional<JsonElement> getPagedResource(String url) {
+        return getPagedResource(url, new HashMap<>());
+    }
+
+    @Override
+    public Optional<JsonElement> getPagedResource(String url, Map<? extends String, ?> headers) {
         GenericUrl urlToCall = endpointUrl.clone();
         urlToCall.putAll(urlParser(url).queryString());
-        return requestClient.executeGetRequest(urlToCall).getPayload();
+        return requestClient.executeGetRequest(urlToCall, headers).getPayload();
     }
 
     @Override
     public Optional<JsonElement> getPagedLinkedResource(String url) {
+        return getPagedLinkedResource(url, new HashMap<>());
+    }
+
+    @Override
+    public Optional<JsonElement> getPagedLinkedResource(String url, Map<? extends String, ?> headers) {
         GenericUrl urlToCall = endpointUrl.clone();
         UrlQueryStringParser urlParser = urlParser(url);
         urlToCall.setPathParts(urlParser.getPathParts());
         urlToCall.putAll(urlParser.queryString());
-        return requestClient.executeGetRequest(urlToCall).getPayload();
+        return requestClient.executeGetRequest(urlToCall, headers).getPayload();
     }
 
     @Override
@@ -262,7 +274,7 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
     }
 
     private ResourceResponse<T> toResourceResponse(
-            Response<JsonElement> jsonResponse) {
+            Response<JsonElement> jsonResponse, Map<? extends String, ?> headers) {
         DefaultResourceResponseBuilder<T> builder = DefaultResourceResponse
                 .<T> builder().statusCode(jsonResponse.getStatusCode())
                 .successStatusCode(jsonResponse.isSuccessStatusCode());
@@ -270,7 +282,7 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
                 && !jsonResponse.getPayload().get().isJsonNull()) {
             builder.payload(
                     Optional.of(new LazyLoadingResourceIterable<>(
-                            jsonResponse.getPayload().get(), this, gson)));
+                            jsonResponse.getPayload().get(), this, gson, headers)));
         } else {
             builder.payload(Optional.empty());
         }

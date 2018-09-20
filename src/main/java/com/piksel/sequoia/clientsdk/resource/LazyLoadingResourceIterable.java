@@ -1,5 +1,7 @@
 package com.piksel.sequoia.clientsdk.resource;
 
+import java.util.HashMap;
+
 /*-
  * #%L
  * Sequoia Java Client SDK
@@ -9,9 +11,9 @@ package com.piksel.sequoia.clientsdk.resource;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,17 +33,18 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @PublicEvolving
-public final class LazyLoadingResourceIterable<T extends Resource> extends LazyLoading<T> implements ResourceIterable<T> {
+public final class LazyLoadingResourceIterable<T extends Resource> extends LazyLoading<T> implements
+        ResourceIterable<T> {
 
     private Map<String, Map<String, Integer>> facetCount;
 
     public LazyLoadingResourceIterable(JsonElement payload, PageableResourceEndpoint<T> endpoint, Gson gson) {
-        log.debug("Creating lazy loading list iterable for [{}]", endpoint.getEndpointType());
-        this.endpoint = endpoint;
-        this.deserializer = new ResourceDeserializer<>(endpoint, gson);
-        this.pageIndex = addPage(payload);
-        this.totalCount = getTotalCount(payload);
-        this.facetCount = getFacetCount(payload);
+        init(payload, endpoint, gson, new HashMap<>());
+    }
+
+    public LazyLoadingResourceIterable(JsonElement payload, PageableResourceEndpoint<T> endpoint, Gson gson,
+            Map<? extends String, ?> headers) {
+        init(payload, endpoint, gson, headers);
     }
 
     @Override
@@ -82,13 +85,25 @@ public final class LazyLoadingResourceIterable<T extends Resource> extends LazyL
         return Optional.ofNullable(facetCount);
     }
 
+    private void init(JsonElement payload, PageableResourceEndpoint<T> endpoint, Gson gson,
+            Map<? extends String, ?> headers) {
+        log.debug("Creating lazy loading list iterable for [{}]", endpoint.getEndpointType());
+        this.endpoint = endpoint;
+        this.deserializer = new ResourceDeserializer<>(endpoint, gson);
+        this.pageIndex = addPage(payload);
+        this.totalCount = getTotalCount(payload);
+        this.facetCount = getFacetCount(payload);
+        this.headers = headers;
+    }
+
     private Map<String, Map<String, Integer>> getFacetCount(JsonElement payload) {
         Meta meta = deserializer.metaFrom(payload).orElse(deserializer.emptyMeta());
         return meta.getFacetCount();
     }
 
+    @Override
     void loadNextAndUpdateIndexes() {
-        Optional<JsonElement> payload = endpoint.getPagedResource(currentPage().getMeta().getNext());
+        Optional<JsonElement> payload = endpoint.getPagedResource(currentPage().getMeta().getNext(), headers);
         pageIndex = addPage(payload.orElseThrow(noSuchElementException()));
         resourceIndex = 0;
     }
