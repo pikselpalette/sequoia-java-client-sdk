@@ -9,9 +9,9 @@ package com.piksel.sequoia.clientsdk.resource;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,12 +22,14 @@ package com.piksel.sequoia.clientsdk.resource;
 
 import static java.util.Objects.nonNull;
 
-import com.google.gson.JsonElement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import com.google.gson.JsonElement;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -44,8 +46,10 @@ abstract class LazyLoading<T extends Resource> {
     int resourceIndex = 0;
     Integer totalCount;
 
+    Map<? extends String, ?> headers;
+
     ResourceDeserializer<T> deserializer;
-    
+
     T next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
@@ -59,18 +63,16 @@ abstract class LazyLoading<T extends Resource> {
             throw new NoSuchElementException(pne.getMessage());
         }
     }
-    
-   
+
     boolean hasNext() {
         return theCurrentPageHasContents() &&
-            ((currentPage().containsIndex(resourceIndex) || currentPage().isNotLast()) && nextPageIsNotEmpty()
-                && nextPageContainsResources());
+                ((currentPage().containsIndex(resourceIndex) || currentPage().isNotLast()) && nextPageIsNotEmpty()
+                        && nextPageContainsResources());
     }
 
     abstract boolean theCurrentPageHasContents();
 
     abstract boolean nextPageContainsResources();
-
 
     Integer getTotalCount(JsonElement payload) {
         Meta meta = deserializer.metaFrom(payload).orElse(deserializer.emptyMeta());
@@ -102,7 +104,7 @@ abstract class LazyLoading<T extends Resource> {
     boolean metaHasNext() {
         return nonNull(currentPage().getMeta().getNext());
     }
-    
+
     int addPage(JsonElement payload) {
         long startTime = System.nanoTime();
         Meta meta = deserializer.metaFrom(payload).orElse(deserializer.emptyMeta());
