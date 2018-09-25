@@ -2,10 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.1.1 - RELEASE - xx-xxx-xxxx
+## 2.1.1 - RELEASE - 25-SEP-2018
 
 - The headers are kept in the possible pagination requests
-
 
 ## 2.1.0 - RELEASE - 19-SEP-2018
 
