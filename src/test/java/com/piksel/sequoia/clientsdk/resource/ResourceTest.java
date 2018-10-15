@@ -93,24 +93,29 @@ public class ResourceTest extends ModelResourceTestBase {
     @Test
     public void givenJsonWithEmptyMetadata_shouldGiveEmptyMetadata() throws JSONException {
         final String originalResourceJson = "{\"ref\":\"test:56b9bb7d8e4aa6e54b874844\",\"owner\":\"test\",\"metadata\":{}}";
-        final String expectedResourceJson = "{\"ref\":\"test:56b9bb7d8e4aa6e54b874844\",\"owner\":\"test\",\"metadata\":{\"fields\":{\"locks\":{},\"locking\":{}}}}";
+        final String expectedResourceJson = "{\"ref\":\"test:56b9bb7d8e4aa6e54b874844\",\"owner\":\"test\"}";
         Resource res = parse(originalResourceJson, Resource.class);
 
         assertNotNull(res.getMetadata());
         assertNotNull(res.getMetadata().getLockActions());
         assertNotNull(res.getMetadata().getLockStatuses());
+        assertEquals(0, res.getMetadata().getLockActions().getLockValues().size());
+        assertEquals(0, res.getMetadata().getLockStatuses().getLockValues().size());
+
         String responseJson = serialize(res);
         JSONAssert.assertEquals(expectedResourceJson, responseJson, JSONCompareMode.STRICT);
     }
 
     @Test
     public void givenJsonWithEmptyMetadataFields_shouldGiveEmptyMetadata() throws JSONException {
-        final String expectedResourceJson = "{\"ref\":\"test:56b9bb7d8e4aa6e54b874844\",\"owner\":\"test\",\"metadata\":{\"fields\":{}}}";
-        Resource res = parse(expectedResourceJson, Resource.class);
+        final String originalResourceJson = "{\"ref\":\"test:56b9bb7d8e4aa6e54b874844\",\"owner\":\"test\",\"metadata\":{\"fields\":{}}}";
+        final String expectedResourceJson = "{\"ref\":\"test:56b9bb7d8e4aa6e54b874844\",\"owner\":\"test\"}";
+        Resource res = parse(originalResourceJson, Resource.class);
 
         assertNotNull(res.getMetadata());
         assertNull(res.getMetadata().getLockActions());
         assertNull(res.getMetadata().getLockStatuses());
+
         String responseJson = serialize(res);
         JSONAssert.assertEquals(expectedResourceJson, responseJson, JSONCompareMode.STRICT);
     }
@@ -118,12 +123,13 @@ public class ResourceTest extends ModelResourceTestBase {
     @Test
     public void givenJsonWithInvalidMetadataFields_shouldGiveEmptyMetadata() throws JSONException {
         final String originalResourceJson = "{\"ref\":\"test:56b9bb7d8e4aa6e54b874844\",\"owner\":\"test\",\"metadata\":{\"fields\":{\"invalidField\":\"invalidVAlue\"}}}";
-        final String expectedResourceJson = "{\"ref\":\"test:56b9bb7d8e4aa6e54b874844\",\"owner\":\"test\",\"metadata\":{\"fields\":{}}}";
+        final String expectedResourceJson = "{\"ref\":\"test:56b9bb7d8e4aa6e54b874844\",\"owner\":\"test\"}";
         Resource res = parse(originalResourceJson, Resource.class);
 
         assertNotNull(res.getMetadata());
         assertNull(res.getMetadata().getLockActions());
         assertNull(res.getMetadata().getLockStatuses());
+
         String responseJson = serialize(res);
         JSONAssert.assertEquals(expectedResourceJson, responseJson, JSONCompareMode.STRICT);
     }
