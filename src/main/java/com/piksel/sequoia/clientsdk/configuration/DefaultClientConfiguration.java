@@ -58,6 +58,8 @@ public class DefaultClientConfiguration {
                         .typeAdapter(new ForwardingListDeserializer()).build(),
                 TypeAdapter.builder().superClass(ForwardingList.class)
                         .typeAdapter(new ForwardingListSerializer()).build(),
+                TypeAdapter.builder().superClass(MetadataType.class)
+                        .typeAdapter(new MetadataTypeSerializer()).build(),
                 TypeAdapter.builder().superClass(MetadataLockFieldValue.class)
                         .typeAdapter(new MetadataLockFieldValueSerializer()).build(),
                 TypeAdapter.builder().superClass(MetadataLockFieldValue.class)
