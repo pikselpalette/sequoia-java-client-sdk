@@ -2,6 +2,29 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.1.2 - RELEASE - 25-SEP-2018
+
+- New serializer for `MetadataType` to avoid building the jsonObject when it's empty. It is empty on these cases:
+
+```
+"metadata": {}
+```
+
+```
+"metadata": {
+  "fields": {}
+}
+```
+
+```
+"metadata": {
+  "fields": {
+    "locks": {},
+    "locking": {}
+  }
+}
+```
+
 ## 2.1.1 - RELEASE - 25-SEP-2018
 
 - The headers are kept in the possible pagination requests
