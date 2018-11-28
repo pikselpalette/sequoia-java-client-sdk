@@ -20,6 +20,25 @@ package com.piksel.sequoia.clientsdk.client;
  * #L%
  */
 
+import com.google.api.client.util.Lists;
+import com.piksel.sequoia.clientsdk.ResourceResponse;
+import com.piksel.sequoia.clientsdk.client.integration.ClientIntegrationTestBase;
+import com.piksel.sequoia.clientsdk.client.model.*;
+import com.piksel.sequoia.clientsdk.resource.DefaultResourceCriteria;
+import com.piksel.sequoia.clientsdk.resource.IncludeResourceException;
+import com.piksel.sequoia.clientsdk.utils.TestResource;
+import com.piksel.sequoia.clientsdk.utils.TestResourceRule;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Optional;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.google.common.collect.Lists.newArrayList;
@@ -28,33 +47,7 @@ import static com.piksel.sequoia.clientsdk.criteria.Inclusion.resource;
 import static com.piksel.sequoia.clientsdk.criteria.StringExpressionFactory.field;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Optional;
-
-import com.piksel.sequoia.clientsdk.criteria.Inclusion;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import com.google.api.client.util.Lists;
-import com.piksel.sequoia.clientsdk.ResourceResponse;
-import com.piksel.sequoia.clientsdk.client.integration.ClientIntegrationTestBase;
-import com.piksel.sequoia.clientsdk.client.model.Asset;
-import com.piksel.sequoia.clientsdk.client.model.Category;
-import com.piksel.sequoia.clientsdk.client.model.Content;
-import com.piksel.sequoia.clientsdk.client.model.Job;
-import com.piksel.sequoia.clientsdk.client.model.Offer;
-import com.piksel.sequoia.clientsdk.resource.DefaultResourceCriteria;
-import com.piksel.sequoia.clientsdk.resource.IncludeResourceException;
-import com.piksel.sequoia.clientsdk.utils.TestResource;
-import com.piksel.sequoia.clientsdk.utils.TestResourceRule;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import static org.junit.Assert.*;
 
 /**
  * Test cases for include (direct and indirect).
