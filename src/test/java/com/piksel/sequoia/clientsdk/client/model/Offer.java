@@ -23,6 +23,7 @@ package com.piksel.sequoia.clientsdk.client.model;
 import java.util.Collection;
 import java.util.Map;
 
+import com.piksel.sequoia.clientsdk.resource.DirectRelationship;
 import com.piksel.sequoia.clientsdk.resource.Resource;
 
 import lombok.Data;
@@ -67,4 +68,14 @@ public final class Offer extends Resource {
     private String descriptiveContentRef;
 
     private Collection<String> scopeContentRefs;
+
+    @DirectRelationship(ref = "locationRefs", relationship = "locations")
+    private Collection<Location> locations;
+
+    @DirectRelationship(ref = "descriptiveContentRef", relationship = "descriptiveContent")
+    private Content descriptiveContent;
+
+    @DirectRelationship(ref = "scopeContentsRefs", relationship = "scopeContents")
+    private Collection<Content> scopeContents;
+
 }

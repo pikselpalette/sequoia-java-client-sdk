@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.1.3 - RELEASE - 28-NOV-2018
+
+- Fix NPE when some of the linked resources in an array have the field `statusCode` and some others don't
+
 ## 2.1.2 - RELEASE - 15-OCT-2018
 
 - New serializer for `MetadataType` to avoid building the jsonObject when it's empty. It is empty on these cases:

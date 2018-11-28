@@ -38,6 +38,7 @@ import java.util.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.piksel.sequoia.clientsdk.resource.ResourceDeserializer.DeserializationException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -197,7 +198,7 @@ class LinkedDeserializer<T extends Resource> {
         }
 
         JsonArray linkedResourceInfo = getLinkedRequestInfo(field, meta);
-        if (containsStatusCode(linkedResourceInfo)) {
+        if (notContainsStatusCode(linkedResourceInfo)) {
             return;
         }
 
@@ -206,18 +207,26 @@ class LinkedDeserializer<T extends Resource> {
 
     private void checkLinkedRequestInfo(JsonArray linkedResourceInfo) {
         for (int i = 0; i < linkedResourceInfo.size(); i++) {
-            Integer statusCode = linkedResourceInfo.get(i).getAsJsonObject().get(STATUS_CODE).getAsInt();
-            if (statusCode >= 400 && statusCode != 404) {
+            JsonObject linkedResource = linkedResourceInfo.get(i).getAsJsonObject();
+            if (statusCodeOf(linkedResource) >= 400 && statusCodeOf(linkedResource) != 404) {
                 throw new IncludeResourceException(Collections.singletonList(linkedResourceInfo.get(i).getAsJsonObject().get(MESSAGE).getAsString()));
             }
         }
+    }
+
+    private boolean hasStatusCode(JsonObject linkedResource) {
+        return nonNull(linkedResource.get(STATUS_CODE));
+    }
+
+    private Integer statusCodeOf(JsonObject linkedResource) {
+        return hasStatusCode(linkedResource) ? linkedResource.get(STATUS_CODE).getAsInt() : 0;
     }
 
     private boolean isDirectRelationship(Field field) {
         return field.getAnnotation(DirectRelationship.class) != null;
     }
 
-    private boolean containsStatusCode(JsonArray linkedResourceInfo) {
+    private boolean notContainsStatusCode(JsonArray linkedResourceInfo) {
         return linkedResourceInfo.size() <= 0 || !linkedResourceInfo.toString().contains(STATUS_CODE);
     }
 
