@@ -35,6 +35,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
+
+import com.piksel.sequoia.clientsdk.criteria.Inclusion;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -92,6 +94,9 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
 
     @TestResource("content-with-linked-categories-notfound.json")
     private String getContentWithCategoriesNotFound;
+
+    @TestResource("offers-with-linked-locations-some-without-statusCode.json")
+    private String getOffersWithLinkedNotFound;
 
     @TestResource("content-with-multiple-linked-categories.json")
     private String getContentWithMultipleCategories;
@@ -406,6 +411,23 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
 
         verifyResponseStatusAndPayload(response);
     }
+
+    @Test
+    public void whenBrowsingWithCriteria_includeRelatedDocument_returnLinkedLocationsSomeWithStatusCodeAndSomeWithout() {
+        stubGetMetadataResponse(scenarioMappings, "offers", getOffersWithLinkedNotFound, 200, "include=scopeContents,descriptiveContent,locations");
+
+        DefaultResourceCriteria criteria = new DefaultResourceCriteria();
+        criteria.include(resource("scopeContents"), resource("descriptiveContent"), resource("locations"));
+
+        ResourceResponse<Offer> response = client.service("metadata").resourcefulEndpoint("offers", Offer.class).browse(criteria);
+        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/offers?include=scopeContents,descriptiveContent,locations")));
+
+        Offer offer = response.getPayload().get().single();
+        assertThat(offer.getLocations().size(), is(1));
+
+        verifyResponseStatusAndPayload(response);
+    }
+
 
     private void verifyResponseStatusAndPayload(ResourceResponse<?> response) {
         assertTrue(response.isSuccessStatusCode());

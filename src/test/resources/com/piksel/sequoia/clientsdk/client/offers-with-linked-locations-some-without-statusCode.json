@@ -1,0 +1,163 @@
+{
+  "meta": {
+    "totalCount": 1,
+    "perPage": 100,
+    "page": 1,
+    "first": "/data/offers?descriptiveContent.fields=ref%2Ctype&locations.fields=ref%2Cname&scopeContents.fields=ref%2CalternativeIdentifiers%2Ctype%2Ctags%2CcategoryRefs&count=true&include=scopeContents%2CdescriptiveContent%2Clocations&owner=testowner&perPage=100&withAlternativeIdentifiers=crid%3Acrid%3A%2F%2Fthird-party.com%2Fe90952ec-552f-4ae4-acda-ad813b70bd59-imi%3A8f598e23-65fa-4651-aafa-f6cb4639e4d0&page=1",
+    "last": "/data/offers?descriptiveContent.fields=ref%2Ctype&locations.fields=ref%2Cname&scopeContents.fields=ref%2CalternativeIdentifiers%2Ctype%2Ctags%2CcategoryRefs&count=true&include=scopeContents%2CdescriptiveContent%2Clocations&owner=testowner&perPage=100&withAlternativeIdentifiers=crid%3Acrid%3A%2F%2Fthird-party.com%2Fe90952ec-552f-4ae4-acda-ad813b70bd59-imi%3A8f598e23-65fa-4651-aafa-f6cb4639e4d0&page=1",
+    "linked": {
+      "scopeContents": [
+        {
+          "request": "/data/contents/testowner:456e39c98965d45c89ddf46741b8e803ecc335d018859def534b256c905a0d20?fields=ref%2CalternativeIdentifiers%2Ctype%2Ctags%2CcategoryRefs"
+        }
+      ],
+      "descriptiveContent": [
+        {
+          "request": "/data/contents/testowner:acht?fields=ref%2Ctype"
+        }
+      ],
+      "locations": [
+        {
+          "statusCode": 404,
+          "error": "Not Found",
+          "request": "/data/locations/testowner:65535?fields=ref%2Cname"
+        },
+        {
+          "statusCode": 404,
+          "error": "Not Found",
+          "request": "/data/locations/testowner:02910,testowner:02920,testowner:02970,testowner:02990,testowner:03230,testowner:04100,testowner:05100,testowner:06500,testowner:06600,testowner:07180?fields=ref%2Cname"
+        },
+        {
+          "statusCode": 404,
+          "error": "Not Found",
+          "request": "/data/locations/testowner:01800,testowner:01850,testowner:01900,testowner:01910,testowner:01920,testowner:01970,testowner:01990,testowner:02100,testowner:02180,testowner:02200?fields=ref%2Cname"
+        },
+        {
+          "statusCode": 404,
+          "error": "Not Found",
+          "request": "/data/locations/testowner:02227,testowner:02230,testowner:02244,testowner:02280,testowner:02300,testowner:02350,testowner:02750,testowner:02800,testowner:02850,testowner:02900?fields=ref%2Cname"
+        },
+        {
+          "request": "/data/locations/testowner:01100,testowner:01180,testowner:01200,testowner:01227,testowner:01230,testowner:01244,testowner:01280,testowner:01300,testowner:01350,testowner:01750?fields=ref%2Cname"
+        }
+      ]
+    }
+  },
+  "offers": [
+    {
+      "ref": "testowner:02f5ec3a50ddb125c3fb700a6b12c52a7844a9ea1c5f892a166b3e03d1f32251",
+      "alternativeIdentifiers": {
+        "imi": "imi:8f598e23-65fa-4651-aafa-f6cb4639e4d0",
+        "serviceId": "acht",
+        "parentId": "crid://third-party.com/e90952ec-552f-4ae4-acda-ad813b70bd59",
+        "rootId": "crid://third-party.com/e90952ec-552f-4ae4-acda-ad813b70bd59",
+        "mediaGroupId": "crid://third-party.com/e90952ec-552f-4ae4-acda-ad813b70bd59"
+      },
+      "owner": "testowner",
+      "name": "02f5ec3a50ddb125c3fb700a6b12c52a7844a9ea1c5f892a166b3e03d1f32251",
+      "title": "linear: 2018-11-27T14:05:00.000Z-2018-11-27T15:00:00.000Z",
+      "tags": [
+        "source:linear",
+        "mag-replay-vrm-ok",
+        "mag-replay-irdeto-ok"
+      ],
+      "custom": {},
+      "createdAt": "2018-11-14T22:00:33.513Z",
+      "createdBy": "root:piksel-system",
+      "updatedAt": "2018-11-26T14:05:20.792Z",
+      "updatedBy": "test:system-test-rollup",
+      "version": "66b4a7907780d1aae0a8ef7179f97b37426b43da",
+      "type": "linear",
+      "availabilityStartAt": "2018-11-27T14:05:00.000Z",
+      "availabilityEndAt": "2018-11-27T15:00:00.000Z",
+      "live": false,
+      "premiere": false,
+      "active": true,
+      "contentRefs": [
+        "testowner:acht",
+        "testowner:456e39c98965d45c89ddf46741b8e803ecc335d018859def534b256c905a0d20"
+      ],
+      "descriptiveContentRef": "testowner:acht",
+      "scopeContentRefs": [
+        "testowner:456e39c98965d45c89ddf46741b8e803ecc335d018859def534b256c905a0d20"
+      ],
+      "locationRefs": [
+        "testowner:01100",
+        "testowner:01180",
+        "testowner:01200",
+        "testowner:01227",
+        "testowner:01230",
+        "testowner:01244",
+        "testowner:01280",
+        "testowner:01300",
+        "testowner:01350",
+        "testowner:01750",
+        "testowner:01800",
+        "testowner:01850",
+        "testowner:01900",
+        "testowner:01910",
+        "testowner:01920",
+        "testowner:01970",
+        "testowner:01990",
+        "testowner:02100",
+        "testowner:02180",
+        "testowner:02200",
+        "testowner:02227",
+        "testowner:02230",
+        "testowner:02244",
+        "testowner:02280",
+        "testowner:02300",
+        "testowner:02350",
+        "testowner:02750",
+        "testowner:02800",
+        "testowner:02850",
+        "testowner:02900",
+        "testowner:02910",
+        "testowner:02920",
+        "testowner:02970",
+        "testowner:02990",
+        "testowner:03230",
+        "testowner:04100",
+        "testowner:05100",
+        "testowner:06500",
+        "testowner:06600",
+        "testowner:07180",
+        "testowner:65535"
+      ]
+    }
+  ],
+  "linked": {
+    "scopeContents": [
+      {
+        "ref": "testowner:456e39c98965d45c89ddf46741b8e803ecc335d018859def534b256c905a0d20",
+        "alternativeIdentifiers": {
+          "crid": "crid://third-party.com/e90952ec-552f-4ae4-acda-ad813b70bd59",
+          "rootId": "crid://third-party.com/e90952ec-552f-4ae4-acda-ad813b70bd59",
+          "mediaGroupId": "crid://third-party.com/e90952ec-552f-4ae4-acda-ad813b70bd59"
+        },
+        "type": "movie",
+        "tags": [
+          "source:linear",
+          "replayTvEnabled"
+        ],
+        "categoryRefs": [
+          "testowner:genre-18_10",
+          "testowner:genre-74-CS2009",
+          "testowner:21eb4ff8f31fac307f1d6e63c0745285d36304444e5e322d3d82426259894577"
+        ]
+      }
+    ],
+    "descriptiveContent": [
+      {
+        "ref": "testowner:acht",
+        "type": "station"
+      }
+    ],
+    "locations": [
+      {
+        "ref": "testowner:01280",
+        "name": "01280"
+      }
+    ]
+  }
+}
