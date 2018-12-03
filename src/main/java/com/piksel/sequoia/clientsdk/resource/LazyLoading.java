@@ -28,6 +28,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,10 +36,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 abstract class LazyLoading<T extends Resource> {
 
+    protected Gson gson;
+
     static final int FIRST_PAGE = 1;
 
     // just to provide easier way to navigate back and forth in future
-    final Map<Integer, Page<T>> pages = new HashMap<>();
+    final Map<Integer,Page<T>> pages = new HashMap<>();
 
     PageableResourceEndpoint<T> endpoint;
 
@@ -46,9 +49,18 @@ abstract class LazyLoading<T extends Resource> {
     int resourceIndex = 0;
     Integer totalCount;
 
-    Map<? extends String, ?> headers;
+    Map<? extends String,?> headers;
 
     ResourceDeserializer<T> deserializer;
+
+    public LazyLoading(JsonElement payload, PageableResourceEndpoint<T> endpoint, Gson gson) {
+        log.debug("Creating lazy loading list iterable for [{}]", endpoint.getEndpointType());
+        this.endpoint = endpoint;
+        this.gson = gson;
+        this.deserializer = new ResourceDeserializer<>(endpoint, gson);
+        this.totalCount = getTotalCount(payload);
+
+    }
 
     T next() {
         if (!hasNext()) {
@@ -65,9 +77,9 @@ abstract class LazyLoading<T extends Resource> {
     }
 
     boolean hasNext() {
-        return theCurrentPageHasContents() &&
-                ((currentPage().containsIndex(resourceIndex) || currentPage().isNotLast()) && nextPageIsNotEmpty()
-                        && nextPageContainsResources());
+        return theCurrentPageHasContents()
+                && ((currentPage().containsIndex(resourceIndex) || currentPage().isNotLast())
+                        && nextPageIsNotEmpty() && nextPageContainsResources());
     }
 
     abstract boolean theCurrentPageHasContents();
@@ -75,8 +87,7 @@ abstract class LazyLoading<T extends Resource> {
     abstract boolean nextPageContainsResources();
 
     Integer getTotalCount(JsonElement payload) {
-        Meta meta = deserializer.metaFrom(payload).orElse(deserializer.emptyMeta());
-        return meta.getTotalCount();
+        return getMeta(payload).getTotalCount();
     }
 
     Page<T> currentPage() {
@@ -102,20 +113,31 @@ abstract class LazyLoading<T extends Resource> {
     abstract void loadNextAndUpdateIndexes();
 
     boolean metaHasNext() {
-        return nonNull(currentPage().getMeta().getNext());
+        return nonNull(currentPage().getMeta().getNext())
+                || nonNull(currentPage().getMeta().getContinuosPage());
     }
 
     int addPage(JsonElement payload) {
+        Meta meta = getMeta(payload);
         long startTime = System.nanoTime();
-        Meta meta = deserializer.metaFrom(payload).orElse(deserializer.emptyMeta());
         pages.put(meta.getPage(), Page.from(meta, deserializer.contentsFrom(payload)));
         long endTime = System.nanoTime();
-        log.debug("time to process json - {} seconds", (double) (endTime - startTime) / 1000000000.0);
+        log.debug("time to process json - {} seconds", (endTime - startTime) / 1000000000.0);
         return meta.getPage();
     }
 
     boolean lastPageItem(AbstractMeta meta) {
         return resourceIndex == meta.getPerPage();
+    }
+
+    protected Meta getMeta(JsonElement payload) {
+        return deserializer.metaFrom(payload).orElse(deserializer.emptyMeta());
+    }
+
+    protected String getNextPage() {
+        return currentPage().getMeta().getContinuosPage() != null
+                ? currentPage().getMeta().getContinuosPage()
+                : currentPage().getMeta().getNext();
     }
 
 }

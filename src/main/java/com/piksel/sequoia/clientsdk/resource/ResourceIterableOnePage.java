@@ -9,9 +9,9 @@ package com.piksel.sequoia.clientsdk.resource;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,38 +20,19 @@ package com.piksel.sequoia.clientsdk.resource;
  * #L%
  */
 
-import com.google.api.client.util.Key;
-import com.google.gson.annotations.SerializedName;
+import java.util.Optional;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.piksel.sequoia.annotations.PublicEvolving;
 
-@Getter
-@Setter
-@ToString
-public class AbstractMeta {
+/**
+ * Provides iterable access over a collection of resources.
+ */
+@PublicEvolving
+public interface ResourceIterableOnePage<T extends Resource> extends ResourceIterable<T> {
 
-    @Key
-    private int page = 1;
-
-    @Key
-    @SerializedName("continue")
-    private String continuosPage;
-
-    @Key
-    private int perPage;
-
-    @Key
-    private String first;
-
-    @Key
-    private String next;
-
-    @Key
-    private String prev;
-
-    @Key
-    private Integer totalCount;
+    /**
+     * Used to retrieve next url to invoke next page.
+     */
+    Optional<String> nextUrl();
 
 }

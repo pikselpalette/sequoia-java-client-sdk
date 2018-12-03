@@ -9,9 +9,9 @@ package com.piksel.sequoia.clientsdk.resource;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,9 +34,10 @@ public interface ResourceIterable<T extends Resource> extends Iterator<T> {
 
     /**
      * Used to retrieve the single instance that this collection contains.
-     * 
+     *
      * @return the single instance that this represents
-     * @throws NotSingularException if the iterable has a size that is not 1
+     * @throws NotSingularException
+     *             if the iterable has a size that is not 1
      */
     T single();
 
@@ -48,6 +49,6 @@ public interface ResourceIterable<T extends Resource> extends Iterator<T> {
     /**
      * Used to retrieve the facetCount presents on the query's result.
      */
-    Optional<Map<String, Map<String, Integer>>> facetCount();
+    Optional<Map<String,Map<String,Integer>>> facetCount();
 
 }

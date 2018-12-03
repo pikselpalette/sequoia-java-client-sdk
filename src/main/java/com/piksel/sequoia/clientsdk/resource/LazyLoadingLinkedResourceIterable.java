@@ -9,9 +9,9 @@ package com.piksel.sequoia.clientsdk.resource;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,25 +36,23 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @PublicEvolving
-public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends LazyLoading<T> implements LinkedResourceIterable<T> {
+public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends LazyLoading<T>
+        implements LinkedResourceIterable<T> {
 
     private final Field field;
     private final T resource;
-    private final Gson gson;
+
     private final ResourceDeserializer<T> linkedDeserializer;
     private int numItemsPage = 0;
 
-    public LazyLoadingLinkedResourceIterable(JsonElement payload, PageableResourceEndpoint<T> endpoint, PageableResourceEndpoint<T> linkedEndpoint,
+    public LazyLoadingLinkedResourceIterable(JsonElement payload,
+            PageableResourceEndpoint<T> endpoint, PageableResourceEndpoint<T> linkedEndpoint,
             Gson gson, Field field, T resource) {
-        log.debug("Creating lazy loading list iterable for [{}]", endpoint.getEndpointType());
-        this.endpoint = endpoint;
+        super(payload, linkedEndpoint, gson);
         this.field = field;
-        this.gson = gson;
         this.resource = resource;
-        this.deserializer = new ResourceDeserializer<>(endpoint, gson);
         this.linkedDeserializer = new ResourceDeserializer<>(linkedEndpoint, gson);
         this.pageIndex = addLinkedPage(payload);
-        this.totalCount = getTotalCount(payload);
     }
 
     @Override
@@ -79,25 +77,33 @@ public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends
 
     int addLinkedPage(JsonElement payload) {
         long startTime = System.nanoTime();
-        LinkedMeta meta = deserializer.linkedMetaFrom(payload, getRelationShip(field), resource.getRef()).orElse(deserializer.emptyLinkedMeta());
+        LinkedMeta meta = deserializer
+                .linkedMetaFrom(payload, getRelationShip(field), resource.getRef())
+                .orElse(deserializer.emptyLinkedMeta());
         ArrayList<T> linkedResources = new ArrayList<>(
-                linkedIndirectDeserializer(endpoint, gson, payload).getLinkedResources(resource, field, getLinked(payload)));
+                linkedIndirectDeserializer(endpoint, gson, payload).getLinkedResources(resource,
+                        field, getLinked(payload)));
         pages.put(meta.getPage(), Page.from(meta, linkedResources));
         numItemsPage = linkedResources.size();
         long endTime = System.nanoTime();
-        log.debug("time to add linked page - {} seconds", (double) (endTime - startTime) / 1000000000.0);
+        log.debug("time to add linked page - {} seconds", (endTime - startTime) / 1000000000.0);
         return meta.getPage();
     }
 
+    @Override
     void loadNextAndUpdateIndexes() {
-        Optional<JsonElement> payload = endpoint.getPagedLinkedResource(currentPage().getMeta().getNext());
+        Optional<JsonElement> payload = endpoint.getPagedLinkedResource(getNextPage());
         deserializer = linkedDeserializer;
-        Optional<JsonElement> filteredPayload = deserializer.includeJustLinkedItems(payload.orElseThrow(noSuchElementException()),
-                field.getAnnotation(IndirectRelationship.class).ref(), resource.getRef().toString());
+        Optional<JsonElement> filteredPayload = deserializer.includeJustLinkedItems(
+                payload.orElseThrow(noSuchElementException()),
+                field.getAnnotation(IndirectRelationship.class).ref(),
+                resource.getRef().toString());
         pageIndex = addPage(filteredPayload.orElseThrow(noSuchElementException()));
         resourceIndex = 0;
-        numItemsPage = deserializer.numLinkedItemsInPayload(payload.orElseThrow(noSuchElementException()),
-                field.getAnnotation(IndirectRelationship.class).ref(), resource.getRef().toString());
+        numItemsPage = deserializer.numLinkedItemsInPayload(
+                payload.orElseThrow(noSuchElementException()),
+                field.getAnnotation(IndirectRelationship.class).ref(),
+                resource.getRef().toString());
     }
 
     @Override

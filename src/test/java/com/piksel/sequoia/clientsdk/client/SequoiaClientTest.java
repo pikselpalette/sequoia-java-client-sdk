@@ -9,9 +9,9 @@ package com.piksel.sequoia.clientsdk.client;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,15 +52,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.util.ExponentialBackOff;
 import com.piksel.sequoia.clientsdk.RequestExecutionException;
@@ -89,7 +92,8 @@ import com.piksel.sequoia.wiremock.helper.WiremockHelper;
 
 public class SequoiaClientTest extends ClientIntegrationTestBase {
 
-    private static final Reference REF_RESOURCE_TO_DELETE = Reference.fromReference("test:resourceToDelete");
+    private static final Reference REF_RESOURCE_TO_DELETE = Reference
+            .fromReference("test:resourceToDelete");
 
     private static final int BATCH_RESOURCES_SIZE = 10;
 
@@ -107,7 +111,7 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
 
     @TestResource("registry-get-response-multi-count.json")
     private String getResponseMultiResourceCount;
- 
+
     @TestResource("registry-get-response-linked-resources.json")
     private String getResponseLinkedResources;
 
@@ -136,55 +140,60 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
 
     @Test
     public void shouldProvideServiceForNewOwner() throws Exception {
-        stubForRegistryClientForNewOwner(scenarioMappings, responseTestmockResource, 201, "testmock");
+        stubForRegistryClientForNewOwner(scenarioMappings, responseTestmockResource, 201,
+                "testmock");
         getHostRegistryAndWaitForItToBePopulated(client);
         ServiceProvider serviceProvider = client.service("workflow", "testmock");
         assertNotNull(serviceProvider);
         commonVerifications();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void whenInstantiateServiceForNewOwnerAndGenerateResourcefullEndpointShouldAddOwner()
-        throws NoSuchFieldException, NoSuchMethodException, IllegalAccessException {
+            throws NoSuchFieldException, NoSuchMethodException, IllegalAccessException {
         stubForRegistryClientForNewOwner(scenarioMappings, responseTestmockResource, 201,
-            "testmock");
+                "testmock");
 
         ResourceEndpointHandler<RegisteredService> response = (ResourceEndpointHandler) client
-            .service("workflow", "testmock")
-            .resourcefulEndpoint("services", RegisteredService.class);
+                .service("workflow", "testmock")
+                .resourcefulEndpoint("services", RegisteredService.class);
 
         Field genericUrlField = response.getClass().getSuperclass().getDeclaredField("endpointUrl");
         genericUrlField.setAccessible(true);
         GenericUrl genericUrl = (GenericUrl) genericUrlField.get(response);
 
         assertThat("Endpoint url should contain owner as query param", genericUrl.build(),
-            equalTo("http://127.0.0.1:8119/data/services?owner=testmock"));
+                equalTo("http://127.0.0.1:8119/data/services?owner=testmock"));
     }
 
     @Test
     public void endpoint_shouldProvideOneEndpoint() {
-        ResourcefulEndpoint<Resource> resourceEndpoint = client.service("registry").resourcefulEndpoint("services", Resource.class);
+        ResourcefulEndpoint<Resource> resourceEndpoint = client.service("registry")
+                .resourcefulEndpoint("services", Resource.class);
         assertNotNull(resourceEndpoint);
     }
 
     @Test
     public void endpoint_shouldProvideOneDynamicEndpoint() {
-        ResourcefulEndpoint<Resource> resourceEndpoint = client.service("registry").resourcefulEndpoint("test", "services", Resource.class);
+        ResourcefulEndpoint<Resource> resourceEndpoint = client.service("registry")
+                .resourcefulEndpoint("test", "services", Resource.class);
         assertNotNull(resourceEndpoint);
     }
 
     @Test
     public void whenStoringWithInvalidResource_andThrowResourceValidationException() {
         thrown.expect(ResourceValidationException.class);
-        client.service("registry").resourcefulEndpoint("services", Resource.class).store(new Resource());
+        client.service("registry").resourcefulEndpoint("services", Resource.class)
+                .store(new Resource());
     }
 
     @Test
     public void whenStoring_shouldPostToDataServicesEndpoint_andReturn_201() {
         stubForServiceRegistryPost(scenarioMappings, responseOneResource, 201);
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class)
                 .store(getRegisteredServiceToCreate());
 
         scenarioMappings.verify("registry", postRequestedFor(urlEqualTo("/data/services")));
@@ -196,10 +205,12 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
     public void whenStoring_shouldPostToDataServicesDynamicEndpoint_andReturn_201() {
         stubForServiceRegistryDynamicPost(scenarioMappings, responseOneResource, 201);
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("test", "services", RegisteredService.class)
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("test", "services", RegisteredService.class)
                 .store(getRegisteredServiceToCreate());
 
-        scenarioMappings.verify("registry", postRequestedFor(urlEqualTo("/data/services?owner=test")));
+        scenarioMappings.verify("registry",
+                postRequestedFor(urlEqualTo("/data/services?owner=test")));
         commonSingleResponseVerifications(response);
         assertEquals(201, response.getStatusCode());
     }
@@ -208,11 +219,13 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
     public void whenReadingWithOwnerAndName_addReferenceToUrl_andReturn200() {
         stubForServiceRegistryGet(scenarioMappings, responseOneResource, 200, "owner:registry");
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class)
                 .read(Reference.fromOwnerAndName("owner", "registry"));
 
         commonVerifications();
-        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/data/services/owner:registry")));
+        scenarioMappings.verify("registry",
+                getRequestedFor(urlEqualTo("/data/services/owner:registry")));
         commonSingleResponseVerifications(response);
         assertEquals(200, response.getStatusCode());
     }
@@ -222,26 +235,30 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
         stubForServiceRegistryGet(scenarioMappings, responseOneResource, 500, "owner:registry500");
         boolean fail = false;
         try {
-            client.service("registry").resourcefulEndpoint("services", RegisteredService.class).read(Reference.fromOwnerAndName("owner", "registry500"));
+            client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                    .read(Reference.fromOwnerAndName("owner", "registry500"));
         } catch (Exception e) {
             fail = true;
             // Expected.
-            scenarioMappings.verify("registry", 4, getRequestedFor(urlEqualTo("/data/services/owner:registry500")));
+            scenarioMappings.verify("registry", 4,
+                    getRequestedFor(urlEqualTo("/data/services/owner:registry500")));
         }
         assertThat(fail, is(true));
 
     }
-    
+
     @Test
     public void whenGetA400_performing_an_operation_should_not_retry() {
         stubForServiceRegistryGet(scenarioMappings, responseOneResource, 400, "owner:registry400");
         boolean fail = false;
         try {
-            client.service("registry").resourcefulEndpoint("services", RegisteredService.class).read(Reference.fromOwnerAndName("owner", "registry400"));
+            client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                    .read(Reference.fromOwnerAndName("owner", "registry400"));
         } catch (Exception e) {
             fail = true;
             // Expected.
-            scenarioMappings.verify("registry", 1, getRequestedFor(urlEqualTo("/data/services/owner:registry400")));
+            scenarioMappings.verify("registry", 1,
+                    getRequestedFor(urlEqualTo("/data/services/owner:registry400")));
         }
         assertThat(fail, is(true));
 
@@ -249,15 +266,17 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenReadingWithMultipleReferences_addReferencesToUrl_andReturn200() {
-        stubForServiceRegistryGet(scenarioMappings, getResponseMultiResource, 200, "test:registry,test:services");
+        stubForServiceRegistryGet(scenarioMappings, getResponseMultiResource, 200,
+                "test:registry,test:services");
         Collection<Reference> references = new ArrayList<>();
         references.add(Reference.fromOwnerAndName("test", "registry"));
         references.add(Reference.fromOwnerAndName("test", "services"));
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
-                .read(references);
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class).read(references);
 
-        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/data/services/test:registry,test:services")));
+        scenarioMappings.verify("registry",
+                getRequestedFor(urlEqualTo("/data/services/test:registry,test:services")));
         assertTrue(response.isSuccessStatusCode());
         assertEquals(200, response.getStatusCode());
         assertNotNull(response.getPayload());
@@ -268,7 +287,8 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
 
         stubForServiceRegistryGetNotFoundResponse(scenarioMappings, "owner:registry");
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class)
                 .read(Reference.fromOwnerAndName("owner", "registry"));
 
         assertFalse(response.isSuccessStatusCode());
@@ -280,7 +300,8 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
     public void whenReadingWithInvalidReference_andThrowIllegalArgumentException() {
         thrown.expect(IllegalArgumentException.class);
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).read(Reference.fromReference("owner"));
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                .read(Reference.fromReference("owner"));
     }
 
     @Test
@@ -289,19 +310,22 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
         thrown.expectMessage("Unable to complete request");
         stubForServiceRegistryGetWithFault(scenarioMappings, null, "owner:registry");
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).read(Reference.fromOwnerAndName("owner", "registry"));
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                .read(Reference.fromOwnerAndName("owner", "registry"));
     }
 
     @Test
     public void whenBrowsingWithCriteria_addCriteriaToUrl_andReturn200() {
-        stubForServiceRegistryGetQueryParams(scenarioMappings, getResponseMultiResource, 200, "withFieldName=field%20value");
+        stubForServiceRegistryGetQueryParams(scenarioMappings, getResponseMultiResource, 200,
+                "withFieldName=field%20value");
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.add(field("fieldName").equalTo("field value"));
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
-                .browse(criteria);
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class).browse(criteria);
 
-        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/data/services?withFieldName=field%20value")));
+        scenarioMappings.verify("registry",
+                getRequestedFor(urlEqualTo("/data/services?withFieldName=field%20value")));
         assertTrue(response.isSuccessStatusCode());
         assertEquals(200, response.getStatusCode());
         assertNotNull(response.getPayload());
@@ -309,31 +333,36 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenBrowsingWithCount_addCriteriaToUrl_andReturn200() {
-        stubForServiceRegistryGetQueryParams(scenarioMappings, getResponseMultiResourceCount, 200, "count=type");
+        stubForServiceRegistryGetQueryParams(scenarioMappings, getResponseMultiResourceCount, 200,
+                "count=type");
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.count("type");
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
-                .browse(criteria);
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class).browse(criteria);
 
-        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/data/services?count=type")));
+        scenarioMappings.verify("registry",
+                getRequestedFor(urlEqualTo("/data/services?count=type")));
         assertTrue(response.isSuccessStatusCode());
         assertEquals(200, response.getStatusCode());
         assertNotNull(response.getPayload());
-        assertEquals(2, response.getPayload().get().facetCount().get().get("type").get("core").intValue());
+        assertEquals(2,
+                response.getPayload().get().facetCount().get().get("type").get("core").intValue());
         assertEquals(2, response.getPayload().get().totalCount().get().intValue());
     }
 
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_andReturn200() {
-        stubForServiceRegistryGetQueryParams(scenarioMappings, getResponseLinkedResources, 200, "include=jobs,tasks,events");
+        stubForServiceRegistryGetQueryParams(scenarioMappings, getResponseLinkedResources, 200,
+                "include=jobs,tasks,events");
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.include(resource("jobs"), resource("tasks"), resource("events"));
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
-                .browse(criteria);
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class).browse(criteria);
 
-        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/data/services?include=jobs,tasks,events")));
+        scenarioMappings.verify("registry",
+                getRequestedFor(urlEqualTo("/data/services?include=jobs,tasks,events")));
         assertTrue(response.isSuccessStatusCode());
         assertEquals(200, response.getStatusCode());
         assertNotNull(response.getPayload());
@@ -345,14 +374,16 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
         thrown.expectMessage("Unable to complete request");
         stubForServiceRegistryBrowseWithFault(scenarioMappings, "withFieldName=value");
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).browse(where(field("fieldName").equalTo("value")));
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                .browse(where(field("fieldName").equalTo("value")));
     }
 
     @Test
     public void whenStoring_shouldPostToDataServicesEndpoint_andReturn_200() {
         stubForServiceRegistryPost(scenarioMappings, responseOneResource, 200);
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class)
                 .store(getRegisteredServiceToCreate());
 
         scenarioMappings.verify("registry", postRequestedFor(urlEqualTo("/data/services")));
@@ -366,7 +397,8 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
         thrown.expectMessage("Unable to complete request");
         stubForServiceRegistryPostWithFault(scenarioMappings);
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).store(getRegisteredServiceToCreate());
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                .store(getRegisteredServiceToCreate());
 
         commonVerifications();
         scenarioMappings.verify("registry", postRequestedFor(urlEqualTo("/data/services")));
@@ -376,7 +408,8 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
     public void whenStoringCollection_shouldPostToDataServicesEndpoint_andReturn_201() {
         stubForServiceRegistryPost(scenarioMappings, postResponseBatchResource, 201);
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class)
                 .store(getRegisteredServices());
 
         commonBatchVerifications(response);
@@ -387,7 +420,8 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
     public void whenStoringCollection_shouldPostToDataServicesEndpoint_andReturn_200() {
         stubForServiceRegistryPost(scenarioMappings, postResponseBatchResource, 200);
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class)
                 .store(getRegisteredServices());
 
         commonBatchVerifications(response);
@@ -400,7 +434,8 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
         thrown.expectMessage("Unable to complete request");
         stubForServiceRegistryPostWithFault(scenarioMappings);
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).store(getRegisteredServices());
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                .store(getRegisteredServices());
 
         commonVerifications();
         scenarioMappings.verify("registry", postRequestedFor(urlEqualTo("/data/services")));
@@ -419,22 +454,26 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenDeleting_addReferenceToTheUrl_andReturn_204() {
-        stubForServiceRegistryDelete(scenarioMappings, null, 204, REF_RESOURCE_TO_DELETE.toString());
+        stubForServiceRegistryDelete(scenarioMappings, null, 204,
+                REF_RESOURCE_TO_DELETE.toString());
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class)
                 .delete(REF_RESOURCE_TO_DELETE);
 
         assertEquals(response.getStatusCode(), 204);
         assertTrue(response.isSuccessStatusCode());
         assertThat(response.getPayload(), is(Optional.empty()));
-        scenarioMappings.verify("registry", deleteRequestedFor(urlEqualTo("/data/services/test:resourceToDelete")));
+        scenarioMappings.verify("registry",
+                deleteRequestedFor(urlEqualTo("/data/services/test:resourceToDelete")));
     }
 
     @Test
     public void whenDeletingWithInvalidReference_andThrowIllegalArgumentException() {
         thrown.expect(IllegalArgumentException.class);
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).delete(Reference.fromReference("owner"));
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                .delete(Reference.fromReference("owner"));
     }
 
     @Test
@@ -449,38 +488,49 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
     public void whenDeletingWithGettingBadResponse_andThrowRequestExecutionException() {
         thrown.expect(RequestExecutionException.class);
         thrown.expectMessage(startsWith("Unable to complete request [DELETE http://127.0.0.1:"));
-        thrown.expectMessage(endsWith("/data/services/test:resourceToDelete] - exception [com.google.api.client.http.HttpResponseException: ] - correlationId [null]"));
-        stubForServiceRegistryDeleteWithFault(scenarioMappings, null, REF_RESOURCE_TO_DELETE.toString());
+        thrown.expectMessage(endsWith(
+                "/data/services/test:resourceToDelete] - exception [com.google.api.client.http.HttpResponseException: ] - correlationId [null]"));
+        stubForServiceRegistryDeleteWithFault(scenarioMappings, null,
+                REF_RESOURCE_TO_DELETE.toString());
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).delete(REF_RESOURCE_TO_DELETE);
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                .delete(REF_RESOURCE_TO_DELETE);
     }
 
     @Test
     public void whenDeletingCollection_addReferencesToTheUrl_andReturn_204() {
         stubForServiceRegistryDelete(scenarioMappings, null, 204, getRefs(getReferencesToDelete()));
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class)
                 .delete(getReferencesToDelete());
 
         assertEquals(response.getStatusCode(), 204);
         assertTrue(response.isSuccessStatusCode());
         scenarioMappings.verify("registry",
-                deleteRequestedFor(urlEqualTo("/data/services/test:resourceToDelete,test:resourceToDelete,"
-                        + "test:resourceToDelete,test:resourceToDelete," + "test:resourceToDelete,test:resourceToDelete,"
-                        + "test:resourceToDelete,test:resourceToDelete," + "test:resourceToDelete,test:resourceToDelete")));
+                deleteRequestedFor(
+                        urlEqualTo("/data/services/test:resourceToDelete,test:resourceToDelete,"
+                                + "test:resourceToDelete,test:resourceToDelete,"
+                                + "test:resourceToDelete,test:resourceToDelete,"
+                                + "test:resourceToDelete,test:resourceToDelete,"
+                                + "test:resourceToDelete,test:resourceToDelete")));
     }
 
     @Test
     public void whenUpdating_addReferencesToTheUrl_performPut_andReturn_200() {
         stubForServiceRegistryUpdate(scenarioMappings, responseOneResource, 200, "owner:services");
 
-        ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
-                .update(getRegisteredServiceToUpdate(), Reference.fromOwnerAndName("owner", "services"));
+        ResourceResponse<RegisteredService> response = client.service("registry")
+                .resourcefulEndpoint("services", RegisteredService.class)
+                .update(getRegisteredServiceToUpdate(),
+                        Reference.fromOwnerAndName("owner", "services"));
 
         assertEquals(response.getStatusCode(), 200);
         assertTrue(response.isSuccessStatusCode());
-        scenarioMappings.verify("registry", putRequestedFor(urlEqualTo("/data/services/owner:services")));
-        assertEquals("356b54eb90cd04566159dfb9c95a0426998a2f7b", response.getPayload().get().single().getVersion());
+        scenarioMappings.verify("registry",
+                putRequestedFor(urlEqualTo("/data/services/owner:services")));
+        assertEquals("356b54eb90cd04566159dfb9c95a0426998a2f7b",
+                response.getPayload().get().single().getVersion());
     }
 
     @Test
@@ -488,24 +538,28 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
         thrown.expect(RequestExecutionException.class);
         stubForServiceRegistryUpdate(scenarioMappings, responseOneResource, 412, "owner:services");
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).update(getRegisteredServiceToUpdate(),
-                Reference.fromOwnerAndName("owner", "services"));
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).update(
+                getRegisteredServiceToUpdate(), Reference.fromOwnerAndName("owner", "services"));
 
-        scenarioMappings.verify("registry", putRequestedFor(urlEqualTo("/data/services/owner:services")));
+        scenarioMappings.verify("registry",
+                putRequestedFor(urlEqualTo("/data/services/owner:services")));
     }
 
     @Test
     public void whenUpdatingWithGetting412_addReferencesToTheUrl_performPut_andThrowRequestExecutionExceptionWithStatusCodeOnThis() {
         try {
-            stubForServiceRegistryUpdate(scenarioMappings, responseOneResource, 412, "owner:services");
+            stubForServiceRegistryUpdate(scenarioMappings, responseOneResource, 412,
+                    "owner:services");
 
-            client.service("registry").resourcefulEndpoint("services", RegisteredService.class).update(getRegisteredServiceToUpdate(),
-                    Reference.fromOwnerAndName("owner", "services"));
+            client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                    .update(getRegisteredServiceToUpdate(),
+                            Reference.fromOwnerAndName("owner", "services"));
         } catch (RequestExecutionException e) {
             assertThat(e.getStatusCode(), is(412));
         }
 
-        scenarioMappings.verify("registry", putRequestedFor(urlEqualTo("/data/services/owner:services")));
+        scenarioMappings.verify("registry",
+                putRequestedFor(urlEqualTo("/data/services/owner:services")));
     }
 
     @Test
@@ -515,36 +569,38 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
         registeredService.setOwner("ow ner");
         stubForServiceRegistryUpdate(scenarioMappings, responseOneResource, 200, "owner:services");
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).update(registeredService,
-                Reference.fromOwnerAndName("owner", "services"));
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                .update(registeredService, Reference.fromOwnerAndName("owner", "services"));
 
     }
 
     @Test
     public void whenUpdatingWithDifferentReferenceInResourceAndAsParameterInTheMethod_andThrowReferenceValidationException() {
         thrown.expect(ReferencesMismatchException.class);
-        thrown.expectMessage("Reference to update owner:services doesn't match with the resource reference owner:servicas");
+        thrown.expectMessage(
+                "Reference to update owner:services doesn't match with the resource reference owner:servicas");
         RegisteredService registeredService = getRegisteredServiceToUpdate();
         registeredService.setOwner("owner");
         registeredService.setName("servicas");
         stubForServiceRegistryUpdate(scenarioMappings, responseOneResource, 200, "owner:services");
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).update(registeredService,
-                Reference.fromOwnerAndName("owner", "services"));
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                .update(registeredService, Reference.fromOwnerAndName("owner", "services"));
 
     }
 
     @Test
     public void whenUpdatingWithDifferentReferenceOwnerNameInResourceAndAsParameterInTheMethod_andThrowReferenceValidationException() {
         thrown.expect(ReferencesMismatchException.class);
-        thrown.expectMessage("Reference to update owner:services doesn't match with the resource reference owner:servicas");
+        thrown.expectMessage(
+                "Reference to update owner:services doesn't match with the resource reference owner:servicas");
         RegisteredService registeredService = getRegisteredServiceToUpdate();
         registeredService.setOwner("owner");
         registeredService.setName("servicas");
         stubForServiceRegistryUpdate(scenarioMappings, responseOneResource, 200, "owner:services");
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).update(registeredService,
-                Reference.fromOwnerAndName("owner", "services"));
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
+                .update(registeredService, Reference.fromOwnerAndName("owner", "services"));
 
     }
 
@@ -553,8 +609,8 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
         thrown.expect(ResourceValidationException.class);
         stubForServiceRegistryUpdate(scenarioMappings, responseOneResource, 200, "owner:services");
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).update(getRegisteredServiceToCreate(),
-                Reference.fromOwnerAndName("owner", "services"));
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).update(
+                getRegisteredServiceToCreate(), Reference.fromOwnerAndName("owner", "services"));
 
     }
 
@@ -564,10 +620,11 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
         thrown.expectMessage(containsString("mycorrelationId"));
         stubForServiceRegistryUpdate(scenarioMappings, responseOneResource, 400, "owner:services");
 
-        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).update(getRegisteredServiceToUpdate(),
-                Reference.fromOwnerAndName("owner", "services"));
+        client.service("registry").resourcefulEndpoint("services", RegisteredService.class).update(
+                getRegisteredServiceToUpdate(), Reference.fromOwnerAndName("owner", "services"));
 
-        scenarioMappings.verify("registry", putRequestedFor(urlEqualTo("/data/services/owner:services")));
+        scenarioMappings.verify("registry",
+                putRequestedFor(urlEqualTo("/data/services/owner:services")));
     }
 
     @Test
@@ -575,7 +632,7 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
         ClientConfiguration configuration = withClientConfiguration();
         SequoiaClient sequoiaClient = SequoiaClient.client(configuration);
         SequoiaClient sequoiaClient1 = SequoiaClient.client(configuration);
-        assertThat("Instances should be just equal", sequoiaClient==sequoiaClient1, is(true));
+        assertThat("Instances should be just equal", sequoiaClient == sequoiaClient1, is(true));
     }
 
     @Test
@@ -584,9 +641,10 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
         SequoiaClient sequoiaClient = SequoiaClient.client(configuration);
         sequoiaClient.reset();
         SequoiaClient sequoiaClient1 = SequoiaClient.client(configuration);
-        assertThat("It should have generated new instance", sequoiaClient==sequoiaClient1, is(false));
+        assertThat("It should have generated new instance", sequoiaClient == sequoiaClient1,
+                is(false));
     }
-    
+
     @Test
     public void whenSequoiaClientIsCreatedWithoutCredentials_shouldNotCallIdentity_callToRegistryShouldNotHaveAuthHeaders() {
         ClientConfiguration configuration = withClientConfigurationWithoutCredentiasl();
@@ -595,15 +653,17 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
         WiremockHelper.setServiceCreator(registeredServiceCreationFunction);
         WiremockHelper.setServicesList(Collections.singletonList("registry"));
         ScenarioHttpMappings scenarioMappings = prepareServicesMappings(testName.getMethodName());
-        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/services/unitTestRoot")).withoutHeader("authorization"));
+        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/services/unitTestRoot"))
+                .withoutHeader("authorization"));
     }
 
     private ClientConfiguration withClientConfigurationWithoutCredentiasl() {
         return ClientConfiguration.builder().identityHostConfiguration(identityHostConfiguration())
                 .registryHostConfiguration(registryHostConfiguration())
                 .recoveryStrategy(RecoveryStrategy.builder()
-                        .backOff(new ExponentialBackOff.Builder().setInitialIntervalMillis(1).setMaxIntervalMillis(5).build()).numberOfRetries(3)
-                        .build())
+                        .backOff(new ExponentialBackOff.Builder().setInitialIntervalMillis(1)
+                                .setMaxIntervalMillis(5).build())
+                        .numberOfRetries(3).build())
                 .registryServiceOwner(OWNER).build();
     }
 
@@ -617,18 +677,21 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
     private void commonBatchVerifications(ResourceResponse<RegisteredService> response) {
         scenarioMappings.verify("registry", postRequestedFor(urlEqualTo("/data/services")));
         assertTrue(response.isSuccessStatusCode());
-        assertEquals("356b54eb90cd04566159dfb9c95a0426998a2f7b", response.getPayload().get().next().getVersion());
+        assertEquals("356b54eb90cd04566159dfb9c95a0426998a2f7b",
+                response.getPayload().get().next().getVersion());
         assertTrue(response.getPayload().get().hasNext());
     }
 
     private static RegisteredService getRegisteredServiceToCreate() {
-        RegisteredService registeredService = MockResponses.newService("services", "services", 1111);
+        RegisteredService registeredService = MockResponses.newService("services", "services",
+                1111);
         registeredService.setOwner("owner");
         return registeredService;
     }
 
     private static RegisteredService getRegisteredServiceToUpdate() {
-        return DefaultClientConfiguration.getDefaultGson().fromJson(serviceToUpdate, RegisteredService.class);
+        return DefaultClientConfiguration.getDefaultGson().fromJson(serviceToUpdate,
+                RegisteredService.class);
     }
 
     private static Collection<RegisteredService> getRegisteredServices() {

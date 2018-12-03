@@ -33,19 +33,19 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @PublicEvolving
-public final class LazyLoadingResourceIterable<T extends Resource> extends LazyLoading<T>
-        implements ResourceIterable<T> {
+public final class SimplePageLoadingResourceIterable<T extends Resource> extends LazyLoading<T>
+        implements ResourceIterableOnePage<T> {
 
     private Map<String,Map<String,Integer>> facetCount;
 
-    public LazyLoadingResourceIterable(JsonElement payload, PageableResourceEndpoint<T> endpoint,
-            Gson gson) {
+    public SimplePageLoadingResourceIterable(JsonElement payload,
+            PageableResourceEndpoint<T> endpoint, Gson gson) {
         super(payload, endpoint, gson);
         init(payload, new HashMap<>());
     }
 
-    public LazyLoadingResourceIterable(JsonElement payload, PageableResourceEndpoint<T> endpoint,
-            Gson gson, Map<? extends String,?> headers) {
+    public SimplePageLoadingResourceIterable(JsonElement payload,
+            PageableResourceEndpoint<T> endpoint, Gson gson, Map<? extends String,?> headers) {
         super(payload, endpoint, gson);
         init(payload, headers);
     }
@@ -104,6 +104,12 @@ public final class LazyLoadingResourceIterable<T extends Resource> extends LazyL
         Optional<JsonElement> payload = endpoint.getPagedResource(getNextPage(), headers);
         pageIndex = addPage(payload.orElseThrow(noSuchElementException()));
         resourceIndex = 0;
+    }
+
+    @Override
+    public Optional<String> nextUrl() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
