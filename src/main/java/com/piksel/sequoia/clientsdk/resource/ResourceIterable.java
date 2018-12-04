@@ -51,4 +51,9 @@ public interface ResourceIterable<T extends Resource> extends Iterator<T> {
      */
     Optional<Map<String,Map<String,Integer>>> facetCount();
 
+    /**
+     * Used to retrieve next url to invoke next page.
+     */
+    Optional<String> nextUrl();
+
 }

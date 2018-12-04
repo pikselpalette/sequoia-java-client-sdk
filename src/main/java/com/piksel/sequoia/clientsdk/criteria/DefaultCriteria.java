@@ -51,6 +51,7 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
     private Boolean active;
     private Boolean available;
 
+    private Boolean onlyOnePage = false;
     private PerPage perPage;
     private Page page;
     private Boolean continuesPage;
@@ -256,6 +257,11 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
     }
 
     @Override
+    public Boolean isOnlyOnePage() {
+        return this.onlyOnePage;
+    }
+
+    @Override
     public Boolean getContinuesPage() {
         return continuesPage;
     }
@@ -322,6 +328,12 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
     public T perPage(int numItemsPerPage) {
         checkHigherThanZero(numItemsPerPage);
         this.perPage = PerPage.builder().perPage(numItemsPerPage).build();
+        return (T) this;
+    }
+
+    @Override
+    public T onlyOnePage(boolean onlyOnePage) {
+        this.onlyOnePage = onlyOnePage;
         return (T) this;
     }
 
@@ -447,4 +459,5 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
         this.intersectCriterias.add(criteria.setDocumentName(resourceName));
         return (T) this;
     }
+
 }

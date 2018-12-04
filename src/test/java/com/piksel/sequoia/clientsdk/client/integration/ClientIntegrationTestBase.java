@@ -9,9 +9,9 @@ package com.piksel.sequoia.clientsdk.client.integration;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,6 +33,7 @@ import static com.piksel.sequoia.wiremock.helper.ScenarioHttpMappings.serviceUrl
 import static com.piksel.sequoia.wiremock.helper.WiremockHelper.prepareServicesMappings;
 import static com.piksel.sequoia.wiremock.helper.utils.ScenarioHttpUtils.serviceUrl;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -40,9 +41,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiFunction;
 import java.util.logging.LogManager;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.google.api.client.util.ExponentialBackOff;
 import com.piksel.sequoia.clientsdk.SequoiaClient;
@@ -81,7 +84,7 @@ public abstract class ClientIntegrationTestBase {
 
     private SequoiaClient getClient() {
         SequoiaClient sequoiaClient = SequoiaClient.client(withClientConfiguration());
-        sequoiaClient.awaitInitialised(10, TimeUnit.SECONDS);
+        sequoiaClient.awaitInitialised(10000, TimeUnit.SECONDS);
         return sequoiaClient;
     }
 
@@ -91,8 +94,9 @@ public abstract class ClientIntegrationTestBase {
                         .backOff(new ExponentialBackOff.Builder().setInitialIntervalMillis(1)
                                 .setMaxIntervalMillis(5).build())
                         .numberOfRetries(3).build())
-                .identityComponentCredentials(identityComponentCredentials()).registryHostConfiguration(registryHostConfiguration())
-                .registryServiceOwner(OWNER).build();
+                .identityComponentCredentials(identityComponentCredentials())
+                .registryHostConfiguration(registryHostConfiguration()).registryServiceOwner(OWNER)
+                .build();
     }
 
     protected HostConfiguration identityHostConfiguration() {
@@ -107,26 +111,33 @@ public abstract class ClientIntegrationTestBase {
         return new HostConfiguration(serviceUrl(SERVICEID_REGISTRY));
     }
 
-    protected void getHostRegistryAndWaitForItToBePopulated() throws InterruptedException, ExecutionException, TimeoutException {
-        Future<Void> populationFuture = ((RegisteredServicesService) client.getHostRegistry()).awaitPopulation();
+    protected void getHostRegistryAndWaitForItToBePopulated()
+            throws InterruptedException, ExecutionException, TimeoutException {
+        Future<Void> populationFuture = ((RegisteredServicesService) client.getHostRegistry())
+                .awaitPopulation();
         waitForCompletion(populationFuture);
     }
 
-    protected void getHostRegistryAndWaitForItToBePopulated(SequoiaClient client) throws InterruptedException, ExecutionException, TimeoutException {
-        Future<Void> populationFuture = ((RegisteredServicesService) client.getHostRegistry()).awaitPopulation();
+    protected void getHostRegistryAndWaitForItToBePopulated(SequoiaClient client)
+            throws InterruptedException, ExecutionException, TimeoutException {
+        Future<Void> populationFuture = ((RegisteredServicesService) client.getHostRegistry())
+                .awaitPopulation();
         waitForCompletion(populationFuture);
     }
 
-    void waitForCompletion(Future<Void> populationFuture) throws InterruptedException, ExecutionException, TimeoutException {
+    void waitForCompletion(Future<Void> populationFuture)
+            throws InterruptedException, ExecutionException, TimeoutException {
         populationFuture.get(5, SECONDS);
     }
 
     protected void commonVerifications() {
         scenarioMappings.verify("identity", postRequestedFor(urlEqualTo("/oauth/token")));
-        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/services/unitTestRoot")).withHeader("authorization", matching(".+")));
+        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/services/unitTestRoot"))
+                .withHeader("authorization", matching(".+")));
     }
 
-    protected BiFunction<String, Integer, Object> registeredServiceCreationFunction = (String name, Integer port) -> {
+    protected BiFunction<String,Integer,Object> registeredServiceCreationFunction = (String name,
+            Integer port) -> {
         RegisteredService registeredService = new RegisteredService();
         registeredService.setName(name);
         registeredService.setTitle(name);

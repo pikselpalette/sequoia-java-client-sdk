@@ -1,7 +1,5 @@
 package com.piksel.sequoia.clientsdk.resource;
 
-import java.util.HashMap;
-
 /*-
  * #%L
  * Sequoia Java Client SDK
@@ -23,56 +21,53 @@ import java.util.HashMap;
  */
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.piksel.sequoia.annotations.PublicEvolving;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @PublicEvolving
-public final class SimplePageLoadingResourceIterable<T extends Resource> extends LazyLoading<T>
-        implements ResourceIterableOnePage<T> {
-
-    private Map<String,Map<String,Integer>> facetCount;
+public final class SimplePageLoadingResourceIterable<T extends Resource>
+        extends LoadingResourceIterable<T> implements ResourceIterable<T> {
 
     public SimplePageLoadingResourceIterable(JsonElement payload,
             PageableResourceEndpoint<T> endpoint, Gson gson) {
         super(payload, endpoint, gson);
-        init(payload, new HashMap<>());
+        init(payload);
     }
 
     public SimplePageLoadingResourceIterable(JsonElement payload,
             PageableResourceEndpoint<T> endpoint, Gson gson, Map<? extends String,?> headers) {
-        super(payload, endpoint, gson);
-        init(payload, headers);
+        super(payload, endpoint, gson, headers);
+        init(payload);
     }
 
     @Override
     public boolean hasNext() {
-        return super.hasNext();
+        return theCurrentPageHasContents() && this.currentPage().containsIndex(resourceIndex);
     }
 
-    @Override
-    boolean theCurrentPageHasContents() {
-        return currentPage().items() > 0;
-    }
-
-    @Override
-    boolean nextPageContainsResources() {
-        return true;
+    private boolean theCurrentPageHasContents() {
+        return this.currentPage().items() > 0;
     }
 
     @Override
     public T next() {
-        return super.next();
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
+        try {
+            return this.currentPage().at(resourceIndex++);
+        } catch (Page.PageResourceDoesNotExist pne) {
+            throw new NoSuchElementException(pne.getMessage());
+        }
     }
 
     @Override
     public T single() {
-        if (pageIndex != FIRST_PAGE || currentPage().isNotLast() || currentPage().items() != 1) {
+        if (this.pageIndex != FIRST_PAGE || currentPage().items() != 1) {
             throw new NotSingularException();
         }
         return next();
@@ -84,32 +79,11 @@ public final class SimplePageLoadingResourceIterable<T extends Resource> extends
     }
 
     @Override
-    public Optional<Map<String,Map<String,Integer>>> facetCount() {
-        return Optional.ofNullable(facetCount);
-    }
+    protected void loadNextAndUpdateIndexes() {}
 
-    private void init(JsonElement payload, Map<? extends String,?> headers) {
+    protected void init(JsonElement payload) {
+        this.nextUrl = getNextUrl(payload);
         this.pageIndex = addPage(payload);
-        this.facetCount = getFacetCount(payload);
-        this.headers = headers;
-    }
-
-    private Map<String,Map<String,Integer>> getFacetCount(JsonElement payload) {
-        Meta meta = deserializer.metaFrom(payload).orElse(deserializer.emptyMeta());
-        return meta.getFacetCount();
-    }
-
-    @Override
-    void loadNextAndUpdateIndexes() {
-        Optional<JsonElement> payload = endpoint.getPagedResource(getNextPage(), headers);
-        pageIndex = addPage(payload.orElseThrow(noSuchElementException()));
-        resourceIndex = 0;
-    }
-
-    @Override
-    public Optional<String> nextUrl() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

@@ -1,7 +1,5 @@
 package com.piksel.sequoia.clientsdk.resource;
 
-import java.util.HashMap;
-
 /*-
  * #%L
  * Sequoia Java Client SDK
@@ -33,41 +31,19 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @PublicEvolving
-public final class LazyLoadingResourceIterable<T extends Resource> extends LazyLoading<T>
-        implements ResourceIterable<T> {
-
-    private Map<String,Map<String,Integer>> facetCount;
+public final class LazyLoadingResourceIterable<T extends Resource>
+        extends AbstractLazyLoadingResourceIterable<T> implements ResourceIterable<T> {
 
     public LazyLoadingResourceIterable(JsonElement payload, PageableResourceEndpoint<T> endpoint,
             Gson gson) {
         super(payload, endpoint, gson);
-        init(payload, new HashMap<>());
+        init(payload);
     }
 
     public LazyLoadingResourceIterable(JsonElement payload, PageableResourceEndpoint<T> endpoint,
             Gson gson, Map<? extends String,?> headers) {
-        super(payload, endpoint, gson);
-        init(payload, headers);
-    }
-
-    @Override
-    public boolean hasNext() {
-        return super.hasNext();
-    }
-
-    @Override
-    boolean theCurrentPageHasContents() {
-        return currentPage().items() > 0;
-    }
-
-    @Override
-    boolean nextPageContainsResources() {
-        return true;
-    }
-
-    @Override
-    public T next() {
-        return super.next();
+        super(payload, endpoint, gson, headers);
+        init(payload);
     }
 
     @Override
@@ -79,31 +55,31 @@ public final class LazyLoadingResourceIterable<T extends Resource> extends LazyL
     }
 
     @Override
-    public Optional<Integer> totalCount() {
-        return super.totalCount();
-    }
-
-    @Override
     public Optional<Map<String,Map<String,Integer>>> facetCount() {
         return Optional.ofNullable(facetCount);
     }
 
-    private void init(JsonElement payload, Map<? extends String,?> headers) {
+    protected void init(JsonElement payload) {
+        this.nextUrl = getNextUrl(payload);
         this.pageIndex = addPage(payload);
-        this.facetCount = getFacetCount(payload);
-        this.headers = headers;
-    }
-
-    private Map<String,Map<String,Integer>> getFacetCount(JsonElement payload) {
-        Meta meta = deserializer.metaFrom(payload).orElse(deserializer.emptyMeta());
-        return meta.getFacetCount();
     }
 
     @Override
-    void loadNextAndUpdateIndexes() {
+    protected void loadNextAndUpdateIndexes() {
         Optional<JsonElement> payload = endpoint.getPagedResource(getNextPage(), headers);
-        pageIndex = addPage(payload.orElseThrow(noSuchElementException()));
+        this.pageIndex = addPage(payload.orElseThrow(noSuchElementException()));
+        this.nextUrl = getNextUrl(payload.orElseThrow(noSuchElementException()));
         resourceIndex = 0;
+    }
+
+    @Override
+    protected boolean theCurrentPageHasContents() {
+        return currentPage().items() > 0;
+    }
+
+    @Override
+    protected boolean nextPageContainsResources() {
+        return true;
     }
 
 }

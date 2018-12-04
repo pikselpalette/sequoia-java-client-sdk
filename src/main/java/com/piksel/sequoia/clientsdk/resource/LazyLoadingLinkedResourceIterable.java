@@ -36,13 +36,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @PublicEvolving
-public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends LazyLoading<T>
-        implements LinkedResourceIterable<T> {
+public final class LazyLoadingLinkedResourceIterable<T extends Resource>
+        extends AbstractLazyLoadingResourceIterable<T> implements LinkedResourceIterable<T> {
 
     private final Field field;
     private final T resource;
 
-    private final ResourceDeserializer<T> linkedDeserializer;
     private int numItemsPage = 0;
 
     public LazyLoadingLinkedResourceIterable(JsonElement payload,
@@ -51,49 +50,17 @@ public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends
         super(payload, linkedEndpoint, gson);
         this.field = field;
         this.resource = resource;
-        this.linkedDeserializer = new ResourceDeserializer<>(linkedEndpoint, gson);
         this.pageIndex = addLinkedPage(payload);
     }
 
     @Override
-    public boolean hasNext() {
-        return super.hasNext();
-    }
-
-    @Override
-    boolean theCurrentPageHasContents() {
+    protected boolean theCurrentPageHasContents() {
         return true;
     }
 
     @Override
-    public T next() {
-        return super.next();
-    }
-
-    @Override
-    public Optional<Integer> totalCount() {
-        return super.totalCount();
-    }
-
-    int addLinkedPage(JsonElement payload) {
-        long startTime = System.nanoTime();
-        LinkedMeta meta = deserializer
-                .linkedMetaFrom(payload, getRelationShip(field), resource.getRef())
-                .orElse(deserializer.emptyLinkedMeta());
-        ArrayList<T> linkedResources = new ArrayList<>(
-                linkedIndirectDeserializer(endpoint, gson, payload).getLinkedResources(resource,
-                        field, getLinked(payload)));
-        pages.put(meta.getPage(), Page.from(meta, linkedResources));
-        numItemsPage = linkedResources.size();
-        long endTime = System.nanoTime();
-        log.debug("time to add linked page - {} seconds", (endTime - startTime) / 1000000000.0);
-        return meta.getPage();
-    }
-
-    @Override
-    void loadNextAndUpdateIndexes() {
+    protected void loadNextAndUpdateIndexes() {
         Optional<JsonElement> payload = endpoint.getPagedLinkedResource(getNextPage());
-        deserializer = linkedDeserializer;
         Optional<JsonElement> filteredPayload = deserializer.includeJustLinkedItems(
                 payload.orElseThrow(noSuchElementException()),
                 field.getAnnotation(IndirectRelationship.class).ref(),
@@ -107,7 +74,7 @@ public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends
     }
 
     @Override
-    boolean nextPageContainsResources() {
+    protected boolean nextPageContainsResources() {
         if ((noItemsInPage() || lastPageItem()) && metaHasNext()) {
             while (currentPage().isNotLast()) {
                 loadNextAndUpdateIndexes();
@@ -120,8 +87,23 @@ public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends
         return true;
     }
 
-    boolean lastPageItem() {
+    private boolean lastPageItem() {
         return numItemsPage > 0 && resourceIndex == numItemsPage;
+    }
+
+    private int addLinkedPage(JsonElement payload) {
+        long startTime = System.nanoTime();
+        LinkedMeta meta = deserializer
+                .linkedMetaFrom(payload, getRelationShip(field), resource.getRef())
+                .orElse(deserializer.emptyLinkedMeta());
+        ArrayList<T> linkedResources = new ArrayList<>(
+                linkedIndirectDeserializer(endpoint, gson, payload).getLinkedResources(resource,
+                        field, getLinked(payload)));
+        pages.put(meta.getPage(), Page.from(meta, linkedResources));
+        numItemsPage = linkedResources.size();
+        long endTime = System.nanoTime();
+        log.debug("time to add linked page - {} seconds", (endTime - startTime) / 1000000000.0);
+        return meta.getPage();
     }
 
     private boolean noItemsInPage() {
