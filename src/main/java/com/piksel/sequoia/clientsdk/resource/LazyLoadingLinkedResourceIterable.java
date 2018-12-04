@@ -48,7 +48,6 @@ public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends
         super(payload, endpoint, gson);
         this.field = field;
         this.resource = resource;
-        this.deserializer = new ResourceDeserializer<>(endpoint, gson);
         this.linkedDeserializer = new ResourceDeserializer<>(linkedEndpoint, gson);
         this.pageIndex = addLinkedPage(payload);
     }
