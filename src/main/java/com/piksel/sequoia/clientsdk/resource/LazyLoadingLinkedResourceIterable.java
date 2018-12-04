@@ -9,9 +9,9 @@ package com.piksel.sequoia.clientsdk.resource;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,17 +36,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @PublicEvolving
-public final class LazyLoadingLinkedResourceIterable<T extends Resource>
-        extends AbstractLazyLoadingResourceIterable<T> implements LinkedResourceIterable<T> {
+public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends AbstractLazyLoadingResourceIterable<T> implements LinkedResourceIterable<T> {
 
     private final Field field;
     private final T resource;
 
     private int numItemsPage = 0;
 
-    public LazyLoadingLinkedResourceIterable(JsonElement payload,
-            PageableResourceEndpoint<T> endpoint, PageableResourceEndpoint<T> linkedEndpoint,
-            Gson gson, Field field, T resource) {
+    public LazyLoadingLinkedResourceIterable(JsonElement payload, PageableResourceEndpoint<T> endpoint, PageableResourceEndpoint<T> linkedEndpoint, Gson gson, Field field, T resource) {
         super(payload, linkedEndpoint, gson);
         this.field = field;
         this.resource = resource;
@@ -60,18 +57,12 @@ public final class LazyLoadingLinkedResourceIterable<T extends Resource>
 
     @Override
     protected void loadNextAndUpdateIndexes() {
-        Optional<JsonElement> payload = endpoint.getPagedLinkedResource(getNextPage());
-        Optional<JsonElement> filteredPayload = deserializer.includeJustLinkedItems(
-                payload.orElseThrow(noSuchElementException()),
-                field.getAnnotation(IndirectRelationship.class).ref(),
-                resource.getRef().toString());
-        pageIndex = addPage(filteredPayload.orElseThrow(noSuchElementException()));
+        Optional<JsonElement> payload = endpoint.getPagedLinkedResource(currentPage().getMeta().getNext());
+        Optional<JsonElement> filteredPayload = deserializer.includeJustLinkedItems(payload.orElseThrow(noSuchElementException()),
+                field.getAnnotation(IndirectRelationship.class).ref(), resource.getRef().toString());        pageIndex = addPage(filteredPayload.orElseThrow(noSuchElementException()));
         resourceIndex = 0;
-        numItemsPage = deserializer.numLinkedItemsInPayload(
-                payload.orElseThrow(noSuchElementException()),
-                field.getAnnotation(IndirectRelationship.class).ref(),
-                resource.getRef().toString());
-    }
+        numItemsPage = deserializer.numLinkedItemsInPayload(payload.orElseThrow(noSuchElementException()),
+                field.getAnnotation(IndirectRelationship.class).ref(), resource.getRef().toString());    }
 
     @Override
     protected boolean nextPageContainsResources() {

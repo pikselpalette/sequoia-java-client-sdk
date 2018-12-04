@@ -9,7 +9,7 @@ package com.piksel.sequoia.clientsdk.criteria;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Holds collections of criteria to be used in queries.
- *
+ * 
  * @param <T>
  *            used to allow subtypes to define the fluent return type
  */
@@ -153,8 +153,7 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
     }
 
     /**
-     * Allows to specify the descending order of the last field added to the order
-     * criteria
+     * Allows to specify the descending order of the last field added to the order criteria
      *
      * @return a reference to the current instance of this object
      * @since 1.0.0
@@ -166,7 +165,7 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
 
     /**
      * Ensure that the currentOrderIndex is in bound in the list of order criteria
-     *
+     * 
      * @return the currentOrderIndex
      * @since 1.0.0
      */
@@ -184,7 +183,7 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
 
     /**
      * Swap out the Order statement if it is different
-     *
+     * 
      * @param ascending
      *            boolean indicating whether the order direction is ascending or not
      * @return a reference to the current instance of this object
@@ -209,11 +208,12 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
      */
     @Override
     public boolean isEmpty() {
-        return criterionEntries.isEmpty() && orderEntries.isEmpty() && Objects.isNull(perPage)
-                && Objects.isNull(page) && Objects.isNull(count) && Objects.isNull(facetCount)
-                && Objects.isNull(resourceSettings) && inclusionEntries.isEmpty()
-                && fieldsEntries.isEmpty() && Objects.isNull(lang) && !this.getActive().isPresent()
-                && !this.getAvailable().isPresent() && this.intersectCriterias.isEmpty();
+        return criterionEntries.isEmpty() && orderEntries.isEmpty() && Objects.isNull(perPage) && Objects.isNull(page) && Objects.isNull(continuesPage) 
+                && Objects.isNull(count) && Objects.isNull(facetCount) && Objects.isNull(resourceSettings) 
+                && inclusionEntries.isEmpty() && fieldsEntries.isEmpty() && Objects.isNull(lang)
+                && !this.getActive().isPresent()
+                && !this.getAvailable().isPresent()
+                && this.intersectCriterias.isEmpty();
     }
 
     @Override
@@ -272,14 +272,10 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
     }
 
     @Override
-    public List<T> getIntersectCriterias() {
-        return intersectCriterias;
-    }
+    public List<T> getIntersectCriterias() { return intersectCriterias; }
 
     @Override
-    public DocumentName getDocumentName() {
-        return documentName;
-    }
+    public DocumentName getDocumentName() { return documentName; }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -396,8 +392,8 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
         return (T) this;
     }
 
-    @Override
-    public Optional<Boolean> getActive() {
+    
+    @Override public Optional<Boolean> getActive() {
         return Optional.ofNullable(this.active);
     }
 
@@ -408,8 +404,8 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
         return (T) this;
     }
 
-    @Override
-    public Optional<Boolean> getAvailable() {
+    
+    @Override public Optional<Boolean> getAvailable() {
         return Optional.ofNullable(this.available);
     }
 
@@ -442,10 +438,8 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
 
         try {
             Preconditions.checkNotNull(resourceName, "Resource name is mandatory");
-            Preconditions.checkArgument(!StringUtils.isBlank(resourceName),
-                    "Resource name should contain some value");
-            Preconditions.checkArgument(!criteria.isEmpty(),
-                    "Intersect criteria should contain any criteria");
+            Preconditions.checkArgument(!StringUtils.isBlank(resourceName), "Resource name should contain some value");
+            Preconditions.checkArgument(!criteria.isEmpty(), "Intersect criteria should contain any criteria");
         } catch (NullPointerException e) {
             throw new InvalidResourceNameException(e.getMessage(), e);
         } catch (IllegalArgumentException e) {
