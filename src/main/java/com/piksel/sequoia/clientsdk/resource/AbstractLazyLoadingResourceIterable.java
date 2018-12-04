@@ -30,8 +30,6 @@ import com.google.gson.JsonElement;
 public abstract class AbstractLazyLoadingResourceIterable<T extends Resource>
         extends LoadingResourceIterable<T> {
 
-    Map<? extends String,?> headers;
-
     public AbstractLazyLoadingResourceIterable(JsonElement payload,
             PageableResourceEndpoint<T> endpoint, Gson gson) {
         super(payload, endpoint, gson);
