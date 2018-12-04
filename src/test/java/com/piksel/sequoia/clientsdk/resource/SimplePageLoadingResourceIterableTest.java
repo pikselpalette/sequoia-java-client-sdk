@@ -9,9 +9,9 @@ package com.piksel.sequoia.clientsdk.resource;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -33,7 +32,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -50,7 +48,7 @@ import com.piksel.sequoia.clientsdk.configuration.DefaultClientConfiguration;
 import com.piksel.sequoia.clientsdk.utils.TestResource;
 import com.piksel.sequoia.clientsdk.utils.TestResourceRule;
 
-public class LazyLoadingResourceIterableTest {
+public class SimplePageLoadingResourceIterableTest {
 
     private static final JsonParser JSON_PARSER = new JsonParser();
 
@@ -97,9 +95,9 @@ public class LazyLoadingResourceIterableTest {
         iterableFor(multipleResponse).single();
     }
 
-    @Test(expected = NotSingularException.class)
+    @Test
     public void shouldThrowNotSingularExceptionWhenGettingSingleItemFromInitialPageHavingNextUrl() {
-        iterableFor(singleResponseWithNext).single();
+        assertThat(iterableFor(singleResponseWithNext).single(), is(notNullValue()));
     }
 
     @Test
@@ -196,62 +194,58 @@ public class LazyLoadingResourceIterableTest {
 
     @Test(expected = NoSuchElementException.class)
     public void shouldThrowNoSuchElementWhenNextIsInvokedOnLastPageAfterLastElement() {
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(multipleResponse);
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(multipleResponse);
         assertThat(iterable.next(), is(notNullValue()));
         assertThat(iterable.next(), is(notNullValue()));
         iterable.next();
     }
 
     @Test
-    public void shouldReturnTrueWhenHasNextIsInvokedAfterLastElementOfPageWithContinueUrl() {
+    public void shouldReturnFalseWhenHasNextIsInvokedAfterLastElementOfPageWithContinueUrl() {
         when(endpoint.getPagedResource(anyString(), anyMap()))
                 .thenReturn(Optional.of(JSON_PARSER.parse(responseFromOtherPage)));
 
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(
                 singleResponseWithContinuesNext);
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
-        assertThat(iterable.hasNext(), is(true));
+        assertThat(iterable.hasNext(), is(false));
     }
 
     @Test
-    public void shouldReturnTrueWhenHasNextIsInvokedAfterLastElementOfPageWithNextUrl() {
+    public void shouldReturnFalseWhenHasNextIsInvokedAfterLastElementOfPageWithNextUrl() {
         when(endpoint.getPagedResource(anyString(), anyMap()))
                 .thenReturn(Optional.of(JSON_PARSER.parse(responseFromOtherPage)));
 
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
 
-        assertThat(iterable.hasNext(), is(true));
-        assertThat(iterable.next(), is(notNullValue()));
-        assertThat(iterable.hasNext(), is(true));
-        assertThat(iterable.totalCount().get(), is(10));
-    }
-
-    @Test
-    public void shouldLoadNextPageWhenNextIsInvokedAfterLastElementOfPageWithNextUrl() {
-        when(endpoint.getPagedResource(anyString(), anyMap()))
-                .thenReturn(Optional.of(JSON_PARSER.parse(responseFromOtherPage)));
-
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
-
-        assertThat(iterable.hasNext(), is(true));
-        assertThat(iterable.next(), is(notNullValue()));
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
         assertThat(iterable.hasNext(), is(false));
+        assertThat(iterable.totalCount().get(), is(10));
+    }
 
-        verify(endpoint).getPagedResource(anyString(), anyMap());
+    @Test(expected = NoSuchElementException.class)
+    public void shouldDontLoadNextPageWhenNextIsInvokedAfterLastElementOfPageWithNextUrl() {
+        when(endpoint.getPagedResource(anyString(), anyMap()))
+                .thenReturn(Optional.of(JSON_PARSER.parse(responseFromOtherPage)));
+
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+
+        assertThat(iterable.hasNext(), is(true));
+        assertThat(iterable.next(), is(notNullValue()));
+        assertThat(iterable.hasNext(), is(false));
+        iterable.next();
     }
 
     @Test(expected = NoSuchElementException.class)
     public void shouldThrowNoSuchElementExceptionWhenLoadingNextPageButNoContentIsReturned() {
         when(endpoint.getPagedResource(anyString(), anyMap())).thenReturn(Optional.empty());
 
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
 
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
-        assertThat(iterable.hasNext(), is(true));
         iterable.next();
     }
 
@@ -260,7 +254,7 @@ public class LazyLoadingResourceIterableTest {
         when(endpoint.getPagedResource(anyString(), anyMap()))
                 .thenReturn(Optional.of(JSON_PARSER.parse(responseEmtpy)));
 
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
 
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
@@ -272,13 +266,12 @@ public class LazyLoadingResourceIterableTest {
         when(endpoint.getPagedResource(anyString(), anyMap()))
                 .thenReturn(Optional.of(JSON_PARSER.parse(responseEmtpy)));
 
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
 
-        assertThat(iterable.nextUrl, is("/data/jobs?perPage=1&sort=-updatedAt&page=2"));
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
         assertThat(iterable.hasNext(), is(false));
-        assertThat(iterable.nextUrl, is(nullValue()));
+        assertThat(iterable.nextUrl, is("/data/jobs?perPage=1&sort=-updatedAt&page=2"));
     }
 
     @Test
@@ -286,26 +279,25 @@ public class LazyLoadingResourceIterableTest {
         when(endpoint.getPagedResource(anyString(), anyMap()))
                 .thenReturn(Optional.of(JSON_PARSER.parse(responseEmtpy)));
 
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(
                 singleResponseWithContinuesNext);
 
-        assertThat(iterable.nextUrl, is("/data/jobs?continue=005c416f4937593268686&perPage=1"));
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
         assertThat(iterable.hasNext(), is(false));
-        assertThat(iterable.nextUrl, is(nullValue()));
+        assertThat(iterable.nextUrl, is("/data/jobs?continue=005c416f4937593268686&perPage=1"));
     }
 
     @Test
     public void givenResponseWithNextPageLink_whenNoContent_shouldNotIteratePages() {
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(
                 responseWithEmptyContentAndPaginationLinks);
 
         assertThat(iterable.hasNext(), is(false));
     }
 
-    private LazyLoadingResourceIterable<Resource> iterableFor(String json) {
-        return new LazyLoadingResourceIterable<>(JSON_PARSER.parse(json), endpoint,
+    private SimplePageLoadingResourceIterable<Resource> iterableFor(String json) {
+        return new SimplePageLoadingResourceIterable<>(JSON_PARSER.parse(json), endpoint,
                 DefaultClientConfiguration.getDefaultGson());
     }
 
