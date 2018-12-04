@@ -40,13 +40,16 @@ public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends
 
     private final Field field;
     private final T resource;
+    private final ResourceDeserializer<T> linkedDeserializer;
     private int numItemsPage = 0;
 
     public LazyLoadingLinkedResourceIterable(JsonElement payload, PageableResourceEndpoint<T> endpoint, PageableResourceEndpoint<T> linkedEndpoint,
             Gson gson, Field field, T resource) {
-        super(payload, linkedEndpoint, gson);
+        super(payload, endpoint, gson);
         this.field = field;
         this.resource = resource;
+        this.deserializer = new ResourceDeserializer<>(endpoint, gson);
+        this.linkedDeserializer = new ResourceDeserializer<>(linkedEndpoint, gson);
         this.pageIndex = addLinkedPage(payload);
     }
 
@@ -58,6 +61,7 @@ public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends
     @Override
     protected void loadNextAndUpdateIndexes() {
         Optional<JsonElement> payload = endpoint.getPagedLinkedResource(currentPage().getMeta().getNext());
+        deserializer = linkedDeserializer;
         Optional<JsonElement> filteredPayload = deserializer.includeJustLinkedItems(payload.orElseThrow(noSuchElementException()),
                 field.getAnnotation(IndirectRelationship.class).ref(), resource.getRef().toString());
         pageIndex = addPage(filteredPayload.orElseThrow(noSuchElementException()));
