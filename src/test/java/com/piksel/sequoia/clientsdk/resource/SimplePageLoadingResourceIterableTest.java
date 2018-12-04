@@ -9,9 +9,9 @@ package com.piksel.sequoia.clientsdk.resource;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -33,7 +32,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -50,7 +48,7 @@ import com.piksel.sequoia.clientsdk.configuration.DefaultClientConfiguration;
 import com.piksel.sequoia.clientsdk.utils.TestResource;
 import com.piksel.sequoia.clientsdk.utils.TestResourceRule;
 
-public class LazyLoadingResourceIterableTest {
+public class SimplePageLoadingResourceIterableTest {
 
     private static final JsonParser JSON_PARSER = new JsonParser();
 
@@ -97,9 +95,9 @@ public class LazyLoadingResourceIterableTest {
         iterableFor(multipleResponse).single();
     }
 
-    @Test(expected = NotSingularException.class)
+    @Test
     public void shouldThrowNotSingularExceptionWhenGettingSingleItemFromInitialPageHavingNextUrl() {
-        iterableFor(singleResponseWithNext).single();
+        assertThat(iterableFor(singleResponseWithNext).single(), is(notNullValue()));
     }
 
     @Test
@@ -109,9 +107,9 @@ public class LazyLoadingResourceIterableTest {
 
     @Test
     public void shouldGetResourceWithDirectSingleLinkedResource() {
-        final ResourceWithDirect instanceWithLinked = new LazyLoadingResourceIterable<>(JSON_PARSER.parse(
-                singleResponseWithDirectSingleLinked),
-                withSingleLinkedEndpoint(), DefaultClientConfiguration.getDefaultGson()).single();
+        final ResourceWithDirect instanceWithLinked = new LazyLoadingResourceIterable<>(
+                JSON_PARSER.parse(singleResponseWithDirectSingleLinked), withSingleLinkedEndpoint(),
+                DefaultClientConfiguration.getDefaultGson()).single();
         assertThat(instanceWithLinked, is(notNullValue()));
         assertThat(instanceWithLinked.someLinkedType, is(notNullValue()));
         assertTrue(instanceWithLinked.someLinkedType.isPresent());
@@ -121,8 +119,7 @@ public class LazyLoadingResourceIterableTest {
     public void shouldGetResourceWithDirectWithErrorInLinkedRef() {
         final ResourceWithDirectWithError instanceWithLinked = new LazyLoadingResourceIterable<>(
                 JSON_PARSER.parse(singleResponseWithDirectSingleLinked), withErrorInLinkedRef(),
-                DefaultClientConfiguration.getDefaultGson())
-                        .single();
+                DefaultClientConfiguration.getDefaultGson()).single();
         assertThat(instanceWithLinked, is(notNullValue()));
         assertThat(instanceWithLinked.someLinkedType, is(notNullValue()));
         assertFalse(instanceWithLinked.someLinkedType.isPresent());
@@ -130,10 +127,9 @@ public class LazyLoadingResourceIterableTest {
 
     @Test
     public void shouldGetResourceWithDirectCollectionLinkedResources() {
-        final LazyLoadingResourceIterable<ResourceWithDirectCollection> lazyLoadingResourceIterable =
-                new LazyLoadingResourceIterable<>(
-                        JSON_PARSER.parse(responseWithDirectCollectionLinked), withCollectionLinkedEndpoint(),
-                        DefaultClientConfiguration.getDefaultGson());
+        final LazyLoadingResourceIterable<ResourceWithDirectCollection> lazyLoadingResourceIterable = new LazyLoadingResourceIterable<>(
+                JSON_PARSER.parse(responseWithDirectCollectionLinked),
+                withCollectionLinkedEndpoint(), DefaultClientConfiguration.getDefaultGson());
 
         ResourceWithDirectCollection resource1 = lazyLoadingResourceIterable.next();
         assertThat(resource1, is(notNullValue()));
@@ -158,18 +154,19 @@ public class LazyLoadingResourceIterableTest {
     public void shouldGetResourceWithDirectCollectionReferencedWithoutLinkedData() {
         final ResourceWithDirectCollection instanceWithLinked = new LazyLoadingResourceIterable<>(
                 JSON_PARSER.parse(singleResponseWithDirectCollectionReferenciatedWithoutLinkedData),
-                withCollectionLinkedEndpoint(),
-                DefaultClientConfiguration.getDefaultGson()).single();
+                withCollectionLinkedEndpoint(), DefaultClientConfiguration.getDefaultGson())
+                        .single();
         assertThat(instanceWithLinked, is(notNullValue()));
-        instanceWithLinked.someLinkedType.forEach((Optional<?> optional) -> assertFalse(optional.isPresent()));
+        instanceWithLinked.someLinkedType
+                .forEach((Optional<?> optional) -> assertFalse(optional.isPresent()));
     }
 
     @Test
     public void shouldGetResourceWithIndirectCollectionLinkedResources() {
-        final LazyLoadingResourceIterable<ResourceWithIndirectCollection> lazyLoadingResourceIterable =
-                new LazyLoadingResourceIterable<>(
-                        JSON_PARSER.parse(responseWithIndirectCollectionLinked), withIndirectCollectionLinkedEndpoint(),
-                        DefaultClientConfiguration.getDefaultGson());
+        final LazyLoadingResourceIterable<ResourceWithIndirectCollection> lazyLoadingResourceIterable = new LazyLoadingResourceIterable<>(
+                JSON_PARSER.parse(responseWithIndirectCollectionLinked),
+                withIndirectCollectionLinkedEndpoint(),
+                DefaultClientConfiguration.getDefaultGson());
 
         ResourceWithIndirectCollection resource1 = lazyLoadingResourceIterable.next();
         assertThat(resource1, is(notNullValue()));
@@ -177,7 +174,8 @@ public class LazyLoadingResourceIterableTest {
         assertThat(resource1.anotherLinkedType, is(notNullValue()));
         assertThat(resource1.anotherLinkedType, is(not(empty())));
         assertThat(resource1.anotherLinkedType.get(0).isPresent(), is(true));
-        assertEquals(resource1.anotherLinkedType.get(0).get().someResourceRef, "test:56b9bb7d8e4aa6e54b874843");
+        assertEquals(resource1.anotherLinkedType.get(0).get().someResourceRef,
+                "test:56b9bb7d8e4aa6e54b874843");
 
         ResourceWithIndirectCollection resource2 = lazyLoadingResourceIterable.next();
         assertThat(resource2, is(notNullValue()));
@@ -185,120 +183,122 @@ public class LazyLoadingResourceIterableTest {
         assertThat(resource2.anotherLinkedType, is(notNullValue()));
         assertThat(resource2.anotherLinkedType, is(not(empty())));
         assertThat(resource2.anotherLinkedType.get(0).isPresent(), is(true));
-        assertEquals(resource2.anotherLinkedType.get(0).get().someResourceRef, "test:56b9bb7d8e4aa6e54b874844");
+        assertEquals(resource2.anotherLinkedType.get(0).get().someResourceRef,
+                "test:56b9bb7d8e4aa6e54b874844");
         assertThat(resource2.anotherLinkedType.get(1).isPresent(), is(true));
-        assertEquals(resource2.anotherLinkedType.get(1).get().someResourceRef, "test:56b9bb7d8e4aa6e54b874844");
-        assertNotEquals(resource2.anotherLinkedType.get(0).get(), resource2.anotherLinkedType.get(1).get());
+        assertEquals(resource2.anotherLinkedType.get(1).get().someResourceRef,
+                "test:56b9bb7d8e4aa6e54b874844");
+        assertNotEquals(resource2.anotherLinkedType.get(0).get(),
+                resource2.anotherLinkedType.get(1).get());
     }
 
     @Test(expected = NoSuchElementException.class)
     public void shouldThrowNoSuchElementWhenNextIsInvokedOnLastPageAfterLastElement() {
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(multipleResponse);
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(multipleResponse);
         assertThat(iterable.next(), is(notNullValue()));
         assertThat(iterable.next(), is(notNullValue()));
         iterable.next();
     }
 
     @Test
-    public void shouldReturnTrueWhenHasNextIsInvokedAfterLastElementOfPageWithNextUrl() {
-        when(endpoint.getPagedResource(anyString(), anyMap())).thenReturn(Optional.of(JSON_PARSER.parse(
-                responseFromOtherPage)));
-
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
-
-        assertThat(iterable.hasNext(), is(true));
-        assertThat(iterable.next(), is(notNullValue()));
-        assertThat(iterable.hasNext(), is(true));
-        assertThat(iterable.totalCount().get(), is(10));
-    }
-    
-    @Test
-    public void shouldReturnTrueWhenHasNextIsInvokedAfterLastElementOfPageWithContinueUrl() {
+    public void shouldReturnFalseWhenHasNextIsInvokedAfterLastElementOfPageWithContinueUrl() {
         when(endpoint.getPagedResource(anyString(), anyMap()))
                 .thenReturn(Optional.of(JSON_PARSER.parse(responseFromOtherPage)));
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithContinuesNext);
-        
-        assertThat(iterable.hasNext(), is(true));
-        assertThat(iterable.next(), is(notNullValue()));
-        assertThat(iterable.hasNext(), is(true));
-    }
 
-    @Test
-    public void shouldLoadNextPageWhenNextIsInvokedAfterLastElementOfPageWithNextUrl() {
-        when(endpoint.getPagedResource(anyString(), anyMap())).thenReturn(Optional.of(JSON_PARSER.parse(
-                responseFromOtherPage)));
-
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
-
-        assertThat(iterable.hasNext(), is(true));
-        assertThat(iterable.next(), is(notNullValue()));
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(
+                singleResponseWithContinuesNext);
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
         assertThat(iterable.hasNext(), is(false));
+    }
 
-        verify(endpoint).getPagedResource(anyString(), anyMap());
+    @Test
+    public void shouldReturnFalseWhenHasNextIsInvokedAfterLastElementOfPageWithNextUrl() {
+        when(endpoint.getPagedResource(anyString(), anyMap()))
+                .thenReturn(Optional.of(JSON_PARSER.parse(responseFromOtherPage)));
+
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+
+        assertThat(iterable.hasNext(), is(true));
+        assertThat(iterable.next(), is(notNullValue()));
+        assertThat(iterable.hasNext(), is(false));
+        assertThat(iterable.totalCount().get(), is(10));
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void shouldDontLoadNextPageWhenNextIsInvokedAfterLastElementOfPageWithNextUrl() {
+        when(endpoint.getPagedResource(anyString(), anyMap()))
+                .thenReturn(Optional.of(JSON_PARSER.parse(responseFromOtherPage)));
+
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+
+        assertThat(iterable.hasNext(), is(true));
+        assertThat(iterable.next(), is(notNullValue()));
+        assertThat(iterable.hasNext(), is(false));
+        iterable.next();
     }
 
     @Test(expected = NoSuchElementException.class)
     public void shouldThrowNoSuchElementExceptionWhenLoadingNextPageButNoContentIsReturned() {
         when(endpoint.getPagedResource(anyString(), anyMap())).thenReturn(Optional.empty());
 
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
 
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
-        assertThat(iterable.hasNext(), is(true));
         iterable.next();
     }
 
     @Test
     public void shouldReturnDoesnotHaveNextPageWhenPageIsEmpty() {
-        when(endpoint.getPagedResource(anyString(), anyMap())).thenReturn(Optional.of(JSON_PARSER.parse(
-                responseEmtpy)));
+        when(endpoint.getPagedResource(anyString(), anyMap()))
+                .thenReturn(Optional.of(JSON_PARSER.parse(responseEmtpy)));
 
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
 
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
         assertThat(iterable.hasNext(), is(false));
     }
 
-    @Test
-    public void givenResponseWithNextPageLink_whenNoContent_shouldNotIteratePages() {
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(responseWithEmptyContentAndPaginationLinks);
-
-        assertThat(iterable.hasNext(), is(false));
-    }
-    
     @Test
     public void shouldReturnNextUrl() {
         when(endpoint.getPagedResource(anyString(), anyMap()))
                 .thenReturn(Optional.of(JSON_PARSER.parse(responseEmtpy)));
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
-        
-        assertThat(iterable.nextUrl, is("/data/jobs?perPage=1&sort=-updatedAt&page=2"));
+
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
         assertThat(iterable.hasNext(), is(false));
-        assertThat(iterable.nextUrl, is(nullValue()));
+        assertThat(iterable.nextUrl, is("/data/jobs?perPage=1&sort=-updatedAt&page=2"));
     }
 
     @Test
     public void shouldReturnContinueUrl() {
         when(endpoint.getPagedResource(anyString(), anyMap()))
                 .thenReturn(Optional.of(JSON_PARSER.parse(responseEmtpy)));
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithContinuesNext);
-     
-        assertThat(iterable.nextUrl, is("/data/jobs?continue=005c416f4937593268686&perPage=1"));
+
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(
+                singleResponseWithContinuesNext);
+
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
         assertThat(iterable.hasNext(), is(false));
-        assertThat(iterable.nextUrl, is(nullValue()));
+        assertThat(iterable.nextUrl, is("/data/jobs?continue=005c416f4937593268686&perPage=1"));
     }
-    
-    private LazyLoadingResourceIterable<Resource> iterableFor(String json) {
-        return new LazyLoadingResourceIterable<>(JSON_PARSER.parse(json), endpoint, DefaultClientConfiguration
-                .getDefaultGson());
+
+    @Test
+    public void givenResponseWithNextPageLink_whenNoContent_shouldNotIteratePages() {
+        SimplePageLoadingResourceIterable<Resource> iterable = iterableFor(
+                responseWithEmptyContentAndPaginationLinks);
+
+        assertThat(iterable.hasNext(), is(false));
+    }
+
+    private SimplePageLoadingResourceIterable<Resource> iterableFor(String json) {
+        return new SimplePageLoadingResourceIterable<>(JSON_PARSER.parse(json), endpoint,
+                DefaultClientConfiguration.getDefaultGson());
     }
 
     private PageableResourceEndpoint<Resource> withEndpoint() {
@@ -311,7 +311,8 @@ public class LazyLoadingResourceIterableTest {
 
     private PageableResourceEndpoint<ResourceWithDirect> withSingleLinkedEndpoint() {
         @SuppressWarnings("unchecked")
-        PageableResourceEndpoint<ResourceWithDirect> endpoint = mock(PageableResourceEndpoint.class);
+        PageableResourceEndpoint<ResourceWithDirect> endpoint = mock(
+                PageableResourceEndpoint.class);
         when(endpoint.getResourceKey()).thenReturn("someResources");
         when(endpoint.getEndpointType()).thenReturn(ResourceWithDirect.class);
         return endpoint;
@@ -319,7 +320,8 @@ public class LazyLoadingResourceIterableTest {
 
     private PageableResourceEndpoint<ResourceWithDirectWithError> withErrorInLinkedRef() {
         @SuppressWarnings("unchecked")
-        PageableResourceEndpoint<ResourceWithDirectWithError> endpoint = mock(PageableResourceEndpoint.class);
+        PageableResourceEndpoint<ResourceWithDirectWithError> endpoint = mock(
+                PageableResourceEndpoint.class);
         when(endpoint.getResourceKey()).thenReturn("someResources");
         when(endpoint.getEndpointType()).thenReturn(ResourceWithDirectWithError.class);
         return endpoint;
@@ -327,7 +329,8 @@ public class LazyLoadingResourceIterableTest {
 
     private PageableResourceEndpoint<ResourceWithDirectCollection> withCollectionLinkedEndpoint() {
         @SuppressWarnings("unchecked")
-        PageableResourceEndpoint<ResourceWithDirectCollection> endpoint = mock(PageableResourceEndpoint.class);
+        PageableResourceEndpoint<ResourceWithDirectCollection> endpoint = mock(
+                PageableResourceEndpoint.class);
         when(endpoint.getResourceKey()).thenReturn("someResources");
         when(endpoint.getEndpointType()).thenReturn(ResourceWithDirectCollection.class);
         return endpoint;
@@ -335,7 +338,8 @@ public class LazyLoadingResourceIterableTest {
 
     private PageableResourceEndpoint<ResourceWithIndirectCollection> withIndirectCollectionLinkedEndpoint() {
         @SuppressWarnings("unchecked")
-        PageableResourceEndpoint<ResourceWithIndirectCollection> endpoint = mock(PageableResourceEndpoint.class);
+        PageableResourceEndpoint<ResourceWithIndirectCollection> endpoint = mock(
+                PageableResourceEndpoint.class);
         when(endpoint.getResourceKey()).thenReturn("someResources");
         when(endpoint.getEndpointType()).thenReturn(ResourceWithIndirectCollection.class);
         return endpoint;
