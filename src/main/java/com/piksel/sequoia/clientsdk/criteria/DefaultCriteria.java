@@ -446,6 +446,6 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
     }
     
     private void checkIsTrue(boolean continuesPage) {
-        Preconditions.checkArgument(continuesPage == true, "it has to be true");
+        Preconditions.checkArgument(continuesPage , "it has to be true");
     }
 }
