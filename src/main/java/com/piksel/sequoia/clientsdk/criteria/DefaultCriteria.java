@@ -48,8 +48,10 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
     private Boolean active;
     private Boolean available;
 
+    private Boolean onlyOnePage = false;
     private PerPage perPage;
     private Page page;
+    private Boolean continuesPage;
     private Count count;
     private FacetCount facetCount;
     private Language lang;
@@ -200,7 +202,7 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
      */
     @Override
     public boolean isEmpty() {
-        return criterionEntries.isEmpty() && orderEntries.isEmpty() && Objects.isNull(perPage) && Objects.isNull(page) && Objects.isNull(count)
+        return criterionEntries.isEmpty() && orderEntries.isEmpty() && Objects.isNull(perPage) && Objects.isNull(page) && Objects.isNull(continuesPage) && Objects.isNull(count)
                 && Objects.isNull(facetCount) && Objects.isNull(resourceSettings) && inclusionEntries.isEmpty() && fieldsEntries.isEmpty()
                 && Objects.isNull(lang)
                 && !this.getActive().isPresent()
@@ -251,6 +253,16 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
     @Override
     public Page getPage() {
         return page;
+    }
+    
+    @Override
+    public Boolean isOnlyOnePage() {
+        return this.onlyOnePage;
+    }
+    
+    @Override
+    public Boolean getContinuesPage() {
+        return continuesPage;
     }
 
     @Override
@@ -310,6 +322,22 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
         this.perPage = PerPage.builder().perPage(numItemsPerPage).build();
         return (T) this;
     }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public T onlyOnePage(boolean onlyOnePage) {
+        this.onlyOnePage = onlyOnePage;
+        return (T) this;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public T continuesPage(boolean continuesPage) {
+        checkIsTrue(continuesPage);
+        this.continuesPage = continuesPage;
+        return (T) this;
+    }
+
 
     @SuppressWarnings("unchecked")
     @Override
@@ -415,5 +443,9 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
 
         this.intersectCriterias.add(criteria.setDocumentName(resourceName));
         return (T) this;
+    }
+    
+    private void checkIsTrue(boolean continuesPage) {
+        Preconditions.checkArgument(continuesPage == true, "it has to be true");
     }
 }

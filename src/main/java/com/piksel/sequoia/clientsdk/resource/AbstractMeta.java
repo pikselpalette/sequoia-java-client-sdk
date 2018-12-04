@@ -21,6 +21,7 @@ package com.piksel.sequoia.clientsdk.resource;
  */
 
 import com.google.api.client.util.Key;
+import com.google.gson.annotations.SerializedName;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,6 +35,10 @@ public class AbstractMeta {
     @Key
     private int page = 1;
 
+    @Key
+    @SerializedName("continue")
+    private String continuosPage;
+    
     @Key
     private int perPage;
 

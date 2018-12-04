@@ -175,7 +175,7 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
     @Override
     public ResourceResponse<T> browse(ResourceCriteria criteria, Map<? extends String, ?> headers) {
         GenericUrl urlToApplyCriteria = endpointUrl.clone();
-        return toResourceResponse(
+        return toResourceResponse(criteria,
                 requestClient.executeGetRequest(new CriteriaUrlApplier()
                         .applyCriteria(urlToApplyCriteria, criteria), headers), headers);
     }
@@ -273,20 +273,36 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
         }
     }
 
-    private ResourceResponse<T> toResourceResponse(
-            Response<JsonElement> jsonResponse, Map<? extends String, ?> headers) {
-        DefaultResourceResponseBuilder<T> builder = DefaultResourceResponse
-                .<T> builder().statusCode(jsonResponse.getStatusCode())
+    private ResourceResponse<T> toResourceResponse(Response<JsonElement> jsonResponse,
+            Map<? extends String,?> headers) {
+        return toResourceResponse(jsonResponse, headers, false);
+    }
+
+    private ResourceResponse<T> toResourceResponse(ResourceCriteria criteria,
+            Response<JsonElement> jsonResponse, Map<? extends String,?> headers) {
+        return toResourceResponse(jsonResponse, headers, criteria.isOnlyOnePage());
+    }
+
+    private ResourceResponse<T> toResourceResponse(Response<JsonElement> jsonResponse,
+            Map<? extends String,?> headers, boolean isOnlyOnePage) {
+
+        DefaultResourceResponseBuilder<T> builder = DefaultResourceResponse.<T>builder()
+                .statusCode(jsonResponse.getStatusCode())
                 .successStatusCode(jsonResponse.isSuccessStatusCode());
+        builder.payload(getLoadingResourceIterable(jsonResponse, headers, isOnlyOnePage));
+        return builder.build();
+    }
+    
+    private Optional<ResourceIterable<T>> getLoadingResourceIterable(
+            Response<JsonElement> jsonResponse, Map<? extends String,?> headers,
+            boolean isOnlyOnePage) {
         if (jsonResponse.getPayload().isPresent()
                 && !jsonResponse.getPayload().get().isJsonNull()) {
-            builder.payload(
-                    Optional.of(new LazyLoadingResourceIterable<>(
-                            jsonResponse.getPayload().get(), this, gson, headers)));
+            return isOnlyOnePage ? Optional.of(new SimplePageLoadingResourceIterable<>(jsonResponse.getPayload().get(), this, gson, headers))
+                        : Optional.of(new LazyLoadingResourceIterable<>(jsonResponse.getPayload().get(), this, gson, headers));
         } else {
-            builder.payload(Optional.empty());
+            return Optional.empty();
         }
-        return builder.build();
     }
 
     private T[] collectionToArray(Collection<T> resources) {

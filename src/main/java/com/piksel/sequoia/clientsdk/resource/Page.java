@@ -51,7 +51,7 @@ public class Page<T extends Resource> {
     }
 
     public boolean isLast() {
-        return isNotPresent(meta.getNext());
+        return isNotPresent(meta.getNext()) && isNotPresent(meta.getContinuosPage());
     }
 
     public int items() {

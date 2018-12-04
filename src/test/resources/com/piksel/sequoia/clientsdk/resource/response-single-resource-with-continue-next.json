@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "perPage": 1,
+    "continue": "/data/jobs?continue=005c416f4937593268686&perPage=1"
+  },
+  "someResources": [
+    {
+      "id": "56b9bb7d8e4aa6e54b874844",
+      "ref": "test:56b9bb7d8e4aa6e54b874844",
+      "owner": "test",
+      "name": "56b9bb7d8e4aa6e54b874844",
+      "createdAt": "2016-04-29T14:12:34.734Z",
+      "createdBy": "root:sysadmin",
+      "updatedAt": "2016-05-23T15:27:16.665Z",
+      "updatedBy": "root:system-piksel-task-management",
+      "version": "fa9a2db0f5f1dcb8cf0a6166ef2a3a2c4e9fb254",
+      "myField": "theValue"
+    }
+  ]
+}
