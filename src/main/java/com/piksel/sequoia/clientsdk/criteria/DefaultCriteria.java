@@ -48,7 +48,6 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
     private Boolean active;
     private Boolean available;
 
-    private Boolean onlyOnePage = false;
     private PerPage perPage;
     private Page page;
     private Boolean continuesPage;
@@ -255,10 +254,6 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
         return page;
     }
     
-    @Override
-    public Boolean isOnlyOnePage() {
-        return this.onlyOnePage;
-    }
     
     @Override
     public Boolean getContinuesPage() {
@@ -325,16 +320,8 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
     
     @SuppressWarnings("unchecked")
     @Override
-    public T onlyOnePage(boolean onlyOnePage) {
-        this.onlyOnePage = onlyOnePage;
-        return (T) this;
-    }
-    
-    @SuppressWarnings("unchecked")
-    @Override
-    public T continuesPage(boolean continuesPage) {
-        checkIsTrue(continuesPage);
-        this.continuesPage = continuesPage;
+    public T continuesPage() {
+        this.continuesPage = true;
         return (T) this;
     }
 
@@ -445,7 +432,4 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
         return (T) this;
     }
     
-    private void checkIsTrue(boolean continuesPage) {
-        Preconditions.checkArgument(continuesPage , "it has to be true");
-    }
 }

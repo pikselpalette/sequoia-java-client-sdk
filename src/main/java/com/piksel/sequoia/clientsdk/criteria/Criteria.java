@@ -106,12 +106,6 @@ public interface Criteria<T extends Criteria<T>> {
      */
     List<FieldSelector> getFieldsEntries();
     
-    /**
-     * Return if only one page will be returned
-     *
-     * @since 4.0.0
-     */
-    Boolean isOnlyOnePage();
 
     /**
      * Return the perPage value
@@ -236,16 +230,6 @@ public interface Criteria<T extends Criteria<T>> {
      */
     T orderByUpdatedAt();
     
-    /**
-     * Enabled onlyOnePage
-     *
-     * @param onlyOnePage
-     *            enable or disabled onlyOnePage no more iteration in other pages
-     *            will be applied
-     * @return a reference to the current instance of this object
-     * @since 4.0.0
-     */
-    T onlyOnePage(boolean onlyOnePage);
 
     /**
      * Request that pagination only contains the provided number of items.
@@ -275,7 +259,7 @@ public interface Criteria<T extends Criteria<T>> {
      * @return a reference to the current instance of this object
      * @since 4.0.0
      */
-    T continuesPage(boolean continues);
+    T continuesPage();
 
     /**
      * Add the count to be retrieved as totalCount in {@link ResourceIterable}.
