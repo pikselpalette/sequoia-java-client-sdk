@@ -51,14 +51,14 @@ public abstract class AbstractLazyLoadingIterable<T extends Resource> extends Ab
     protected abstract boolean nextPageContainsResources();
 
     protected String getNextPage() {
-        return currentPage().getMeta().getContinuosPage() != null
-                ? currentPage().getMeta().getContinuosPage()
+        return currentPage().getMeta().getContinuesPage() != null
+                ? currentPage().getMeta().getContinuesPage()
                 : currentPage().getMeta().getNext();
     }
 
     protected boolean metaHasNext() {
         return nonNull(currentPage().getMeta().getNext())
-                || nonNull(currentPage().getMeta().getContinuosPage());
+                || nonNull(currentPage().getMeta().getContinuesPage());
     }
 
     private boolean nextPageIsNotEmpty() {

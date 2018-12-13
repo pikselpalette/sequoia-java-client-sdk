@@ -37,7 +37,7 @@ public class AbstractMeta {
 
     @Key
     @SerializedName("continue")
-    private String continuosPage;
+    private String continuesPage;
     
     @Key
     private int perPage;

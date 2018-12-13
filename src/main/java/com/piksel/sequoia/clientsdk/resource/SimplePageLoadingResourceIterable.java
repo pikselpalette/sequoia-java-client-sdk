@@ -30,8 +30,9 @@ import com.piksel.sequoia.annotations.PublicEvolving;
 
 @PublicEvolving
 public final class SimplePageLoadingResourceIterable<T extends Resource>
-        extends AbstractLoadingIterable<T> implements ResourceIterable<T> {
-
+        extends AbstractLoadingIterable<T> implements PageableResourceIterable<T> {
+    
+    
     public SimplePageLoadingResourceIterable(JsonElement payload,
             PageableResourceEndpoint<T> endpoint, Gson gson) {
         super(payload, endpoint, gson);
@@ -76,6 +77,11 @@ public final class SimplePageLoadingResourceIterable<T extends Resource>
     @Override
     public Optional<Integer> totalCount() {
         return super.totalCount();
+    }
+    
+    @Override
+    public Optional<String> nextUrl() {
+        return Optional.ofNullable(this.nextUrl);
     }
 
     @Override

@@ -20,35 +20,19 @@ package com.piksel.sequoia.clientsdk.resource;
  * #L%
  */
 
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Optional;
 
 import com.piksel.sequoia.annotations.PublicEvolving;
 
 /**
- * Provides iterable access over a collection of resources.
+ * Provides iterable access over a collection of resources with external pagination.
  */
 @PublicEvolving
-public interface ResourceIterable<T extends Resource> extends Iterator<T> {
+public interface PageableResourceIterable<T extends Resource> extends ResourceIterable<T>{
 
     /**
-     * Used to retrieve the single instance that this collection contains.
-     * 
-     * @return the single instance that this represents
-     * @throws NotSingularException if the iterable has a size that is not 1
+     * Used to retrieve next url to invoke next page.
      */
-    T single();
-
-    /**
-     * Used to retrieve the number of resources presents on the query's result.
-     */
-    Optional<Integer> totalCount();
-
-    /**
-     * Used to retrieve the facetCount presents on the query's result.
-     */
-    Optional<Map<String, Map<String, Integer>>> facetCount();
-    
+    Optional<String> nextUrl();
 
 }

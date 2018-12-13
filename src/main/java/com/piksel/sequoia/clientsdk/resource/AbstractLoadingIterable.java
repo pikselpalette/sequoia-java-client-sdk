@@ -89,10 +89,6 @@ public abstract class AbstractLoadingIterable<T extends Resource> {
         return Optional.ofNullable(facetCount);
     }
 
-    public Optional<String> nextUrl() {
-        return Optional.ofNullable(this.nextUrl);
-    }
-
     protected abstract void loadNextAndUpdateIndexes();
 
     protected int addPage(JsonElement payload) {
@@ -111,7 +107,7 @@ public abstract class AbstractLoadingIterable<T extends Resource> {
 
     protected String getNextUrl(JsonElement payload) {
         Meta meta = deserializer.metaFrom(payload).orElse(deserializer.emptyMeta());
-        return meta.getContinuosPage() != null ? meta.getContinuosPage() : meta.getNext();
+        return meta.getContinuesPage() != null ? meta.getContinuesPage() : meta.getNext();
     }
 
     protected Map<String,Map<String,Integer>> getFacetCount(JsonElement payload) {
