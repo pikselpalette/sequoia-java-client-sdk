@@ -42,7 +42,6 @@ public abstract class AbstractLoadingIterable<T extends Resource> {
     protected int pageIndex;
     protected int resourceIndex = 0;
     protected Integer totalCount;
-    protected String nextUrl;
 
     protected ResourceDeserializer<T> deserializer;
 

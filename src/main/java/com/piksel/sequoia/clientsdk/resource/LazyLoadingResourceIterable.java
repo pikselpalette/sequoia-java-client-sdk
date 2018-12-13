@@ -27,10 +27,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.piksel.sequoia.annotations.PublicEvolving;
 
-
 @PublicEvolving
-public final class LazyLoadingResourceIterable<T extends Resource> extends AbstractLazyLoadingIterable<T> implements
-        ResourceIterable<T> {
+public final class LazyLoadingResourceIterable<T extends Resource>
+        extends AbstractLazyLoadingIterable<T> implements ResourceIterable<T> {
 
     public LazyLoadingResourceIterable(JsonElement payload, PageableResourceEndpoint<T> endpoint,
             Gson gson) {
@@ -58,7 +57,6 @@ public final class LazyLoadingResourceIterable<T extends Resource> extends Abstr
     }
 
     protected void init(JsonElement payload) {
-        this.nextUrl = getNextUrl(payload);
         this.pageIndex = addPage(payload);
     }
 
@@ -66,7 +64,6 @@ public final class LazyLoadingResourceIterable<T extends Resource> extends Abstr
     protected void loadNextAndUpdateIndexes() {
         Optional<JsonElement> payload = endpoint.getPagedResource(getNextPage(), headers);
         this.pageIndex = addPage(payload.orElseThrow(noSuchElementException()));
-        this.nextUrl = getNextUrl(payload.orElseThrow(noSuchElementException()));
         resourceIndex = 0;
     }
 
