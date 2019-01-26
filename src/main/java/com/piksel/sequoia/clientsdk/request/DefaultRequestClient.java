@@ -20,24 +20,7 @@ package com.piksel.sequoia.clientsdk.request;
  * #L%
  */
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpResponseException;
-import com.google.api.client.http.HttpStatusCodes;
+import com.google.api.client.http.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -50,8 +33,18 @@ import com.piksel.sequoia.clientsdk.resource.Reference;
 import com.piksel.sequoia.clientsdk.resource.Resource;
 import com.piksel.sequoia.clientsdk.resource.ResourceCollection;
 import com.piksel.sequoia.clientsdk.resource.json.JsonHttpContent;
-
 import lombok.extern.slf4j.Slf4j;
+
+import javax.inject.Inject;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Central client shared between service endpoint clients for accessing data services.
@@ -95,6 +88,7 @@ public class DefaultRequestClient implements RequestClient {
                 headers);
         HttpRequest request = createGetRequest(url);
         request.getHeaders().putAll(headers);
+        configureApplicationJsonHeaders(request);
         return executeRequest(request);
     }
 
