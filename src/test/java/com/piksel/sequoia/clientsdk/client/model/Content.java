@@ -20,21 +20,20 @@ package com.piksel.sequoia.clientsdk.client.model;
  * #L%
  */
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import com.google.api.client.util.Key;
 import com.piksel.sequoia.clientsdk.resource.DirectRelationship;
 import com.piksel.sequoia.clientsdk.resource.IndirectRelationship;
 import com.piksel.sequoia.clientsdk.resource.LinkedResourceIterable;
 import com.piksel.sequoia.clientsdk.resource.Resource;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Data
 @AllArgsConstructor
@@ -47,6 +46,9 @@ public class Content extends Resource {
 
     @Key
     private Map<String, String> localisedTitle;
+
+    @Key
+    private Map<String, String> localisedShortSynopsis;
 
     @Key
     private String type;
