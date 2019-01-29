@@ -20,21 +20,6 @@ package com.piksel.sequoia.clientsdk.client.integration;
  * #L%
  */
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.google.common.collect.Lists.newArrayList;
-import static java.time.OffsetDateTime.now;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.http.HttpStatus;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.RemoteMappingBuilder;
 import com.github.tomakehurst.wiremock.client.ValueMatchingStrategy;
@@ -44,6 +29,15 @@ import com.google.gson.Gson;
 import com.piksel.sequoia.clientsdk.registry.RegisteredService;
 import com.piksel.sequoia.clientsdk.resource.ResourceCollection;
 import com.piksel.sequoia.wiremock.helper.ScenarioHttpMappings;
+import org.apache.http.HttpStatus;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.time.OffsetDateTime.now;
 
 /**
  * A utility class providing stubbed mock responses for WireMock tests.
@@ -128,7 +122,7 @@ public class MockResponses {
 
     public static void stubGetMetadataResponse(ScenarioHttpMappings scenarioHttpMappings, String resource, String response, int status, String params) {
         scenarioHttpMappings.addMapping("metadata",
-                get(urlEqualTo(String.join("?", String.join("/", "/data", resource), params))).willReturn(aResponse().withStatus(status).withBody(response)));
+                get(urlEqualTo(String.join("?", String.join("/", "/data", resource), params))).willReturn(aResponse().withStatus(status).withBody(response).withHeader("content-type", "application/json;charset=UTF-8")));
     }
 
     public static void stubForRegistryClientWithServiceName(ScenarioHttpMappings scenarioHttpMappings, String response, int status,

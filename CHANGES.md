@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.1.4 - RELEASE - 29-JAN-2019
+
+- Headers `accept` and `content-type` with value `application/json` added to GET operations
+
 ## 2.1.3 - RELEASE - 28-NOV-2018
 
 - Fix NPE when some of the linked resources in an array have the field `statusCode` and some others don't

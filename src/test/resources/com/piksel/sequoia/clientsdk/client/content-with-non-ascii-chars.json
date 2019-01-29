@@ -1,0 +1,73 @@
+{
+  "meta": {},
+  "contents":[
+    {
+      "owner":"owner",
+      "name":"content-non-ascii",
+      "ref":"owner:content-non-ascii",
+      "createdAt":"2014-12-25T12:00:00.000Z",
+      "createdBy":"owner:test-admin",
+      "updatedAt":"2014-12-25T12:00:00.000Z",
+      "updatedBy":"owner:test-admin",
+      "version":"356b54eb90cd04566159dfb9c95a0426998a2f7a",
+      "title": "Avrupa Haber Türkçe",
+      "localisedTitle": {
+        "nl": "Avrupa Haber Türkçe",
+        "tr": "Avrupa Haber"
+      },
+      "type": "episode",
+      "sortTitle": "AVRUPA HABER TÜRKÇE",
+      "longSynopsis": "Nieuwsprogramma. Het laatste nieuws uit Europa.",
+      "localisedLongSynopsis": {
+        "nl": "Nieuwsprogramma. Het laatste nieuws uit Europa.",
+        "tr": "Programda, Avrupa'da yaşanan son gelişmeler, haberler ve değerlendirmeler ele alınıyor."
+      },
+      "mediumSynopsis": "Nieuwsprogramma. Het laatste nieuws uit Europa.",
+      "localisedMediumSynopsis": {
+        "nl": "Nieuwsprogramma. Het laatste nieuws uit Europa.",
+        "tr": "Programda, Avrupa'da yaşanan son gelişmeler, haberler ve değerlendirmeler ele alınıyor."
+      },
+      "shortSynopsis": "Nieuwsprogramma. Het laatste nieuws uit Europa.",
+      "localisedShortSynopsis": {
+        "nl": "Nieuwsprogramma. Het laatste nieuws uit Europa.",
+        "tr": "Programda, Avrupa'da yaşanan son gelişmeler, haberler ve değerlendirmeler ele alınıyor."
+      },
+      "order": 797809764,
+      "active": true,
+      "parentRef": "owner:f12e665a",
+      "categoryRefs": [
+        "owner:genre-20-CS2088",
+        "owner:genre-22",
+        "owner:516f2b5846ae7448",
+        "owner:13ffdec2f5814df"
+      ]
+    }
+  ],
+  "linked": {
+    "categories": [
+      {
+        "alternativeIdentifiers": {
+          "termId": "unknown"
+        },
+        "ref": "owner:13ffdec2f5814df",
+        "tags": [
+          "source:linear"
+        ],
+        "title": "Not rated",
+        "value": "1"
+      },
+      {
+        "alternativeIdentifiers": {
+          "termId": "22"
+        },
+        "ref": "owner:genre-22",
+        "tags": [
+          "type:genre",
+          "source:ondemand"
+        ],
+        "title": "News",
+        "value": "1"
+      }
+    ]
+  }
+}
