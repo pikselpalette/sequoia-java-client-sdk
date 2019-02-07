@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.1.5 - RELEASE -
+
+- Upgrade google http client version. This fixes some bugs related to not being able to do a browse using a Map<String, String> with certain headers as `accept` or `content-type`
+
 ## 2.1.4 - RELEASE - 29-JAN-2019
 
 - Headers `accept` and `content-type` with value `application/json` added to GET operations
