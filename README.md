@@ -1,3 +1,6 @@
+[![Piksel Palette](https://pikselgroup.com/broadcast/wp-content/uploads/sites/3/2017/09/P-P.png)](https://piksel.com/product/piksel-palette/)
+
+
 Sequoia Java Client SDK
 -----------------------
 
