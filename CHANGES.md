@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.2.0 - RELEASE - 16-MAY-2019
+
+- Release minor version
+
 ## 2.1.6 - RELEASE - 16-MAY-2019
 
 - Add `continue` flag to support navigation to next page
