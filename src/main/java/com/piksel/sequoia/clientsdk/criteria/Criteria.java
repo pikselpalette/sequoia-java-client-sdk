@@ -105,6 +105,7 @@ public interface Criteria<T extends Criteria<T>> {
      * @since 1.0.0
      */
     List<FieldSelector> getFieldsEntries();
+    
 
     /**
      * Return the perPage value
@@ -119,6 +120,13 @@ public interface Criteria<T extends Criteria<T>> {
      * @since 1.0.0
      */
     Page getPage();
+    
+    /**
+     * Return if continuesPage is enabled
+     *
+     * @since 4.0.0
+     */
+    Boolean getContinuesPage();
 
     /**
      * Return the count value
@@ -221,6 +229,7 @@ public interface Criteria<T extends Criteria<T>> {
      * @since 1.0.0
      */
     T orderByUpdatedAt();
+    
 
     /**
      * Request that pagination only contains the provided number of items.
@@ -241,6 +250,16 @@ public interface Criteria<T extends Criteria<T>> {
      * @since 1.0.0
      */
     T page(int numPage);
+    
+    /**
+     * Enabled continues pagination
+     *
+     * @param continues
+     *            enable or disabled continues pagination
+     * @return a reference to the current instance of this object
+     * @since 4.0.0
+     */
+    T continuesPage();
 
     /**
      * Add the count to be retrieved as totalCount in {@link ResourceIterable}.

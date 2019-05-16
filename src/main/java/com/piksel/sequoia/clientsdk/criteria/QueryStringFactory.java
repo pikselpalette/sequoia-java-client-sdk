@@ -66,6 +66,7 @@ public final class QueryStringFactory {
     private void createCriterionList(DefaultCriteria<?> criteria, QueryString qs) {
         addPerPage(criteria, qs);
         addPage(criteria, qs);
+        addContinuesPage(criteria, qs);
         addCount(criteria, qs);
         addFacetCount(criteria, qs);
         addSkipResources(criteria, qs);
@@ -117,6 +118,14 @@ public final class QueryStringFactory {
         Optional.ofNullable(criteria.getPage()).ifPresent(page ->
                 qs.put(criteria.getDocumentName().get().concat("page"), Integer.toString(page.getPage()))
         );
+    }
+    
+    private void addContinuesPage(DefaultCriteria criteria, QueryString qs) {
+        Optional.ofNullable(criteria.getContinuesPage()).ifPresent(page -> {
+            if (criteria.getContinuesPage()) {
+                qs.put(criteria.getDocumentName().get().concat("continue"), criteria.getContinuesPage().toString());
+            }
+        });
     }
 
     private void addCriterionEntries(DefaultCriteria criteria, QueryString qs) {

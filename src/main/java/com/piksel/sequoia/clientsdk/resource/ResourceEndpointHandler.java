@@ -273,20 +273,26 @@ public class ResourceEndpointHandler<T extends Resource> implements PageableReso
         }
     }
 
-    private ResourceResponse<T> toResourceResponse(
-            Response<JsonElement> jsonResponse, Map<? extends String, ?> headers) {
-        DefaultResourceResponseBuilder<T> builder = DefaultResourceResponse
-                .<T> builder().statusCode(jsonResponse.getStatusCode())
+  
+
+    private ResourceResponse<T> toResourceResponse(Response<JsonElement> jsonResponse,
+            Map<? extends String,?> headers) {
+
+        DefaultResourceResponseBuilder<T> builder = DefaultResourceResponse.<T>builder()
+                .statusCode(jsonResponse.getStatusCode())
                 .successStatusCode(jsonResponse.isSuccessStatusCode());
+        builder.payload(getLoadingResourceIterable(jsonResponse, headers));
+        return builder.build();
+    }
+    
+    private Optional<ResourceIterable<T>> getLoadingResourceIterable(
+            Response<JsonElement> jsonResponse, Map<? extends String,?> headers) {
         if (jsonResponse.getPayload().isPresent()
                 && !jsonResponse.getPayload().get().isJsonNull()) {
-            builder.payload(
-                    Optional.of(new LazyLoadingResourceIterable<>(
-                            jsonResponse.getPayload().get(), this, gson, headers)));
+            return Optional.of(new LazyLoadingResourceIterable<>(jsonResponse.getPayload().get(), this, gson, headers));
         } else {
-            builder.payload(Optional.empty());
+            return Optional.empty();
         }
-        return builder.build();
     }
 
     private T[] collectionToArray(Collection<T> resources) {

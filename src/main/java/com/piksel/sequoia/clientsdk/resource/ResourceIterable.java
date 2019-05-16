@@ -49,5 +49,6 @@ public interface ResourceIterable<T extends Resource> extends Iterator<T> {
      * Used to retrieve the facetCount presents on the query's result.
      */
     Optional<Map<String, Map<String, Integer>>> facetCount();
+    
 
 }
