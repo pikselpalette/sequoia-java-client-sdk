@@ -25,12 +25,14 @@ import com.github.tomakehurst.wiremock.client.RemoteMappingBuilder;
 import com.github.tomakehurst.wiremock.client.ValueMatchingStrategy;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import com.piksel.sequoia.clientsdk.registry.RegisteredService;
 import com.piksel.sequoia.clientsdk.resource.ResourceCollection;
 import com.piksel.sequoia.wiremock.helper.ScenarioHttpMappings;
 import org.apache.http.HttpStatus;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -183,6 +185,11 @@ public class MockResponses {
     public static void stubForServiceRegistryUpdate(ScenarioHttpMappings scenarioHttpMappings, String response, int status, String ref) {
         scenarioHttpMappings.addMapping("registry", put(urlEqualTo(String.join("/", "/data/services", ref)))
                 .willReturn(aResponse().withHeader("x-correlation-id", "mycorrelationId").withStatus(status).withBody(response)));
+    }
+
+    public static void stubForRegistryGet(ScenarioHttpMappings scenarioMappings, String owner, String response) {
+        scenarioMappings.addMapping("registry", get(urlEqualTo("/services/" + owner)).willReturn(aResponse().withStatus(200)
+                .withBody(response)));
     }
 
     public static void stubForServiceRegistryPostWithFault(ScenarioHttpMappings scenarioHttpMappings) {

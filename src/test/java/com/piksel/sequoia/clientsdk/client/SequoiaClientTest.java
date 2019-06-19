@@ -26,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.piksel.sequoia.clientsdk.client.integration.MockResponses.stubForRegistryClientForNewOwner;
+import static com.piksel.sequoia.clientsdk.client.integration.MockResponses.stubForRegistryGet;
 import static com.piksel.sequoia.clientsdk.client.integration.MockResponses.stubForServiceRegistryBrowseWithFault;
 import static com.piksel.sequoia.clientsdk.client.integration.MockResponses.stubForServiceRegistryDelete;
 import static com.piksel.sequoia.clientsdk.client.integration.MockResponses.stubForServiceRegistryDeleteWithFault;
@@ -194,6 +195,7 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenStoring_shouldPostToDataServicesDynamicEndpoint_andReturn_201() {
+        stubForRegistryGet(scenarioMappings, "test", responseOneResource);
         stubForServiceRegistryDynamicPost(scenarioMappings, responseOneResource, 201);
 
         ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("test", "services", RegisteredService.class)

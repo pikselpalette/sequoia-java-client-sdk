@@ -81,7 +81,7 @@ public abstract class ClientIntegrationTestBase {
 
     private SequoiaClient getClient() {
         SequoiaClient sequoiaClient = SequoiaClient.client(withClientConfiguration());
-        sequoiaClient.awaitInitialised(10, TimeUnit.SECONDS);
+        sequoiaClient.awaitInitialised(1000000, TimeUnit.SECONDS);
         return sequoiaClient;
     }
 
