@@ -36,6 +36,7 @@ import com.piksel.sequoia.clientsdk.recovery.RequestRecoveryStrategyProvider;
 import com.piksel.sequoia.clientsdk.registry.DefaultRegistryClient;
 import com.piksel.sequoia.clientsdk.registry.RegistryClient;
 import com.piksel.sequoia.clientsdk.registry.RegistryClientConfiguration;
+import com.piksel.sequoia.clientsdk.request.DefaultRequestClient;
 import com.piksel.sequoia.clientsdk.request.RequestClient;
 import com.piksel.sequoia.clientsdk.token.ClientGrantCredentialUnsuccessfulResponseHandler;
 import com.piksel.sequoia.clientsdk.token.DataServicesClientGrantUnsuccessfulResponseHandler;
@@ -58,40 +59,45 @@ public class DataServicesClientModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(ClientConfiguration.class).toInstance(configuration);
-        bind(DataServicesRequestConfigurator.class)
-                .to(providesDataServiceRequestConfigurator())
-                .asEagerSingleton();
-        bind(RequestFactory.class).to(providesRequestFactory())
+        bind(DataServicesCredentialProvider.class)
+                .to(HttpClientAccessCredentialProvider.class)
                 .asEagerSingleton();
         bind(DataServicesCredentialProvider.class)
                 .to(HttpClientAccessCredentialProvider.class)
                 .asEagerSingleton();
-        bind(HttpRequestInitializer.class).to(providesRequestInitializer())
-                .asEagerSingleton();
-        bind(RegistryClient.class).to(providesRegistryClient())
-                .asEagerSingleton();
-        bind(DataServicesCredentialProvider.class)
-                .to(HttpClientAccessCredentialProvider.class)
-                .asEagerSingleton();
-        bind(RequestClient.class)
-            .to(configuration.getRequestClientClass())
-            .asEagerSingleton();
     }
 
-    private Class<? extends RegistryClient> providesRegistryClient() {
-        return DefaultRegistryClient.class;
+    @Provides
+    public DataServicesRequestConfigurator providesDataServiceRequestConfigurator(JsonObjectParser jsonObjectParser,
+                                                                                  DataServicesCredentialProvider dataServicesCredentialProvider,
+                                                                                  ClientConfiguration clientConfiguration,
+                                                                                  UserAgentStringSupplier userAgentStringSupplier) {
+        return new DefaultDataServicesRequestConfigurator(jsonObjectParser, dataServicesCredentialProvider, clientConfiguration,
+                userAgentStringSupplier);
+
     }
 
-    protected Class<? extends HttpRequestInitializer> providesRequestInitializer() {
-        return DataServicesRequestInitializer.class;
+    @Provides
+    public HttpRequestInitializer providesRequestInitializer(DataServicesRequestConfigurator dataServicesRequestConfigurator) {
+        return new DataServicesRequestInitializer(dataServicesRequestConfigurator);
     }
 
-    protected Class<? extends RequestFactory> providesRequestFactory() {
-        return DataServicesRequestFactory.class;
+    @Provides
+    public RequestFactory providesRequestFactory(DataServicesRequestInitializer requestInitializer,
+                                                 MessageConfiguration transportConfiguration) {
+        return new DataServicesRequestFactory(requestInitializer, transportConfiguration);
     }
 
-    protected Class<? extends DataServicesRequestConfigurator> providesDataServiceRequestConfigurator() {
-        return DefaultDataServicesRequestConfigurator.class;
+    @Provides
+    public RequestClient providesRequestClient(RequestFactory requestFactory,
+                                HttpRequestInitializer requestInitializer, Gson gson) {
+        return new DefaultRequestClient(requestFactory, requestInitializer, gson);
+    }
+
+    @Provides
+    public RegistryClient provideRegistryClient(RequestClient requestClient, PreconfiguredHostRegistry registry,
+                                                RegistryClientConfiguration configuration, Gson gson) {
+        return new DefaultRegistryClient(requestClient, registry, configuration, gson);
     }
     
     @Provides

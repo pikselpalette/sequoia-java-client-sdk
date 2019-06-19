@@ -48,9 +48,23 @@ public interface DataServicesCredentialProvider {
     Credential getCredential();
 
     /**
+     * Get a {@link Credential} for the given client context and owner. This method does
+     * perform any caching of the acquired {@link TokenResponse}.
+     *
+     * @param owner the owner for which retrieve the identity url from registry
+     * @return the acquired token response
+     */
+    Credential getCredential(String owner);
+
+    /**
      * Called when the component is shutting down to revoke its token.
      */
     void revokeToken();
+
+    /**
+     * Called when the component is shutting down to revoke its token.
+     */
+    void revokeToken(String owner);
 
     /**
      * Returns false if the {@link #revokeToken()} method has been called. This
