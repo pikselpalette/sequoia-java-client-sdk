@@ -65,6 +65,9 @@ public class DataServicesClientModule extends AbstractModule {
         bind(DataServicesCredentialProvider.class)
                 .to(HttpClientAccessCredentialProvider.class)
                 .asEagerSingleton();
+        bind(RequestClient.class)
+                .to(configuration.getRequestClientClass())
+                .asEagerSingleton();
     }
 
     @Provides
@@ -86,12 +89,6 @@ public class DataServicesClientModule extends AbstractModule {
     public RequestFactory providesRequestFactory(DataServicesRequestInitializer requestInitializer,
                                                  MessageConfiguration transportConfiguration) {
         return new DataServicesRequestFactory(requestInitializer, transportConfiguration);
-    }
-
-    @Provides
-    public RequestClient providesRequestClient(RequestFactory requestFactory,
-                                HttpRequestInitializer requestInitializer, Gson gson) {
-        return new DefaultRequestClient(requestFactory, requestInitializer, gson);
     }
 
     @Provides
