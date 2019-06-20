@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 2.3.0 - RELEASE -
 
-- Update HttpClientAccessCredentialProvider to allow to generate access token per owner. This improvements will go to registry and extract the identity service for that owner, in order to generate the token against that identity host. To avoid making requests to registry continuously, a cache has also been implemented to store identity hosts per owner name. Values in the cache will expire after 10 minutes, so that, if any change is done in registry, it will be reflected in the client in 10  minutes as much.
+- Update HttpClientAccessCredentialProvider to use registry in order to extract identity service location per owner to get the token. To avoid making requests to registry continuously, a cache has also been implemented to store identity hosts per owner name. Values in the cache will expire after 10 minutes, so that, if any change is done in registry, it will be reflected in the client in 10  minutes as much.
 
 ## 2.2.0 - RELEASE - 16-MAY-2019
 
