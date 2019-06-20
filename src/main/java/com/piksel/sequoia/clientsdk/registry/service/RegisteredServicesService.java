@@ -143,7 +143,7 @@ public class RegisteredServicesService extends AbstractScheduledService implemen
     }
 
     private void registerService(RegisteredService registeredService, String owner) {
-        MappedRegisteredServices registeredServices = getRegisteredServicesForOwner(registryOwner)
+        MappedRegisteredServices registeredServices = getRegisteredServicesForOwner(owner)
             .orElse(new MappedRegisteredServices());
         registeredServices.put(registeredService.getName(), registeredService);
         serviceMap.put(owner, registeredServices);

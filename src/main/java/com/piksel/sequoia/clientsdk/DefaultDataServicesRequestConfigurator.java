@@ -23,6 +23,7 @@ package com.piksel.sequoia.clientsdk;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -97,10 +98,10 @@ class DefaultDataServicesRequestConfigurator implements DataServicesRequestConfi
 
     private void withDataServicesCredentialProvider(HttpRequest request,
             DataServicesCredentialProvider dataServicesCredentialProvider) {
-        if (needsCredentials() && validCredentials(dataServicesCredentialProvider)) {
+        Credential credential = requestCredential(request, dataServicesCredentialProvider);
+        if (needsCredentials() && validCredentials(dataServicesCredentialProvider, credential)) {
             try {
-                dataServicesCredentialProvider.getCredential()
-                        .initialize(request);
+                credential.initialize(request);
             } catch (IOException e) {
                 throw aConfigurationException(request,
                         dataServicesCredentialProvider, e);
@@ -108,14 +109,24 @@ class DefaultDataServicesRequestConfigurator implements DataServicesRequestConfi
         }
     }
 
+    private Credential requestCredential(HttpRequest request, DataServicesCredentialProvider dataServicesCredentialProvider) {
+        if(dataServicesCredentialProvider != null) {
+            Optional<String> requestOwnerOptional = Optional.ofNullable(request.getUrl())
+                    .map(url -> (String)url.get("owner"));
+            return requestOwnerOptional.map(dataServicesCredentialProvider::getCredential)
+                    .orElse(dataServicesCredentialProvider.getCredential());
+        }
+        return null;
+    }
+
     private boolean needsCredentials() {
         return clientConfig != null &&
                 clientConfig.getIdentityComponentCredentials() != null;
     }
 
-    private boolean validCredentials(DataServicesCredentialProvider dataServicesCredentialProvider) {
+    private boolean validCredentials(DataServicesCredentialProvider dataServicesCredentialProvider, Credential credential) {
         return dataServicesCredentialProvider != null &&
-                dataServicesCredentialProvider.getCredential() != null;
+                credential != null;
     }
 
     private void withParser(HttpRequest request, ObjectParser parser) {

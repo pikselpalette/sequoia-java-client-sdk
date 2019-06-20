@@ -26,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.piksel.sequoia.clientsdk.client.integration.MockResponses.stubForRegistryClientForNewOwner;
+import static com.piksel.sequoia.clientsdk.client.integration.MockResponses.stubForRegistryGet;
 import static com.piksel.sequoia.clientsdk.client.integration.MockResponses.stubForServiceRegistryBrowseWithFault;
 import static com.piksel.sequoia.clientsdk.client.integration.MockResponses.stubForServiceRegistryDelete;
 import static com.piksel.sequoia.clientsdk.client.integration.MockResponses.stubForServiceRegistryDeleteWithFault;
@@ -194,6 +195,26 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenStoring_shouldPostToDataServicesDynamicEndpoint_andReturn_201() {
+
+        String registryResponse = "{\n" +
+                "   \"meta\": {},\n" +
+                "   \"services\":[\n" +
+                "      {\n" +
+                "         \"owner\":\"test\",\n" +
+                "         \"name\":\"identity\",\n" +
+                "         \"ref\":\"test:identity\",\n" +
+                "         \"createdAt\":\"2014-12-25T12:00:00.000Z\",\n" +
+                "         \"createdBy\":\"test:test-admin\",\n" +
+                "         \"updatedAt\":\"2014-12-25T12:00:00.000Z\",\n" +
+                "         \"updatedBy\":\"test:test-admin\",\n" +
+                "         \"version\":\"356b54eb90cd04566159dfb9c95a0426998a2f7b\",\n" +
+                "         \"title\":\"identity\",\n" +
+                "         \"location\":\"http://127.0.0.1:" + scenarioMappings.servicePort("identity") + "\"\n" +
+                "      }\n" +
+                "   ]\n" +
+                "}";
+
+        stubForRegistryGet(scenarioMappings, "test", registryResponse);
         stubForServiceRegistryDynamicPost(scenarioMappings, responseOneResource, 201);
 
         ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("test", "services", RegisteredService.class)

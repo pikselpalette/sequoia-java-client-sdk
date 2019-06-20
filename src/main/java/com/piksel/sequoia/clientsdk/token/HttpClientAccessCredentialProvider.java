@@ -20,14 +20,6 @@ package com.piksel.sequoia.clientsdk.token;
  * #L%
  */
 
-import static com.google.api.client.auth.oauth2.BearerToken.authorizationHeaderAccessMethod;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
-
-import javax.inject.Inject;
-
 import com.google.api.client.auth.oauth2.ClientCredentialsTokenRequest;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
@@ -42,14 +34,31 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.HttpUnsuccessfulResponseHandler;
 import com.google.api.client.http.UrlEncodedContent;
 import com.google.api.client.json.JsonFactory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Maps;
 import com.piksel.sequoia.annotations.Internal;
 import com.piksel.sequoia.clientsdk.MessageConfiguration;
 import com.piksel.sequoia.clientsdk.PreconfiguredHostRegistry;
 import com.piksel.sequoia.clientsdk.configuration.ComponentCredentials;
 import com.piksel.sequoia.clientsdk.configuration.HostConfiguration;
 import com.piksel.sequoia.clientsdk.recovery.RequestRecoveryStrategyProvider;
-
+import com.piksel.sequoia.clientsdk.registry.RegisteredService;
+import com.piksel.sequoia.clientsdk.registry.RegistryClient;
+import com.piksel.sequoia.clientsdk.resource.ResourceIterable;
+import com.piksel.sequoia.clientsdk.token.cache.IdentityHostsCache;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import static com.google.api.client.auth.oauth2.BearerToken.authorizationHeaderAccessMethod;
 
 /**
  * An {@link DataServicesCredentialProvider} that communicates with the data
@@ -71,21 +80,28 @@ public class HttpClientAccessCredentialProvider
     private final RequestRecoveryStrategyProvider requestRecoveryStrategyProvider;
     private final MessageConfiguration messageConfiguration;
     private final ClientGrantCredentialUnsuccessfulResponseHandler unsuccessfulResponseHandler;
+    private final RegistryClient registryClient;
 
     private ClientGrantCredential credential;
     private boolean allowCredentialRefresh = true;
+
+    private Map<String, ClientGrantCredential> credentialsMap = Maps.newConcurrentMap();
+    private LoadingCache<String, HostConfiguration> identityHostsCache;
 
     @Inject
     public HttpClientAccessCredentialProvider(
             PreconfiguredHostRegistry hostRegistry,
             RequestRecoveryStrategyProvider requestRecoveryStrategyProvider,
             MessageConfiguration transportConfiguration,
-            ClientGrantCredentialUnsuccessfulResponseHandler unsuccessfulResponseHandler) {
+            ClientGrantCredentialUnsuccessfulResponseHandler unsuccessfulResponseHandler,
+            RegistryClient registryClient) {
         this.hostRegistry = hostRegistry;
         this.requestRecoveryStrategyProvider = requestRecoveryStrategyProvider;
         this.messageConfiguration = transportConfiguration;
         this.unsuccessfulResponseHandler = unsuccessfulResponseHandler;
+        this.registryClient = registryClient;
         log.debug("HttpClientAccessCredentialProvider constructed");
+        initCache();
     }
 
     @Override
@@ -93,22 +109,21 @@ public class HttpClientAccessCredentialProvider
         if (credential == null && allowCredentialRefresh) {
             log.debug("No client credential stored - requesting a new one");
             TokenResponse response = executeTokenRequest();
+            GenericUrl url = buildIdentityAccessTokenUrl();
+            credential = buildClientGrantCredential(response, url);
+        }
+        return credential;
+    }
 
-            credential = ClientGrantCredential.builder()
-                    .unsuccessfulResponseHandler(unsuccessfulResponseHandler)
-                    .credentialBuilder(new ClientGrantCredential.Builder(
-                            authorizationHeaderAccessMethod())
-                                    .setTransport(
-                                            messageConfiguration.getTransport())
-                                    .setJsonFactory(messageConfiguration
-                                            .getJsonFactory())
-                                    .setTokenServerUrl(
-                                            buildIdentityAccessTokenUrl())
-                                    .setClientAuthentication(
-                                            createBasicAuthHeader()))
-                    .build();
-            log.debug("Built client credential [{}]", credential);
-            credential.setFromTokenResponse(response);
+    @Override
+    public Credential getCredential(String owner) {
+        ClientGrantCredential credential = credentialsMap.get(owner);
+        if (credential == null && allowCredentialRefresh) {
+            log.debug("No client credential stored - requesting a new one");
+            TokenResponse response = executeTokenRequestForOwner(owner);
+            GenericUrl url = buildIdentityAccessTokenUrlForOwner(owner);
+            credential = buildClientGrantCredential(response, url);
+            credentialsMap.put(owner, credential);
         }
         return credential;
     }
@@ -123,8 +138,36 @@ public class HttpClientAccessCredentialProvider
     }
 
     @Override
+    public void revokeToken(String owner) {
+        if (credential != null) {
+            executeRevokeRequest(owner);
+            credential.disableRefreshToken();
+        }
+        allowCredentialRefresh = false;
+    }
+
+    @Override
     public boolean isAllowedToRefreshToken() {
         return allowCredentialRefresh;
+    }
+
+    private ClientGrantCredential buildClientGrantCredential(TokenResponse response, GenericUrl url) {
+        ClientGrantCredential credential;
+        credential = ClientGrantCredential.builder()
+                .unsuccessfulResponseHandler(unsuccessfulResponseHandler)
+                .credentialBuilder(new ClientGrantCredential.Builder(
+                        authorizationHeaderAccessMethod())
+                        .setTransport(
+                                messageConfiguration.getTransport())
+                        .setJsonFactory(messageConfiguration
+                                .getJsonFactory())
+                        .setTokenServerUrl(url)
+                        .setClientAuthentication(
+                                createBasicAuthHeader()))
+                .build();
+        log.debug("Built client credential [{}]", credential);
+        credential.setFromTokenResponse(response);
+        return credential;
     }
 
     private TokenResponse executeTokenRequest() {
@@ -135,10 +178,28 @@ public class HttpClientAccessCredentialProvider
         return callDataServices(tokenServerUrl, jsonFactory, transport);
     }
 
+    private TokenResponse executeTokenRequestForOwner(String owner) {
+        log.debug("Executing a token request");
+        GenericUrl tokenServerUrl = buildIdentityAccessTokenUrlForOwner(owner);
+        JsonFactory jsonFactory = messageConfiguration.getJsonFactory();
+        HttpTransport transport = messageConfiguration.getTransport();
+        return callDataServices(tokenServerUrl, jsonFactory, transport);
+    }
+
     private void executeRevokeRequest() {
         try {
             log.debug("Executing a revoke request");
             aRequestFactory().buildPostRequest(buildIdentityRevokeTokenUrl(),
+                    buildRevokeContent()).execute();
+        } catch (IOException e) {
+            throw anUnexpectedTokenRevokeException(e);
+        }
+    }
+
+    private void executeRevokeRequest(String owner) {
+        try {
+            log.debug("Executing a revoke request");
+            aRequestFactory().buildPostRequest(buildIdentityRevokeTokenUrl(owner),
                     buildRevokeContent()).execute();
         } catch (IOException e) {
             throw anUnexpectedTokenRevokeException(e);
@@ -199,8 +260,30 @@ public class HttpClientAccessCredentialProvider
         return resolveHostUrlWithPath(OAUTH_REVOKE_URL_PATH);
     }
 
+    private GenericUrl buildIdentityAccessTokenUrlForOwner(String owner) {
+        return resolveHostUrlForOwner(owner);
+    }
+
+    private GenericUrl buildIdentityRevokeTokenUrl(String owner) {
+        return resolveHostUrlForOwner(owner);
+    }
+
     private GenericUrl resolveHostUrlWithPath(String path) {
         HostConfiguration hostConfiguration = hostRegistry.identity();
+        return generateUrl(hostConfiguration);
+    }
+
+    private GenericUrl resolveHostUrlForOwner(String owner) {
+        HostConfiguration hostConfiguration = hostRegistry.identity();
+        try {
+            hostConfiguration = identityHostsCache.get(owner);
+        } catch (ExecutionException e) {
+            log.warn("Could not find Identity host for owner `{}` in registry host `{}`", owner, hostRegistry.serviceRegistry().getUrl());
+        }
+        return generateUrl(hostConfiguration);
+    }
+
+    private GenericUrl generateUrl(HostConfiguration hostConfiguration) {
         URL resolvedUri = hostConfiguration.getBaseUrl();
         GenericUrl genericUrl = new GenericUrl(resolvedUri);
         genericUrl.appendRawPath(OAUTH_TOKEN_URL_PATH);
@@ -235,6 +318,14 @@ public class HttpClientAccessCredentialProvider
         return new TokenRevokeException(
                 "An unexpected error occurs when trying to revoke the token",
                 e);
+    }
+
+    private void initCache() {
+        identityHostsCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES)
+                .build(IdentityHostsCache.builder()
+                        .defaultIdentityHost(hostRegistry.identity())
+                        .registryClient(registryClient)
+                        .build());
     }
 
 }
