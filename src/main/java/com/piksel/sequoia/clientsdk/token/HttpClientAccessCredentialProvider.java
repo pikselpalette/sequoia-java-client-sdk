@@ -34,6 +34,8 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.HttpUnsuccessfulResponseHandler;
 import com.google.api.client.http.UrlEncodedContent;
 import com.google.api.client.json.JsonFactory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
 import com.piksel.sequoia.annotations.Internal;
 import com.piksel.sequoia.clientsdk.MessageConfiguration;
@@ -44,6 +46,7 @@ import com.piksel.sequoia.clientsdk.recovery.RequestRecoveryStrategyProvider;
 import com.piksel.sequoia.clientsdk.registry.RegisteredService;
 import com.piksel.sequoia.clientsdk.registry.RegistryClient;
 import com.piksel.sequoia.clientsdk.resource.ResourceIterable;
+import com.piksel.sequoia.clientsdk.token.cache.IdentityHostsCache;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -52,6 +55,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.api.client.auth.oauth2.BearerToken.authorizationHeaderAccessMethod;
 
@@ -81,6 +86,7 @@ public class HttpClientAccessCredentialProvider
     private boolean allowCredentialRefresh = true;
 
     private Map<String, ClientGrantCredential> credentialsMap = Maps.newConcurrentMap();
+    private LoadingCache<String, HostConfiguration> identityHostsCache;
 
     @Inject
     public HttpClientAccessCredentialProvider(
@@ -95,6 +101,7 @@ public class HttpClientAccessCredentialProvider
         this.unsuccessfulResponseHandler = unsuccessfulResponseHandler;
         this.registryClient = registryClient;
         log.debug("HttpClientAccessCredentialProvider constructed");
+        initCache();
     }
 
     @Override
@@ -102,22 +109,8 @@ public class HttpClientAccessCredentialProvider
         if (credential == null && allowCredentialRefresh) {
             log.debug("No client credential stored - requesting a new one");
             TokenResponse response = executeTokenRequest();
-
-            credential = ClientGrantCredential.builder()
-                    .unsuccessfulResponseHandler(unsuccessfulResponseHandler)
-                    .credentialBuilder(new ClientGrantCredential.Builder(
-                            authorizationHeaderAccessMethod())
-                                    .setTransport(
-                                            messageConfiguration.getTransport())
-                                    .setJsonFactory(messageConfiguration
-                                            .getJsonFactory())
-                                    .setTokenServerUrl(
-                                            buildIdentityAccessTokenUrl())
-                                    .setClientAuthentication(
-                                            createBasicAuthHeader()))
-                    .build();
-            log.debug("Built client credential [{}]", credential);
-            credential.setFromTokenResponse(response);
+            GenericUrl url = buildIdentityAccessTokenUrl();
+            credential = buildClientGrantCredential(response, url);
         }
         return credential;
     }
@@ -127,23 +120,9 @@ public class HttpClientAccessCredentialProvider
         ClientGrantCredential credential = credentialsMap.get(owner);
         if (credential == null && allowCredentialRefresh) {
             log.debug("No client credential stored - requesting a new one");
-            TokenResponse response = executeTokenRequest(owner);
-
-            credential = ClientGrantCredential.builder()
-                    .unsuccessfulResponseHandler(unsuccessfulResponseHandler)
-                    .credentialBuilder(new ClientGrantCredential.Builder(
-                            authorizationHeaderAccessMethod())
-                            .setTransport(
-                                    messageConfiguration.getTransport())
-                            .setJsonFactory(messageConfiguration
-                                    .getJsonFactory())
-                            .setTokenServerUrl(
-                                    buildIdentityAccessTokenUrl(owner))
-                            .setClientAuthentication(
-                                    createBasicAuthHeader()))
-                    .build();
-            log.debug("Built client credential [{}]", credential);
-            credential.setFromTokenResponse(response);
+            TokenResponse response = executeTokenRequestForOwner(owner);
+            GenericUrl url = buildIdentityAccessTokenUrlForOwner(owner);
+            credential = buildClientGrantCredential(response, url);
             credentialsMap.put(owner, credential);
         }
         return credential;
@@ -172,6 +151,25 @@ public class HttpClientAccessCredentialProvider
         return allowCredentialRefresh;
     }
 
+    private ClientGrantCredential buildClientGrantCredential(TokenResponse response, GenericUrl url) {
+        ClientGrantCredential credential;
+        credential = ClientGrantCredential.builder()
+                .unsuccessfulResponseHandler(unsuccessfulResponseHandler)
+                .credentialBuilder(new ClientGrantCredential.Builder(
+                        authorizationHeaderAccessMethod())
+                        .setTransport(
+                                messageConfiguration.getTransport())
+                        .setJsonFactory(messageConfiguration
+                                .getJsonFactory())
+                        .setTokenServerUrl(url)
+                        .setClientAuthentication(
+                                createBasicAuthHeader()))
+                .build();
+        log.debug("Built client credential [{}]", credential);
+        credential.setFromTokenResponse(response);
+        return credential;
+    }
+
     private TokenResponse executeTokenRequest() {
         log.debug("Executing a token request");
         GenericUrl tokenServerUrl = buildIdentityAccessTokenUrl();
@@ -180,9 +178,9 @@ public class HttpClientAccessCredentialProvider
         return callDataServices(tokenServerUrl, jsonFactory, transport);
     }
 
-    private TokenResponse executeTokenRequest(String owner) {
+    private TokenResponse executeTokenRequestForOwner(String owner) {
         log.debug("Executing a token request");
-        GenericUrl tokenServerUrl = buildIdentityAccessTokenUrl(owner);
+        GenericUrl tokenServerUrl = buildIdentityAccessTokenUrlForOwner(owner);
         JsonFactory jsonFactory = messageConfiguration.getJsonFactory();
         HttpTransport transport = messageConfiguration.getTransport();
         return callDataServices(tokenServerUrl, jsonFactory, transport);
@@ -262,7 +260,7 @@ public class HttpClientAccessCredentialProvider
         return resolveHostUrlWithPath(OAUTH_REVOKE_URL_PATH);
     }
 
-    private GenericUrl buildIdentityAccessTokenUrl(String owner) {
+    private GenericUrl buildIdentityAccessTokenUrlForOwner(String owner) {
         return resolveHostUrlForOwner(owner);
     }
 
@@ -272,29 +270,24 @@ public class HttpClientAccessCredentialProvider
 
     private GenericUrl resolveHostUrlWithPath(String path) {
         HostConfiguration hostConfiguration = hostRegistry.identity();
-        URL resolvedUri = hostConfiguration.getBaseUrl();
-        GenericUrl genericUrl = new GenericUrl(resolvedUri);
-        genericUrl.appendRawPath(OAUTH_TOKEN_URL_PATH);
-        return genericUrl;
+        return generateUrl(hostConfiguration);
     }
 
     private GenericUrl resolveHostUrlForOwner(String owner) {
-        HostConfiguration hostConfiguration = getIdentityHostFromRegistry(owner).orElse(hostRegistry.identity());
+        HostConfiguration hostConfiguration = hostRegistry.identity();
+        try {
+            hostConfiguration = identityHostsCache.get(owner);
+        } catch (ExecutionException e) {
+            log.warn("Could not find Identity host for owner `{}` in registry host `{}`", owner, hostRegistry.serviceRegistry().getUrl());
+        }
+        return generateUrl(hostConfiguration);
+    }
+
+    private GenericUrl generateUrl(HostConfiguration hostConfiguration) {
         URL resolvedUri = hostConfiguration.getBaseUrl();
         GenericUrl genericUrl = new GenericUrl(resolvedUri);
         genericUrl.appendRawPath(OAUTH_TOKEN_URL_PATH);
         return genericUrl;
-    }
-
-    private Optional<HostConfiguration> getIdentityHostFromRegistry(String owner) {
-        ResourceIterable<RegisteredService> serviceResourceIterable =registryClient.getServiceRegistryListForOwner(owner);
-        while(serviceResourceIterable.hasNext()) {
-            RegisteredService registeredService = serviceResourceIterable.next();
-            if(registeredService.getName().equals("identity")) {
-                return Optional.of(new HostConfiguration(registeredService.getLocation()));
-            }
-        }
-        return Optional.empty();
     }
 
     private HttpRequestFactory aRequestFactory() {
@@ -325,6 +318,14 @@ public class HttpClientAccessCredentialProvider
         return new TokenRevokeException(
                 "An unexpected error occurs when trying to revoke the token",
                 e);
+    }
+
+    private void initCache() {
+        identityHostsCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES)
+                .build(IdentityHostsCache.builder()
+                        .defaultIdentityHost(hostRegistry.identity())
+                        .registryClient(registryClient)
+                        .build());
     }
 
 }

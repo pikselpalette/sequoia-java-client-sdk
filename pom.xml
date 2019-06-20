@@ -111,6 +111,7 @@
 		<findbugs.version>3.0.1</findbugs.version>
 		<commons-lang.version>3.7</commons-lang.version>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+		<equalsverifier.version>2.5</equalsverifier.version>
 	</properties>
 
 	<dependencies>
@@ -260,6 +261,12 @@
 					<artifactId>json-path</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>nl.jqno.equalsverifier</groupId>
+			<artifactId>equalsverifier</artifactId>
+			<version>${equalsverifier.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
