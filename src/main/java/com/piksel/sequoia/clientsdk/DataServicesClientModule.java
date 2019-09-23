@@ -37,11 +37,13 @@ import com.piksel.sequoia.clientsdk.registry.DefaultRegistryClient;
 import com.piksel.sequoia.clientsdk.registry.RegistryClient;
 import com.piksel.sequoia.clientsdk.registry.RegistryClientConfiguration;
 import com.piksel.sequoia.clientsdk.request.DefaultRequestClient;
+import com.piksel.sequoia.clientsdk.request.RegistryRequestClient;
 import com.piksel.sequoia.clientsdk.request.RequestClient;
 import com.piksel.sequoia.clientsdk.token.ClientGrantCredentialUnsuccessfulResponseHandler;
 import com.piksel.sequoia.clientsdk.token.DataServicesClientGrantUnsuccessfulResponseHandler;
 import com.piksel.sequoia.clientsdk.token.DataServicesCredentialProvider;
 import com.piksel.sequoia.clientsdk.token.HttpClientAccessCredentialProvider;
+import sun.misc.Request;
 
 /**
  * Defines the standard bindings to wire the various components of the client
@@ -92,11 +94,22 @@ public class DataServicesClientModule extends AbstractModule {
     }
 
     @Provides
-    public RegistryClient provideRegistryClient(RequestClient requestClient, PreconfiguredHostRegistry registry,
+    public RegistryClient providesRegistryClient(RegistryRequestClient requestClient, PreconfiguredHostRegistry registry,
                                                 RegistryClientConfiguration configuration, Gson gson) {
         return new DefaultRegistryClient(requestClient, registry, configuration, gson);
     }
-    
+
+    @Provides
+    public RegistryRequestClient providesRegistryRequestClient(DefaultRequestClient requestClient) {
+        return new RegistryRequestClient(requestClient);
+    }
+
+    @Provides
+    public DefaultRequestClient providesDefaultRequestClient(RequestFactory requestFactory,
+                                                            HttpRequestInitializer requestInitializer, Gson gson){
+        return new DefaultRequestClient(requestFactory, requestInitializer, gson);
+    }
+
     @Provides
     public UserAgentStringSupplier providesUserAgentStringSupplier() {
         UserAgentConfigurer configurer = configuration.getUserAgentConfigurer();

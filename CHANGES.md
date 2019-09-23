@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.4.0 - RELEASE - 
+
+- Removing auth header when requests to the registry/services endpoint.
+
 ## 2.3.0 - RELEASE - 20-JUN-2019
 
 - Update HttpClientAccessCredentialProvider to use registry in order to extract identity service location per owner to get tokens. To avoid making requests to registry continuously, a cache has also been implemented to store identity hosts per owner name. Values in the cache will expire after 10 minutes, so that, if any change is done in registry, it will be reflected in the client in 10 minutes as much.

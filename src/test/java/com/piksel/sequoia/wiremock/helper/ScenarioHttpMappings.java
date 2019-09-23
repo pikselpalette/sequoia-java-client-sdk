@@ -123,7 +123,7 @@ public class ScenarioHttpMappings {
     }
 
     public void addMapping(String serviceId, RemoteMappingBuilder requestMapping) {
-        createScenarioBindedMapping(null, serviceId, requestMapping, equalTo("Bearer " + token));
+        createScenarioBindedMapping(null, serviceId, requestMapping, null);
     }
 
     public void addStepMapping(String serviceId, RemoteMappingBuilder requestMapping) {

@@ -123,7 +123,7 @@ public abstract class ClientIntegrationTestBase {
 
     protected void commonVerifications() {
         scenarioMappings.verify("identity", postRequestedFor(urlEqualTo("/oauth/token")));
-        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/services/unitTestRoot")).withHeader("authorization", matching(".+")));
+        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/services/unitTestRoot")));
     }
 
     protected BiFunction<String, Integer, Object> registeredServiceCreationFunction = (String name, Integer port) -> {
