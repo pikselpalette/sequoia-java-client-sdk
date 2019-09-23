@@ -43,7 +43,6 @@ import com.piksel.sequoia.clientsdk.token.ClientGrantCredentialUnsuccessfulRespo
 import com.piksel.sequoia.clientsdk.token.DataServicesClientGrantUnsuccessfulResponseHandler;
 import com.piksel.sequoia.clientsdk.token.DataServicesCredentialProvider;
 import com.piksel.sequoia.clientsdk.token.HttpClientAccessCredentialProvider;
-import sun.misc.Request;
 
 /**
  * Defines the standard bindings to wire the various components of the client
