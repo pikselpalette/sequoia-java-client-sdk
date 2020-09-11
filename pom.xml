@@ -98,7 +98,7 @@
 		<httpclient.version>4.5.2</httpclient.version>
 		<objenesis.version>2.6</objenesis.version>
 		<reflections.version>0.9.10</reflections.version>
-		<hibernate-validator.version>5.3.5.Final</hibernate-validator.version>
+		<hibernate-validator.version>5.3.6.Final</hibernate-validator.version>
 		<guava.version>24.1.1-jre</guava.version>
 		<lombok.version>1.16.20</lombok.version>
 		<javax-el.version>3.0.0</javax-el.version>
