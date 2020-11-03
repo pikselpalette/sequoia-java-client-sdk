@@ -9,9 +9,9 @@ package com.piksel.sequoia.clientsdk.resource.json;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,8 +29,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.piksel.sequoia.annotations.Internal;
 import com.piksel.sequoia.clientsdk.resource.ResourceMap;
+import lombok.extern.slf4j.Slf4j;
 
 @Internal
+@Slf4j
 public class ResourceMapDeserializer implements JsonDeserializer<ResourceMap> {
 
     @Override
@@ -51,8 +53,20 @@ public class ResourceMapDeserializer implements JsonDeserializer<ResourceMap> {
                         .toResourceList(entry.getValue().getAsJsonArray()));
             } else if (entry.getValue().isJsonPrimitive()
                     && entry.getValue().getAsJsonPrimitive().isNumber()) {
-                resourceMap.put(entry.getKey(),
-                        entry.getValue().getAsNumber().longValue());
+                try {
+                    resourceMap.put(entry.getKey(),
+                                    entry.getValue().getAsNumber().longValue());
+                } catch (NumberFormatException e) {
+                    try {
+                        resourceMap.put(entry.getKey(),
+                                        entry.getValue().getAsNumber().doubleValue());
+                    } catch (NumberFormatException nfe) {
+                        log.warn("Cannot parse {} setting it as String",
+                                 entry.getValue().getAsNumber().toString());
+                        resourceMap.put(entry.getKey(),
+                                        entry.getValue().getAsNumber().toString());
+                    }
+                }
             }
         });
         return resourceMap;

@@ -48,6 +48,9 @@ public class ResourceTest extends ModelResourceTestBase {
     @TestResource("resource-complete.json")
     String resource;
 
+    @TestResource("resource-complete-with-float.json")
+    String resourceWithFloat;
+
     @TestResource("resource-complete-with-extra-data.json")
     String resourceWithExtraData;
 
@@ -68,6 +71,17 @@ public class ResourceTest extends ModelResourceTestBase {
         Resource res = parse(resource, Resource.class);
 
         assertTrue(res.isValid().isEmpty());
+    }
+
+    @Test
+    public void givenCompleteResourceWithFloat_shouldNotContainViolations() {
+        Resource res = parse(resourceWithFloat, Resource.class);
+
+        assertTrue(res.isValid().isEmpty());
+        assertThat(res.getCustom().get("floatValue"), is(29.97));
+        assertThat(res.getCustom().get("numberValue"), is(34));
+
+
     }
 
     @Test
