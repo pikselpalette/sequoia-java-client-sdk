@@ -79,7 +79,7 @@ public class ResourceTest extends ModelResourceTestBase {
 
         assertTrue(res.isValid().isEmpty());
         assertThat(res.getCustom().get("floatValue"), is(29.97));
-        assertThat(res.getCustom().get("numberValue"), is(34));
+        assertThat(res.getCustom().get("numberValue"), is(34L));
 
 
     }
