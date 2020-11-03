@@ -60,7 +60,7 @@ public class ResourceMapDeserializer implements JsonDeserializer<ResourceMap> {
                     try {
                         resourceMap.put(entry.getKey(),
                                         entry.getValue().getAsNumber().doubleValue());
-                    } catch (Exception nfe) {
+                    } catch (NumberFormatException nfe) {
                         log.warn("Cannot parse {} setting it as String",
                                  entry.getValue().getAsNumber().toString());
                         resourceMap.put(entry.getKey(),
