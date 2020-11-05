@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.4.1 - RELEASE - 
+## 2.4.1 - RELEASE - 05-NOV-2020
 
 - Fixing bug deserializing Resource Maps with floats.
 - Fixing bug deserializing URL query string when the value contains the character `=`.
