@@ -20,16 +20,16 @@ package com.piksel.sequoia.clientsdk.resource;
  * #L%
  */
 
-import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
+import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang.StringUtils.substringBefore;
 
 class UrlQueryStringParser {
 
@@ -44,7 +44,7 @@ class UrlQueryStringParser {
     }
 
     public Map<String, String> queryString() {
-        return Splitter.on("&").withKeyValueSeparator('=').split(substringAfter(urlDecode(url), "?"));
+        return Splitter.on("&").withKeyValueSeparator(Splitter.on("=").limit(2)).split(substringAfter(urlDecode(url), "?"));
     }
 
     public List<String> getPathParts() {

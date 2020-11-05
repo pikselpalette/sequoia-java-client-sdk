@@ -20,22 +20,30 @@ package com.piksel.sequoia.clientsdk.resource;
  * #L%
  */
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class UrlQueryStringParserTest {
 
     @Test
     public void testParser() {
-        assertThat(
-                UrlQueryStringParser.urlParser("http://my url.com?test=true")
-                        .queryString().keySet().iterator().next(),
-                is("test"));
-        assertThat(
-                UrlQueryStringParser.urlParser("http://my url.com?test=true")
-                        .queryString().values().iterator().next(),
-                is("true"));
+        Map<String, String> queryParameters = UrlQueryStringParser.urlParser(
+                "http://my url.com?param1=value1&test=true&continue=a=bc=d=e%3D&param2=value2&param3=value3")
+                .queryString();
+
+        Map<String, String> queryParametersExpected = new HashMap<String, String>() {{
+            put("test", "true");
+            put("continue", "a=bc=d=e=");
+            put("param1", "value1");
+            put("param2", "value2");
+            put("param3", "value3");
+        }};
+
+        assertThat(queryParameters, is(queryParametersExpected));
     }
 }
