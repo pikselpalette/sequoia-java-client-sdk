@@ -55,7 +55,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderBy("field-name");
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=field-name"));
+                    assertThat(queryString.toString(), is("sort=field-name&continue=true"));
                 }
             }
 
@@ -65,7 +65,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderBy("field-name").asc();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=field-name"));
+                    assertThat(queryString.toString(), is("sort=field-name&continue=true"));
                 }
             }
 
@@ -76,7 +76,7 @@ public class OrderingCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("sort=field-name%2Cfield-name2"));
+                            is("sort=field-name%2Cfield-name2&continue=true"));
                 }
             }
 
@@ -86,7 +86,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderBy("field-name").desc();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=-field-name"));
+                    assertThat(queryString.toString(), is("sort=-field-name&continue=true"));
                 }
             }
 
@@ -98,7 +98,7 @@ public class OrderingCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("sort=-field-name%2C-field-name2"));
+                            is("sort=-field-name%2C-field-name2&continue=true"));
                 }
             }
 
@@ -110,7 +110,7 @@ public class OrderingCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("sort=field-name%2C-field-name2%2Cfield-name3"));
+                            is("sort=field-name%2C-field-name2%2Cfield-name3&continue=true"));
                 }
             }
 
@@ -121,7 +121,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderBy("field-name").orderBy("field-name");
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=field-name"));
+                    assertThat(queryString.toString(), is("sort=field-name&continue=true"));
                 }
 
                 @Test
@@ -130,7 +130,7 @@ public class OrderingCriteriaQueryStringTest {
                             .desc();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=-field-name"));
+                    assertThat(queryString.toString(), is("sort=-field-name&continue=true"));
                 }
 
             }
@@ -142,7 +142,7 @@ public class OrderingCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("sort=field-n%C3%A6me"));
+                            is("sort=field-n%C3%A6me&continue=true"));
                 }
             }
         }
@@ -155,7 +155,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderByOwner();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=owner"));
+                    assertThat(queryString.toString(), is("sort=owner&continue=true"));
                 }
 
                 @Test
@@ -163,7 +163,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderByOwner().desc();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=-owner"));
+                    assertThat(queryString.toString(), is("sort=-owner&continue=true"));
                 }
             }
 
@@ -173,7 +173,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderByName();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=name"));
+                    assertThat(queryString.toString(), is("sort=name&continue=true"));
                 }
 
                 @Test
@@ -181,7 +181,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderByName().desc();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=-name"));
+                    assertThat(queryString.toString(), is("sort=-name&continue=true"));
                 }
             }
 
@@ -191,7 +191,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderByCreatedAt();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=createdAt"));
+                    assertThat(queryString.toString(), is("sort=createdAt&continue=true"));
                 }
 
                 @Test
@@ -199,7 +199,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderByCreatedAt().desc();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=-createdAt"));
+                    assertThat(queryString.toString(), is("sort=-createdAt&continue=true"));
                 }
             }
 
@@ -209,7 +209,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderByCreatedBy();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=createdBy"));
+                    assertThat(queryString.toString(), is("sort=createdBy&continue=true"));
                 }
 
                 @Test
@@ -217,7 +217,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderByCreatedBy().desc();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=-createdBy"));
+                    assertThat(queryString.toString(), is("sort=-createdBy&continue=true"));
                 }
             }
 
@@ -227,7 +227,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderByUpdatedAt();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=updatedAt"));
+                    assertThat(queryString.toString(), is("sort=updatedAt&continue=true"));
                 }
 
                 @Test
@@ -235,7 +235,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderByUpdatedAt().desc();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=-updatedAt"));
+                    assertThat(queryString.toString(), is("sort=-updatedAt&continue=true"));
                 }
             }
 
@@ -245,7 +245,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderByUpdatedBy();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=updatedBy"));
+                    assertThat(queryString.toString(), is("sort=updatedBy&continue=true"));
                 }
 
                 @Test
@@ -253,7 +253,7 @@ public class OrderingCriteriaQueryStringTest {
                     criteria.orderByUpdatedBy().desc();
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("sort=-updatedBy"));
+                    assertThat(queryString.toString(), is("sort=-updatedBy&continue=true"));
                 }
             }
         }

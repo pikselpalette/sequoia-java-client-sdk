@@ -59,7 +59,7 @@ public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends
 
     @Override
     protected void loadNextAndUpdateIndexes() {
-        Optional<JsonElement> payload = endpoint.getPagedLinkedResource(currentPage().getMeta().getNext());
+        Optional<JsonElement> payload = endpoint.getPagedLinkedResource(currentPage().getMeta().getContinuesPage());
         deserializer = linkedDeserializer;
         Optional<JsonElement> filteredPayload = deserializer.includeJustLinkedItems(payload.orElseThrow(noSuchElementException()),
                 field.getAnnotation(IndirectRelationship.class).ref(), resource.getRef().toString());

@@ -106,7 +106,7 @@ public abstract class AbstractLoadingIterable<T extends Resource> {
 
     protected String getNextUrl(JsonElement payload) {
         Meta meta = deserializer.metaFrom(payload).orElse(deserializer.emptyMeta());
-        return meta.getContinuesPage() != null ? meta.getContinuesPage() : meta.getNext();
+        return meta.getContinuesPage();
     }
 
     protected Map<String,Map<String,Integer>> getFacetCount(JsonElement payload) {

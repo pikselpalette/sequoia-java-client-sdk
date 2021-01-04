@@ -56,7 +56,7 @@ public class PaginationCriteriaQueryStringTest {
                     criteria.perPage(1000);
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("perPage=1000"));
+                    assertThat(queryString.toString(), is("perPage=1000&continue=true"));
                 }
 
                 @Test
@@ -64,7 +64,7 @@ public class PaginationCriteriaQueryStringTest {
                     criteria.perPage(1000).perPage(1);
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("perPage=1"));
+                    assertThat(queryString.toString(), is("perPage=1&continue=true"));
                 }
             }
 
@@ -79,38 +79,6 @@ public class PaginationCriteriaQueryStringTest {
             }
         }
 
-        public class WithPage {
-
-            public class PageNumberHigherThanZero {
-
-                @Test
-                public void shouldGeneratePageQueryString() {
-                    criteria.page(1000);
-                    QueryString queryString = queryStringFactory
-                            .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("page=1000"));
-                }
-
-                @Test
-                public void shouldGenerateTheLastOnePage() {
-                    criteria.page(1000).page(1);
-                    QueryString queryString = queryStringFactory
-                            .createQueryString(criteria);
-                    assertThat(queryString.toString(), is("page=1"));
-                }
-            }
-
-            public class PageNumberEqualToZero {
-
-                @Test
-                public void shouldThrowException() {
-                    thrown.expect(IllegalArgumentException.class);
-                    thrown.expectMessage("it must be higher than 0");
-                    criteria.page(0);
-                }
-            }
-        }
-
         public class Count {
 
             @Test
@@ -118,7 +86,7 @@ public class PaginationCriteriaQueryStringTest {
                 criteria.count();
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("count=true"));
+                assertThat(queryString.toString(), is("count=true&continue=true"));
             }
 
         }
@@ -130,7 +98,7 @@ public class PaginationCriteriaQueryStringTest {
                 criteria.skipResources();
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("resources=false"));
+                assertThat(queryString.toString(), is("resources=false&continue=true"));
             }
 
         }
@@ -142,7 +110,7 @@ public class PaginationCriteriaQueryStringTest {
                 criteria.count("type");
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("count=type"));
+                assertThat(queryString.toString(), is("count=type&continue=true"));
             }
 
         }

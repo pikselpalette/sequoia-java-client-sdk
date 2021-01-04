@@ -57,7 +57,7 @@ public class ActiveAvailableCriteriaQueryStringTest {
                 criteria.active(true);
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("active=true"));
+                assertThat(queryString.toString(), is("active=true&continue=true"));
             }
 
         }
@@ -84,7 +84,7 @@ public class ActiveAvailableCriteriaQueryStringTest {
                 criteria.available(true);
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("available=true"));
+                assertThat(queryString.toString(), is("available=true&continue=true"));
             }
 
         }

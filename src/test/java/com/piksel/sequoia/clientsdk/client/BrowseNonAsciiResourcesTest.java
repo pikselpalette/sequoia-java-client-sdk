@@ -47,14 +47,18 @@ public class BrowseNonAsciiResourcesTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenBrowsingWithCriteria_returnedResourceWithNonAsciiCharsIsProperlyRead() {
-        stubGetMetadataResponse(scenarioMappings, "contents", getContentWithNonAsciiChars, 200, "include=categories&withType=episode%7C%7Cmovie");
+        stubGetMetadataResponse(scenarioMappings,
+                                "contents",
+                                getContentWithNonAsciiChars,
+                                200,
+                                "include=categories&withType=episode%7C%7Cmovie&continue=true");
 
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.add(field("type").equalTo("episode||movie"));
         criteria.include(resource("categories"));
 
         ResourceResponse<Content> response = client.service("metadata").resourcefulEndpoint("contents", Content.class).browse(criteria);
-        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/contents?include=categories&withType=episode%7C%7Cmovie")));
+        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/contents?include=categories&withType=episode%7C%7Cmovie&continue=true")));
 
         verifyResponseStatusAndPayload(response);
 

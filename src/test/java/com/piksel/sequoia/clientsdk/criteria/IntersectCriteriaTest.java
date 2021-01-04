@@ -51,7 +51,8 @@ public class IntersectCriteriaTest {
             addIntersectCriteria("relatedDoc", "relatedProp");
 
             QueryString qs = queryStringFactory.createQueryString(criteria);
-            assertThat(qs.toString(), is("include=relatedDoc%3Cintersect%3E&prop=value&relatedDoc.relatedProp=value"));
+            assertThat(qs.toString(),
+                       is("include=relatedDoc%3Cintersect%3E&continue=true&prop=value&relatedDoc.relatedProp=value&relatedDoc.continue=true"));
         }
 
         @Test
@@ -62,7 +63,7 @@ public class IntersectCriteriaTest {
 
             QueryString qs = queryStringFactory.createQueryString(criteria);
             assertThat(qs.toString(),
-                    is("include=relatedDoc%3Cintersect%3E%2CrelatedDoc2%3Cintersect%3E&prop=value&relatedDoc.relatedProp=value&relatedDoc2.related2Prop=value"));
+                       is("include=relatedDoc%3Cintersect%3E%2CrelatedDoc2%3Cintersect%3E&relatedDoc2.continue=true&continue=true&prop=value&relatedDoc.relatedProp=value&relatedDoc2.related2Prop=value&relatedDoc.continue=true"));
         }
 
         @Test
@@ -73,7 +74,7 @@ public class IntersectCriteriaTest {
 
             QueryString qs = queryStringFactory.createQueryString(criteria);
             assertThat(qs.toString(),
-                    is("include=includedDoc%2CrelatedDoc%3Cintersect%3E&prop=value&relatedDoc.relatedProp=value"));
+                    is("include=includedDoc%2CrelatedDoc%3Cintersect%3E&continue=true&prop=value&relatedDoc.relatedProp=value&relatedDoc.continue=true"));
         }
 
         @Test
@@ -93,7 +94,7 @@ public class IntersectCriteriaTest {
 
             QueryString qs = queryStringFactory.createQueryString(criteria);
             assertThat(qs.toString(),
-                    is("include=relatedDoc%3Cintersect%3E&relatedDoc.fields=retrieveField1%2CretrieveField2&prop=value&relatedDoc.relatedProp=value"));
+                       is("include=relatedDoc%3Cintersect%3E&relatedDoc.fields=retrieveField1%2CretrieveField2&continue=true&prop=value&relatedDoc.relatedProp=value&relatedDoc.continue=true"));
 
         }
 
@@ -104,7 +105,7 @@ public class IntersectCriteriaTest {
 
             QueryString qs = queryStringFactory.createQueryString(criteria);
             assertThat(qs.toString(),
-                    is("include=relatedDoc%3Cintersect%3E&relatedDoc.sort=field1%2Cfield2&prop=value&relatedDoc.relatedProp=value"));
+                    is("include=relatedDoc%3Cintersect%3E&relatedDoc.sort=field1%2Cfield2&continue=true&prop=value&relatedDoc.relatedProp=value&relatedDoc.continue=true"));
 
         }
 
@@ -115,7 +116,7 @@ public class IntersectCriteriaTest {
 
             QueryString qs = queryStringFactory.createQueryString(criteria);
             assertThat(qs.toString(),
-                    is("include=relatedDoc%3Cintersect%3E&relatedDoc.include=relatedRelatedDoc&prop=value&relatedDoc.relatedRelatedDoc.field=value&relatedDoc.relatedProp=value"));
+                    is("include=relatedDoc%3Cintersect%3E&relatedDoc.include=relatedRelatedDoc&continue=true&prop=value&relatedDoc.relatedRelatedDoc.field=value&relatedDoc.relatedProp=value&relatedDoc.continue=true"));
         }
 
 

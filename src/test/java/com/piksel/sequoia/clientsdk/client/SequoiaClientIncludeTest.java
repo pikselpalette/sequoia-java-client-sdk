@@ -102,14 +102,18 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_returnSingleDirectLinkedItemAndReturn200() {
-        stubGetMetadataResponse(scenarioMappings, "assets", getAssetWithSingleContent, 200, "include=contents&withReference=owner:asset1");
+        stubGetMetadataResponse(scenarioMappings,
+                                "assets",
+                                getAssetWithSingleContent,
+                                200,
+                                "include=contents&withReference=owner:asset1&continue=true");
 
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.add(field("reference").equalTo("owner:asset1"));
         criteria.include(resource("contents"));
 
         ResourceResponse<Asset> response = client.service("metadata").resourcefulEndpoint("assets", Asset.class).browse(criteria);
-        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/assets?include=contents&withReference=owner:asset1")));
+        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/assets?include=contents&withReference=owner:asset1&continue=true")));
 
         verifyResponseStatusAndPayload(response);
 
@@ -341,7 +345,7 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_withoutRef_returnEmptyCollectionOfItemsAndReturn200() {
         stubGetMetadataResponse(scenarioMappings, "contents", getContentWithMultipleAssetsWithoutRef, 200,
-                "include=assets&withReference=owner:content1");
+                "include=assets&withReference=owner:content1&continue=true");
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.add(field("reference").equalTo("owner:content1"));
         criteria.include(resource("assets"));

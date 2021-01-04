@@ -56,7 +56,7 @@ public class SelectionCriteriaQueryStringTest {
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
                 assertThat(queryString.toString(),
-                        is("withFieldName=field+value"));
+                        is("withFieldName=field+value&continue=true"));
             }
         }
 
@@ -79,7 +79,7 @@ public class SelectionCriteriaQueryStringTest {
             criteria.add(field("fieldName").equalTo("field-value"));
             QueryString queryString = queryStringFactory
                     .createQueryString(criteria);
-            assertThat(queryString.toString(), is("withFieldName=field-value"));
+            assertThat(queryString.toString(), is("withFieldName=field-value&continue=true"));
         }
     }
 
@@ -91,7 +91,7 @@ public class SelectionCriteriaQueryStringTest {
             QueryString queryString = queryStringFactory
                     .createQueryString(criteria);
             assertThat(queryString.toString(), is(
-                    "withFieldName=field-value&withField2Name=field2-value"));
+                    "withFieldName=field-value&withField2Name=field2-value&continue=true"));
         }
         
         @Test
@@ -101,7 +101,7 @@ public class SelectionCriteriaQueryStringTest {
             QueryString queryString = queryStringFactory
                     .createQueryString(criteria);
             assertThat(queryString.toString(), is(
-                    "withFieldName=field-value&withFieldName=field2-value"));
+                    "withFieldName=field-value&withFieldName=field2-value&continue=true"));
         }
     }
 
@@ -112,7 +112,7 @@ public class SelectionCriteriaQueryStringTest {
             QueryString queryString = queryStringFactory
                     .createQueryString(criteria);
             assertThat(queryString.toString(),
-                    is("withFieldName=field-v%C3%A6lue"));
+                    is("withFieldName=field-v%C3%A6lue&continue=true"));
         }
     }
 
@@ -128,7 +128,7 @@ public class SelectionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("withFieldName=field-Value%7C%7Cfield-value2"));
+                            is("withFieldName=field-Value%7C%7Cfield-value2&continue=true"));
                 }
             }
 
@@ -140,7 +140,7 @@ public class SelectionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("withFieldName=field-Value%7C%7Cfield-value2"));
+                            is("withFieldName=field-Value%7C%7Cfield-value2&continue=true"));
                 }
             }
 
@@ -189,7 +189,7 @@ public class SelectionCriteriaQueryStringTest {
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
                 assertThat(queryString.toString(), is(
-                        "withFieldName=field-Value&withFieldName=field-value2"));
+                        "withFieldName=field-Value&withFieldName=field-value2&continue=true"));
             }
         }
     }
@@ -205,7 +205,7 @@ public class SelectionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("withFieldName=field-Value*"));
+                            is("withFieldName=field-Value*&continue=true"));
                 }
             }
 
@@ -240,7 +240,7 @@ public class SelectionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("withFieldName=*field-Value"));
+                            is("withFieldName=*field-Value&continue=true"));
                 }
             }
 
@@ -275,7 +275,7 @@ public class SelectionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("withFieldName=field-Value"));
+                            is("withFieldName=field-Value&continue=true"));
                 }
             }
 
@@ -309,7 +309,7 @@ public class SelectionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("withFieldName=%21field-Value"));
+                            is("withFieldName=%21field-Value&continue=true"));
                 }
             }
 
@@ -340,7 +340,7 @@ public class SelectionCriteriaQueryStringTest {
                 criteria.add(field("fieldName").exist());
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("withFieldName=*"));
+                assertThat(queryString.toString(), is("withFieldName=*&continue=true"));
             }
         }
 
@@ -350,7 +350,7 @@ public class SelectionCriteriaQueryStringTest {
                 criteria.add(field("fieldName").notExist());
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("withFieldName=%21*"));
+                assertThat(queryString.toString(), is("withFieldName=%21*&continue=true"));
             }
         }
 
@@ -364,7 +364,7 @@ public class SelectionCriteriaQueryStringTest {
                 criteria.add(textSearch("text search"));
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("q=text+search"));
+                assertThat(queryString.toString(), is("q=text+search&continue=true"));
             }
         }
 
@@ -402,7 +402,7 @@ public class SelectionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(), is(
-                            "withFieldName=2014-12-25T12%3A00%3A00.000Z%2F2015-12-25T12%3A00%3A00.000Z"));
+                            "withFieldName=2014-12-25T12%3A00%3A00.000Z%2F2015-12-25T12%3A00%3A00.000Z&continue=true"));
                 }
             }
 
@@ -459,7 +459,7 @@ public class SelectionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(), is(
-                            "withFieldName=%212014-12-25T12%3A00%3A00.000Z%2F2015-12-25T12%3A00%3A00.000Z"));
+                            "withFieldName=%212014-12-25T12%3A00%3A00.000Z%2F2015-12-25T12%3A00%3A00.000Z&continue=true"));
                 }
             }
 
@@ -515,7 +515,7 @@ public class SelectionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(), is(
-                            "withFieldName=%212014-12-25T12%3A00%3A00.000Z%2F"));
+                            "withFieldName=%212014-12-25T12%3A00%3A00.000Z%2F&continue=true"));
                 }
             }
 
@@ -551,7 +551,7 @@ public class SelectionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(), is(
-                            "withFieldName=%2F2014-12-25T12%3A00%3A00.000Z"));
+                            "withFieldName=%2F2014-12-25T12%3A00%3A00.000Z&continue=true"));
                 }
             }
 
@@ -586,7 +586,7 @@ public class SelectionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(), is(
-                            "withFieldName=%21%2F2014-12-25T12%3A00%3A00.000Z"));
+                            "withFieldName=%21%2F2014-12-25T12%3A00%3A00.000Z&continue=true"));
                 }
             }
 
@@ -621,7 +621,7 @@ public class SelectionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(), is(
-                            "withFieldName=2014-12-25T12%3A00%3A00.000Z%2F"));
+                            "withFieldName=2014-12-25T12%3A00%3A00.000Z%2F&continue=true"));
                 }
             }
 

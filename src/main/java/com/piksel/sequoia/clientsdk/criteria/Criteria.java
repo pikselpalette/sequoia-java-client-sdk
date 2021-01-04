@@ -114,19 +114,6 @@ public interface Criteria<T extends Criteria<T>> {
      */
     PerPage getPerPage();
 
-    /**
-     * Return the page value
-     * 
-     * @since 1.0.0
-     */
-    Page getPage();
-    
-    /**
-     * Return if continuesPage is enabled
-     *
-     * @since 4.0.0
-     */
-    Boolean getContinuesPage();
 
     /**
      * Return the count value
@@ -241,25 +228,6 @@ public interface Criteria<T extends Criteria<T>> {
      */
     T perPage(int numItemsPerPage);
 
-    /**
-     * Request a specific page number.
-     * 
-     * @param numPage
-     *            the number of the page to be retrieved
-     * @return a reference to the current instance of this object
-     * @since 1.0.0
-     */
-    T page(int numPage);
-    
-    /**
-     * Enabled continues pagination
-     *
-     * @param continues
-     *            enable or disabled continues pagination
-     * @return a reference to the current instance of this object
-     * @since 4.0.0
-     */
-    T continuesPage();
 
     /**
      * Add the count to be retrieved as totalCount in {@link ResourceIterable}.
