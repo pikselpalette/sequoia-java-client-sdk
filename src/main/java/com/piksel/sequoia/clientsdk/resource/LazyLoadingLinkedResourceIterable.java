@@ -71,7 +71,7 @@ public final class LazyLoadingLinkedResourceIterable<T extends Resource> extends
 
     @Override
     protected boolean nextPageContainsResources() {
-        if ((noItemsInPage() || lastPageItem()) && metaHasNext()) {
+        if ((noItemsInPage() || lastPageItem()) && metaHasContinue()) {
             while (currentPage().isNotLast()) {
                 loadNextAndUpdateIndexes();
                 if (currentPage().items() > 0) {

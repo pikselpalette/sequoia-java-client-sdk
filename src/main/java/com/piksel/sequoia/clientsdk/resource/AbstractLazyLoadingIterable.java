@@ -54,12 +54,12 @@ public abstract class AbstractLazyLoadingIterable<T extends Resource> extends Ab
         return currentPage().getMeta().getContinuesPage();
     }
 
-    protected boolean metaHasNext() {
+    protected boolean metaHasContinue() {
         return nonNull(currentPage().getMeta().getContinuesPage());
     }
 
     private boolean nextPageIsNotEmpty() {
-        if (lastPageItem(currentPage().getMeta()) && metaHasNext()) {
+        if (lastPageItem(currentPage().getMeta()) && metaHasContinue()) {
             loadNextAndUpdateIndexes();
             return (currentPage().items() > 0);
         }

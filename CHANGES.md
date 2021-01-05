@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.0 - RELEASE - XX-XXX-2021
+
+- Using continue pagination and remove mechanism to iterate based in `next`
+- Remove `continue` flag to support navigation to next page
+- Remove `page` param to support navigation to a give page
+
 ## 2.4.1 - RELEASE - 05-NOV-2020
 
 - Fixing bug deserializing Resource Maps with floats.
