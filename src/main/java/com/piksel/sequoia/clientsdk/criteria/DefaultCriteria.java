@@ -47,10 +47,7 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
     private final List<FieldSelector> fieldsEntries;
     private Boolean active;
     private Boolean available;
-
     private PerPage perPage;
-    private Page page;
-    private Boolean continuesPage;
     private Count count;
     private FacetCount facetCount;
     private Language lang;
@@ -201,7 +198,7 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
      */
     @Override
     public boolean isEmpty() {
-        return criterionEntries.isEmpty() && orderEntries.isEmpty() && Objects.isNull(perPage) && Objects.isNull(page) && Objects.isNull(continuesPage) && Objects.isNull(count)
+        return criterionEntries.isEmpty() && orderEntries.isEmpty() && Objects.isNull(perPage) && Objects.isNull(count)
                 && Objects.isNull(facetCount) && Objects.isNull(resourceSettings) && inclusionEntries.isEmpty() && fieldsEntries.isEmpty()
                 && Objects.isNull(lang)
                 && !this.getActive().isPresent()
@@ -247,17 +244,6 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
     @Override
     public PerPage getPerPage() {
         return perPage;
-    }
-
-    @Override
-    public Page getPage() {
-        return page;
-    }
-    
-    
-    @Override
-    public Boolean getContinuesPage() {
-        return continuesPage;
     }
 
     @Override
@@ -317,22 +303,7 @@ public class DefaultCriteria<T extends Criteria<T>> implements Criteria<T> {
         this.perPage = PerPage.builder().perPage(numItemsPerPage).build();
         return (T) this;
     }
-    
-    @SuppressWarnings("unchecked")
-    @Override
-    public T continuesPage() {
-        this.continuesPage = true;
-        return (T) this;
-    }
 
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public T page(int numPage) {
-        checkHigherThanZero(numPage);
-        this.page = Page.builder().page(numPage).build();
-        return (T) this;
-    }
 
     private void checkHigherThanZero(int numPage) {
         Preconditions.checkArgument(numPage > 0, "it must be higher than 0");

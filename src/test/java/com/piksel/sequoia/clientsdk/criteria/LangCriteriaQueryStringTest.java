@@ -55,7 +55,7 @@ public class LangCriteriaQueryStringTest {
                 criteria.lang("en");
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("lang=en"));
+                assertThat(queryString.toString(), is("continue=true&lang=en"));
             }
 
         }
@@ -68,7 +68,7 @@ public class LangCriteriaQueryStringTest {
                 criteria.lang("es");
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("lang=es"));
+                assertThat(queryString.toString(), is("continue=true&lang=es"));
             }
 
         }
@@ -80,7 +80,7 @@ public class LangCriteriaQueryStringTest {
                 criteria.lang(null);
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), isEmptyString());
+                assertThat(queryString.toString(),  is("continue=true"));
             }
 
         }

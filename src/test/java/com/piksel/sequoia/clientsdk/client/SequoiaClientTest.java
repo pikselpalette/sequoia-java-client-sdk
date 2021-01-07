@@ -315,14 +315,14 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenBrowsingWithCriteria_addCriteriaToUrl_andReturn200() {
-        stubForServiceRegistryGetQueryParams(scenarioMappings, getResponseMultiResource, 200, "withFieldName=field%20value");
+        stubForServiceRegistryGetQueryParams(scenarioMappings, getResponseMultiResource, 200, "withFieldName=field%20value&continue=true");
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.add(field("fieldName").equalTo("field value"));
 
         ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
                 .browse(criteria);
 
-        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/data/services?withFieldName=field%20value")));
+        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/data/services?withFieldName=field%20value&continue=true")));
         assertTrue(response.isSuccessStatusCode());
         assertEquals(200, response.getStatusCode());
         assertNotNull(response.getPayload());
@@ -330,14 +330,14 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenBrowsingWithCount_addCriteriaToUrl_andReturn200() {
-        stubForServiceRegistryGetQueryParams(scenarioMappings, getResponseMultiResourceCount, 200, "count=type");
+        stubForServiceRegistryGetQueryParams(scenarioMappings, getResponseMultiResourceCount, 200, "count=type&continue=true");
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.count("type");
 
         ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
                 .browse(criteria);
 
-        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/data/services?count=type")));
+        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/data/services?count=type&continue=true")));
         assertTrue(response.isSuccessStatusCode());
         assertEquals(200, response.getStatusCode());
         assertNotNull(response.getPayload());
@@ -347,14 +347,14 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_andReturn200() {
-        stubForServiceRegistryGetQueryParams(scenarioMappings, getResponseLinkedResources, 200, "include=jobs,tasks,events");
+        stubForServiceRegistryGetQueryParams(scenarioMappings, getResponseLinkedResources, 200, "include=jobs,tasks,events&continue=true");
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.include(resource("jobs"), resource("tasks"), resource("events"));
 
         ResourceResponse<RegisteredService> response = client.service("registry").resourcefulEndpoint("services", RegisteredService.class)
                 .browse(criteria);
 
-        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/data/services?include=jobs,tasks,events")));
+        scenarioMappings.verify("registry", getRequestedFor(urlEqualTo("/data/services?include=jobs,tasks,events&continue=true")));
         assertTrue(response.isSuccessStatusCode());
         assertEquals(200, response.getStatusCode());
         assertNotNull(response.getPayload());
@@ -364,7 +364,7 @@ public class SequoiaClientTest extends ClientIntegrationTestBase {
     public void whenBrowsingWithGettingFault_andThrowRequestExecutionException() {
         thrown.expect(RequestExecutionException.class);
         thrown.expectMessage("Unable to complete request");
-        stubForServiceRegistryBrowseWithFault(scenarioMappings, "withFieldName=value");
+        stubForServiceRegistryBrowseWithFault(scenarioMappings, "withFieldName=value&continue=true");
 
         client.service("registry").resourcefulEndpoint("services", RegisteredService.class).browse(where(field("fieldName").equalTo("value")));
     }

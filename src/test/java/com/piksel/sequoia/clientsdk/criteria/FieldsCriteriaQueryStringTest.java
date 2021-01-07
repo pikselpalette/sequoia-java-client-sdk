@@ -54,7 +54,7 @@ public class FieldsCriteriaQueryStringTest {
                 criteria.fields("title");
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("fields=title"));
+                assertThat(queryString.toString(), is("continue=true&fields=title"));
             }
 
         }
@@ -83,7 +83,7 @@ public class FieldsCriteriaQueryStringTest {
                 criteria.fields("title", "ref");
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("fields=title%2Cref"));
+                assertThat(queryString.toString(), is("continue=true&fields=title%2Cref"));
             }
 
             @Test
@@ -91,7 +91,7 @@ public class FieldsCriteriaQueryStringTest {
                 criteria.fields("title").fields("ref");
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("fields=title%2Cref"));
+                assertThat(queryString.toString(), is("continue=true&fields=title%2Cref"));
             }
 
             @Test
@@ -99,7 +99,7 @@ public class FieldsCriteriaQueryStringTest {
                 criteria.fields("title", "ref", "title");
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("fields=title%2Cref"));
+                assertThat(queryString.toString(), is("continue=true&fields=title%2Cref"));
             }
         }
 

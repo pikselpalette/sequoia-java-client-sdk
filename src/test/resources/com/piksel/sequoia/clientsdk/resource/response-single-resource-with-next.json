@@ -1,9 +1,7 @@
 {
   "meta": {
-    "page": 1,
     "perPage": 1,
-    "first": "/data/jobs?perPage=1&sort=-updatedAt&page=1",
-    "next": "/data/jobs?perPage=1&sort=-updatedAt&page=2",
+    "continue": "/data/jobs?continue=005c416f4937593268686&perPage=1",
     "totalCount":10
   },
   "someResources": [

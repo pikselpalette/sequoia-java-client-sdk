@@ -102,14 +102,18 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_returnSingleDirectLinkedItemAndReturn200() {
-        stubGetMetadataResponse(scenarioMappings, "assets", getAssetWithSingleContent, 200, "include=contents&withReference=owner:asset1");
+        stubGetMetadataResponse(scenarioMappings,
+                                "assets",
+                                getAssetWithSingleContent,
+                                200,
+                                "include=contents&withReference=owner:asset1&continue=true");
 
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.add(field("reference").equalTo("owner:asset1"));
         criteria.include(resource("contents"));
 
         ResourceResponse<Asset> response = client.service("metadata").resourcefulEndpoint("assets", Asset.class).browse(criteria);
-        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/assets?include=contents&withReference=owner:asset1")));
+        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/assets?include=contents&withReference=owner:asset1&continue=true")));
 
         verifyResponseStatusAndPayload(response);
 
@@ -130,13 +134,13 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_returnMultipleDirectLinkedItemAndReturn200() {
-        stubGetMetadataResponse(scenarioMappings, "contents", getContentWithMultipleCategories, 200, "include=categories");
+        stubGetMetadataResponse(scenarioMappings, "contents", getContentWithMultipleCategories, 200, "include=categories&continue=true");
 
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.include(resource("categories"));
 
         ResourceResponse<Content> response = client.service("metadata").resourcefulEndpoint("contents", Content.class).browse(criteria);
-        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/contents?include=categories")));
+        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/contents?include=categories&continue=true")));
 
         verifyResponseStatusAndPayload(response);
 
@@ -208,14 +212,14 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_returnMissingDirectLinkedItemAndReturn200() {
-        stubGetMetadataResponse(scenarioMappings, "assets", getAssetWithMissingContent, 200, "include=contents&withReference=owner:asset1");
+        stubGetMetadataResponse(scenarioMappings, "assets", getAssetWithMissingContent, 200, "include=contents&withReference=owner:asset1&continue=true");
 
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.add(field("reference").equalTo("owner:asset1"));
         criteria.include(resource("contents"));
 
         ResourceResponse<Asset> response = client.service("metadata").resourcefulEndpoint("assets", Asset.class).browse(criteria);
-        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/assets?include=contents&withReference=owner:asset1")));
+        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/assets?include=contents&withReference=owner:asset1&continue=true")));
 
         verifyResponseStatusAndPayload(response);
 
@@ -228,25 +232,25 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_returnBigPayload() {
 
-        stubGetMetadataResponse(scenarioMappings, "jobs", bigPayload, 200, "include=events");
+        stubGetMetadataResponse(scenarioMappings, "jobs", bigPayload, 200, "include=events&continue=true");
 
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.include(resource("events"));
         ResourceResponse<Job> response = client.service("metadata").resourcefulEndpoint("jobs", Job.class).browse(criteria);
         log.debug("Big payload {} ", getJobsEvents(response));
 
-        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/jobs?include=events")));
+        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/jobs?include=events&continue=true")));
         verifyResponseStatusAndPayload(response);
     }
 
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_returnMultipleIndirectLinkedItemsAndReturn200() {
         stubGetMetadataResponse(scenarioMappings, "contents", getContentWithMultiplePageAssets, 200,
-                "include=assets,offers&offers.fields=ref,name,contentRefs&withReference=test:contentsToChecktesting1");
+                "include=assets,offers&offers.fields=ref,name,contentRefs&withReference=test:contentsToChecktesting1&continue=true");
         stubGetMetadataResponse(scenarioMappings, "assets", secondPageAssets, 200,
-                "fields=ref,name,contentRef,type,mediaType,url,fileFormat,title,fileSize,tags&count=true&withContentRef=test:contentsToChecktesting1&page=2&perPage=100");
+                "fields=ref,name,contentRef,type,mediaType,url,fileFormat,title,fileSize,tags&count=true&withContentRef=test:contentsToChecktesting1&continue=eyJndCI6eyJmaWVsZCI6InJlZiIsInZhbHVlIjoidGVzdG1vY2s6ZmM4NjMwODAtMTY3YS00ZTgxLTgyMDktOThiZDQ3NjA4YzE1IiwiY3Vyc29yIjp0cnVlfX0&perPage=100");
         stubGetMetadataResponse(scenarioMappings, "offers", secondPageOffers, 200,
-                "fields=ref,name,title,contentRefs&count=true&withContentRefs=test:contentsToChecktesting1&page=2&perPage=100");
+                "fields=ref,name,title,contentRefs&count=true&withContentRefs=test:contentsToChecktesting1&continue=eyJndCI6eyJmaWVsZCI6InJlZiIsInZhbHVlIjoidGVzdG1vY2s6ZmM4NjMwODAtMTY3YS00ZTgxLTgyMDktOThiZDQ3NjA4YzE1IiwiY3Vyc29yIjp0cnVlfX0&perPage=100");
 
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.add(field("reference").equalTo("test:contentsToChecktesting1"));
@@ -254,7 +258,7 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
 
         ResourceResponse<Content> response = client.service("metadata").resourcefulEndpoint("contents", Content.class).browse(criteria);
         scenarioMappings.verify("metadata", getRequestedFor(
-                urlEqualTo("/data/contents?include=assets,offers&offers.fields=ref,name,contentRefs&withReference=test:contentsToChecktesting1")));
+                urlEqualTo("/data/contents?include=assets,offers&offers.fields=ref,name,contentRefs&withReference=test:contentsToChecktesting1&continue=true")));
 
         verifyResponseStatusAndPayload(response);
 
@@ -269,22 +273,22 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
         assertOfferNames(offers, numOffers);
 
         scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo(
-                "/data/assets?fields=ref,name,contentRef,type,mediaType,url,fileFormat,title,fileSize,tags&count=true&withContentRef=test:contentsToChecktesting1&page=2&perPage=100")));
+                "/data/assets?fields=ref,name,contentRef,type,mediaType,url,fileFormat,title,fileSize,tags&count=true&withContentRef=test:contentsToChecktesting1&continue=eyJndCI6eyJmaWVsZCI6InJlZiIsInZhbHVlIjoidGVzdG1vY2s6ZmM4NjMwODAtMTY3YS00ZTgxLTgyMDktOThiZDQ3NjA4YzE1IiwiY3Vyc29yIjp0cnVlfX0&perPage=100")));
         scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo(
-                "/data/offers?fields=ref,name,title,contentRefs&count=true&withContentRefs=test:contentsToChecktesting1&page=2&perPage=100")));
+                "/data/offers?fields=ref,name,title,contentRefs&count=true&withContentRefs=test:contentsToChecktesting1&continue=eyJndCI6eyJmaWVsZCI6InJlZiIsInZhbHVlIjoidGVzdG1vY2s6ZmM4NjMwODAtMTY3YS00ZTgxLTgyMDktOThiZDQ3NjA4YzE1IiwiY3Vyc29yIjp0cnVlfX0&perPage=100")));
 
     }
 
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_returnMultipleIndirectLinkedItemsAndIterateThemAndReturn200() {
-        stubGetMetadataResponse(scenarioMappings, "contents", getContentWithMultipleAssets, 200, "include=assets&withReference=owner:content1");
+        stubGetMetadataResponse(scenarioMappings, "contents", getContentWithMultipleAssets, 200, "include=assets&withReference=owner:content1&continue=true");
 
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.add(field("reference").equalTo("owner:content1"));
         criteria.include(resource("assets"));
 
         ResourceResponse<Content> response = client.service("metadata").resourcefulEndpoint("contents", Content.class).browse(criteria);
-        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/contents?include=assets&withReference=owner:content1")));
+        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/contents?include=assets&withReference=owner:content1&continue=true")));
 
         verifyResponseStatusAndPayload(response);
 
@@ -341,7 +345,7 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_withoutRef_returnEmptyCollectionOfItemsAndReturn200() {
         stubGetMetadataResponse(scenarioMappings, "contents", getContentWithMultipleAssetsWithoutRef, 200,
-                "include=assets&withReference=owner:content1");
+                "include=assets&withReference=owner:content1&continue=true");
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.add(field("reference").equalTo("owner:content1"));
         criteria.include(resource("assets"));
@@ -357,7 +361,7 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_withoutRefInsideOfLinked_returnEmptyCollectionOfItemsAndReturn200() {
         stubGetMetadataResponse(scenarioMappings, "contents", getContentWithMultipleAssetsWithoutRefInLinked, 200,
-                "include=assets,offers&withReference=owner:content1");
+                "include=assets,offers&withReference=owner:content1&continue=true");
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.add(field("reference").equalTo("owner:content1"));
         criteria.include(resource("assets"), resource("offers"));
@@ -377,26 +381,26 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
         thrown.expect(IncludeResourceException.class);
         thrown.expectMessage("fields is invalid - channelRef is not allowed");
 
-        stubGetMetadataResponse(scenarioMappings, "contents", getContentWithCategoriesError, 200, "include=categories");
+        stubGetMetadataResponse(scenarioMappings, "contents", getContentWithCategoriesError, 200, "include=categories&continue=true");
 
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.include(resource("categories"));
 
         ResourceResponse<Content> response = client.service("metadata").resourcefulEndpoint("contents", Content.class).browse(criteria);
-        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/contents?include=categories")));
+        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/contents?include=categories&continue=true")));
 
         verifyResponseStatusAndPayload(response);
     }
 
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_returnEmptyListOfCategoriesAnd404ErrorsInMetaAndReturns200() {
-        stubGetMetadataResponse(scenarioMappings, "contents", getContentWithCategoriesNotFound, 200, "include=categories");
+        stubGetMetadataResponse(scenarioMappings, "contents", getContentWithCategoriesNotFound, 200, "include=categories&continue=true");
 
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.include(resource("categories"));
 
         ResourceResponse<Content> response = client.service("metadata").resourcefulEndpoint("contents", Content.class).browse(criteria);
-        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/contents?include=categories")));
+        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/contents?include=categories&continue=true")));
 
         Content content = response.getPayload().get().single();
         assertTrue(content.getCategoriesCollection().isEmpty());
@@ -407,13 +411,13 @@ public class SequoiaClientIncludeTest extends ClientIntegrationTestBase {
 
     @Test
     public void whenBrowsingWithCriteria_includeRelatedDocument_returnLinkedLocationsSomeWithStatusCodeAndSomeWithout() {
-        stubGetMetadataResponse(scenarioMappings, "offers", getOffersWithLinkedNotFound, 200, "include=scopeContents,descriptiveContent,locations");
+        stubGetMetadataResponse(scenarioMappings, "offers", getOffersWithLinkedNotFound, 200, "include=scopeContents,descriptiveContent,locations&continue=true");
 
         DefaultResourceCriteria criteria = new DefaultResourceCriteria();
         criteria.include(resource("scopeContents"), resource("descriptiveContent"), resource("locations"));
 
         ResourceResponse<Offer> response = client.service("metadata").resourcefulEndpoint("offers", Offer.class).browse(criteria);
-        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/offers?include=scopeContents,descriptiveContent,locations")));
+        scenarioMappings.verify("metadata", getRequestedFor(urlEqualTo("/data/offers?include=scopeContents,descriptiveContent,locations&continue=true")));
 
         Offer offer = response.getPayload().get().single();
         assertThat(offer.getLocations().size(), is(1));

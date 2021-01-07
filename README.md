@@ -341,9 +341,7 @@ public class Foo extends Resource {
 ```
 {
 	"meta": {
-		"page": 1,
-		"perPage": 1,
-		"first": "/data/foos?perPage=1&sort=-updatedAt&page=1"
+		"perPage": 1
 	},
 	"foos": [
 		{
@@ -388,9 +386,7 @@ public class Bar extends Resource {
 ```
 {
 	"meta": {
-		"page": 1,
 		"perPage": 1,
-		"first": "/data/bars?perPage=1&sort=-updatedAt&page=1"
 	},
 	"bars": [
 		{
@@ -483,15 +479,6 @@ ResourceResponse<Brand> response = brands.browse(where(field("year").greaterThan
         													 .orderByCreatedAt().perPage(10));
 ```
 
-### Page
-
-```java
-ResourceResponse<Brand> response = brands.browse(where(field("year").greaterThan("1930"))
-        													 .orderByCreatedAt().page(1));
-```
-
-Will navigate to the page requested.
-
 ### Count
 
 ```java
@@ -505,25 +492,6 @@ response.getPayload().ifPresent(payload -> {
 ```
 Will return `totalCount` on the payload
 
-### Continue
-
-When set to true, will cause the response meta to contain a continue value to allow requesting the next set of results, if available. meta.continue will be omitted when there are no more results beyond the current set. The value of continue (when not true) is only to provide a hint to the service as to what data to return next, it is not intended to be used other than when following meta.continue links. Clients are expected to follow the meta.continue from the response in order to get further results.
-
-If perPage is not provided pagination.pageSize.default will be used instead.
-
-Note: first, next, prev and last are never included in a response with continue true.
-
-Note: continue MAY be used with <intersect> queries if the service supports it.
-
-```
-ResourceResponse<Content> response = contentsEndpoint
-                    .browse(where(field("tags").oneOrMoreOf(TAG1, TAG2)).perPage(1)
-                            .continuesPage().orderByName());
-
-response.getPayload().ifPresent(payload -> {
-                payload.next().getName();
-}
-```
 
 ### Faceted Count
 

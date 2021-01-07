@@ -6,23 +6,15 @@
         "linked": {
             "assets": [
                 {
-                    "totalCount": 101,
-                    "page": 1,
                     "perPage": 100,
-                    "first": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2CmediaType%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=test%3AcontentsToChecktesting1&page=1&perPage=100",
-                    "last": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2CmediaType%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=test%3AcontentsToChecktesting1&page=2&perPage=100",
-                    "next": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2CmediaType%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=test%3AcontentsToChecktesting1&page=2&perPage=100",
+                    "continue": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2CmediaType%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=test%3AcontentsToChecktesting1&continue=eyJndCI6eyJmaWVsZCI6InJlZiIsInZhbHVlIjoidGVzdG1vY2s6ZmM4NjMwODAtMTY3YS00ZTgxLTgyMDktOThiZDQ3NjA4YzE1IiwiY3Vyc29yIjp0cnVlfX0&perPage=100",
                     "request": "/data/assets?fields=ref%2Cname%2CcontentRef%2Ctype%2CmediaType%2Curl%2CfileFormat%2Ctitle%2CfileSize%2Ctags&count=true&withContentRef=test%3AcontentsToChecktesting1"
                 }
             ],
             "offers": [
                 {
-                    "totalCount": 101,
-                    "page": 1,
                     "perPage": 100,
-                    "first": "/data/offers?fields=ref%2Cname%2Ctitle%2CcontentRefs&count=true&withContentRefs=test%3AcontentsToChecktesting1&page=1&perPage=100",
-                    "last": "/data/offers?fields=ref%2Cname%2Ctitle%2CcontentRefs&count=true&withContentRefs=test%3AcontentsToChecktesting1&page=2&perPage=100",
-                    "next": "/data/offers?fields=ref%2Cname%2Ctitle%2CcontentRefs&count=true&withContentRefs=test%3AcontentsToChecktesting1&page=2&perPage=100",
+                    "continue": "/data/offers?fields=ref%2Cname%2Ctitle%2CcontentRefs&count=true&withContentRefs=test%3AcontentsToChecktesting1&continue=eyJndCI6eyJmaWVsZCI6InJlZiIsInZhbHVlIjoidGVzdG1vY2s6ZmM4NjMwODAtMTY3YS00ZTgxLTgyMDktOThiZDQ3NjA4YzE1IiwiY3Vyc29yIjp0cnVlfX0&perPage=100",
                     "request": "/data/offers?fields=ref%2Cname%2Ctitle%2CcontentRefs&count=true&withContentRefs=test%3AcontentsToChecktesting1"
                 }
             ]

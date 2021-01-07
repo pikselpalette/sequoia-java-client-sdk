@@ -43,15 +43,6 @@ public class AbstractMeta {
     private int perPage;
 
     @Key
-    private String first;
-
-    @Key
-    private String next;
-
-    @Key
-    private String prev;
-
-    @Key
     private Integer totalCount;
 
 }

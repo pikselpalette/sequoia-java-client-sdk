@@ -69,7 +69,7 @@ public class LazyLoadingResourceIterableTest {
     @TestResource("response-single-resources-with-collection-referenciated-without-linked-data.json")
     private String singleResponseWithDirectCollectionReferenciatedWithoutLinkedData;
     @TestResource("response-single-resource-with-next.json")
-    private String singleResponseWithNext;
+    private String singleResponseWithContinue;
     @TestResource("response-single-resource-with-continue-next.json")
     private String singleResponseWithContinuesNext;
     @TestResource("response-single-resource-from-other-page.json")
@@ -97,8 +97,8 @@ public class LazyLoadingResourceIterableTest {
     }
 
     @Test(expected = NotSingularException.class)
-    public void shouldThrowNotSingularExceptionWhenGettingSingleItemFromInitialPageHavingNextUrl() {
-        iterableFor(singleResponseWithNext).single();
+    public void shouldThrowNotSingularExceptionWhenGettingSingleItemFromInitialPageHavingContinue() {
+        iterableFor(singleResponseWithContinue).single();
     }
 
     @Test
@@ -206,7 +206,7 @@ public class LazyLoadingResourceIterableTest {
         when(endpoint.getPagedResource(anyString(), anyMap()))
                 .thenReturn(Optional.of(JSON_PARSER.parse(responseFromOtherPage)));
 
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithContinue);
 
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
@@ -231,7 +231,7 @@ public class LazyLoadingResourceIterableTest {
         when(endpoint.getPagedResource(anyString(), anyMap()))
                 .thenReturn(Optional.of(JSON_PARSER.parse(responseFromOtherPage)));
 
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithContinue);
 
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
@@ -246,7 +246,7 @@ public class LazyLoadingResourceIterableTest {
     public void shouldThrowNoSuchElementExceptionWhenLoadingNextPageButNoContentIsReturned() {
         when(endpoint.getPagedResource(anyString(), anyMap())).thenReturn(Optional.empty());
 
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithContinue);
 
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));
@@ -259,7 +259,7 @@ public class LazyLoadingResourceIterableTest {
         when(endpoint.getPagedResource(anyString(), anyMap()))
                 .thenReturn(Optional.of(JSON_PARSER.parse(responseEmtpy)));
 
-        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithNext);
+        LazyLoadingResourceIterable<Resource> iterable = iterableFor(singleResponseWithContinue);
 
         assertThat(iterable.hasNext(), is(true));
         assertThat(iterable.next(), is(notNullValue()));

@@ -54,7 +54,7 @@ public class InclusionCriteriaQueryStringTest {
                 criteria.include(resource("jobs"));
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("include=jobs"));
+                assertThat(queryString.toString(), is("include=jobs&continue=true"));
             }
         }
 
@@ -82,7 +82,7 @@ public class InclusionCriteriaQueryStringTest {
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
                 assertThat(queryString.toString(),
-                        is("include=jobs%2Ctask%2Cevents"));
+                        is("include=jobs%2Ctask%2Cevents&continue=true"));
             }
         }
 
@@ -93,7 +93,7 @@ public class InclusionCriteriaQueryStringTest {
                         resource("jobs"));
                 QueryString queryString = queryStringFactory
                         .createQueryString(criteria);
-                assertThat(queryString.toString(), is("include=jobs%2Cevents"));
+                assertThat(queryString.toString(), is("include=jobs%2Cevents&continue=true"));
             }
         }
 
@@ -110,7 +110,7 @@ public class InclusionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("include=jobs&jobs.fields=text"));
+                            is("include=jobs&continue=true&jobs.fields=text"));
                 }
             }
 
@@ -121,7 +121,7 @@ public class InclusionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("include=jobs&jobs.fields=title%2Cname"));
+                            is("include=jobs&continue=true&jobs.fields=title%2Cname"));
                 }
             }
 
@@ -137,7 +137,7 @@ public class InclusionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(), is(
-                            "include=jobs%2Cevents&events.fields=name&jobs.fields=title"));
+                            "include=jobs%2Cevents&events.fields=name&continue=true&jobs.fields=title"));
                 }
             }
 
@@ -149,7 +149,7 @@ public class InclusionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(), is(
-                            "include=jobs%2Cevents&events.fields=name%2Cref&jobs.fields=name%2Ctitle"));
+                            "include=jobs%2Cevents&events.fields=name%2Cref&continue=true&jobs.fields=name%2Ctitle"));
                 }
             }
 
@@ -168,7 +168,7 @@ public class InclusionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("jobs.sort=text&include=jobs"));
+                            is("jobs.sort=text&include=jobs&continue=true"));
                 }
             }
 
@@ -179,7 +179,7 @@ public class InclusionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(),
-                            is("jobs.sort=title%2C-name&include=jobs"));
+                            is("jobs.sort=title%2C-name&include=jobs&continue=true"));
                 }
             }
 
@@ -195,7 +195,7 @@ public class InclusionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(), is(
-                            "jobs.sort=title&include=jobs%2Cevents&events.sort=name"));
+                            "jobs.sort=title&include=jobs%2Cevents&continue=true&events.sort=name"));
                 }
             }
 
@@ -207,7 +207,7 @@ public class InclusionCriteriaQueryStringTest {
                     QueryString queryString = queryStringFactory
                             .createQueryString(criteria);
                     assertThat(queryString.toString(), is(
-                            "jobs.sort=name%2C-title&include=jobs%2Cevents&events.fields=name%2Cref"));
+                            "jobs.sort=name%2C-title&include=jobs%2Cevents&events.fields=name%2Cref&continue=true"));
                 }
             }
 
