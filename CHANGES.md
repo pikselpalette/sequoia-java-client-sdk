@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 3.0.0 - RELEASE - XX-XXX-2021
+## 3.0.0 - RELEASE - 07-JAN-2021
 
 - Using continue pagination and remove mechanism to iterate based in `next`
 - Remove `continue` flag to support navigation to next page
